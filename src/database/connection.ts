@@ -1,22 +1,18 @@
-import { Pool, PoolClient } from 'pg';
-import { config } from '../utils/config';
+/**
+ * DISABLED Database Connection - Cold Storage Version
+ * 
+ * This is a stub version of the database connection that maintains the same
+ * interface but doesn't actually connect to a database. This allows us
+ * to focus on frontend development while keeping database functionality in cold storage.
+ */
+
 import { logger } from '../utils/logger';
 
 class Database {
-  private pool: Pool;
   private static instance: Database;
 
   private constructor() {
-    this.pool = new Pool({
-      connectionString: config.database.url,
-      max: 20,
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 2000,
-    });
-
-    this.pool.on('error', (err) => {
-      logger.error('Unexpected error on idle client', err);
-    });
+    logger.info('Database initialized in DISABLED mode (cold storage)');
   }
 
   public static getInstance(): Database {
@@ -27,54 +23,34 @@ class Database {
   }
 
   public async query<T = any>(text: string, params?: any[]): Promise<T[]> {
-    const start = Date.now();
-    try {
-      const result = await this.pool.query(text, params);
-      const duration = Date.now() - start;
-      logger.debug('Executed query', { text, duration, rows: result.rowCount });
-      return result.rows;
-    } catch (error) {
-      logger.error('Database query error', { text, params, error });
-      throw error;
-    }
+    logger.debug('Database query called (DISABLED):', { text, params });
+    return []; // Always return empty array
   }
 
   public async queryOne<T = any>(text: string, params?: any[]): Promise<T | null> {
-    const rows = await this.query<T>(text, params);
-    return rows.length > 0 ? rows[0] : null;
+    logger.debug('Database queryOne called (DISABLED):', { text, params });
+    return null; // Always return null
   }
 
-  public async getClient(): Promise<PoolClient> {
-    return this.pool.connect();
+  public async getClient(): Promise<any> {
+    logger.debug('Database getClient called (DISABLED)');
+    return null; // Return null client
   }
 
-  public async transaction<T>(callback: (client: PoolClient) => Promise<T>): Promise<T> {
-    const client = await this.getClient();
-    try {
-      await client.query('BEGIN');
-      const result = await callback(client);
-      await client.query('COMMIT');
-      return result;
-    } catch (error) {
-      await client.query('ROLLBACK');
-      throw error;
-    } finally {
-      client.release();
-    }
+  public async transaction<T>(callback: (client: any) => Promise<T>): Promise<T> {
+    logger.debug('Database transaction called (DISABLED)');
+    // Call the callback with a null client to maintain interface
+    return await callback(null);
   }
 
   public async close(): Promise<void> {
-    await this.pool.end();
+    logger.info('Database close called (DISABLED)');
+    // Do nothing in disabled mode
   }
 
   public async ping(): Promise<boolean> {
-    try {
-      await this.query('SELECT 1');
-      return true;
-    } catch (error) {
-      logger.error('Database ping failed', error);
-      return false;
-    }
+    logger.debug('Database ping called (DISABLED)');
+    return false; // Always return false to indicate no database connection
   }
 }
 

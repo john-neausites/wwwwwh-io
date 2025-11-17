@@ -3,8 +3,10 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
+import multer from 'multer';
 import { config } from './utils/config';
 import { logger } from './utils/logger';
+import { fileService } from './services/file-service';
 
 class Server {
   private app: express.Application;
@@ -89,17 +91,170 @@ class Server {
     // API versioning
     const apiV1 = express.Router();
     
-    // Temporary placeholder routes
+    // Configure multer for file uploads
+    const upload = multer({
+      storage: multer.memoryStorage(),
+      limits: {
+        fileSize: 100 * 1024 * 1024, // 100MB limit
+        files: 10 // Maximum 10 files at once
+      },
+      fileFilter: (req, file, cb) => {
+        // Allow all file types for now, but log them
+        logger.info(`File upload: ${file.originalname} (${file.mimetype})`);
+        cb(null, true);
+      }
+    });
+    
+    // File management endpoints
+    
+    // List files in a directory
+    apiV1.get('/files', async (req, res) => {
+      try {
+        const requestPath = req.query.path as string || '';
+        const files = await fileService.listFiles(requestPath);
+        res.json(files);
+      } catch (error: any) {
+        logger.error('Failed to list files:', error);
+        res.status(500).json({
+          error: 'Failed to list files',
+          message: error.message
+        });
+      }
+    });
+    
+    // Upload files
+    apiV1.post('/files/upload', upload.array('file'), async (req, res) => {
+      try {
+        const files = req.files as Express.Multer.File[];
+        const targetPath = req.body.path || '';
+        
+        if (!files || files.length === 0) {
+          return res.status(400).json({
+            error: 'No files provided'
+          });
+        }
+        
+        const uploadedFiles = [];
+        
+        for (const file of files) {
+          const fileItem = await fileService.saveUploadedFile(
+            file.buffer,
+            file.originalname,
+            targetPath
+          );
+          uploadedFiles.push(fileItem);
+        }
+        
+        res.json({
+          message: `Successfully uploaded ${uploadedFiles.length} file(s)`,
+          files: uploadedFiles
+        });
+        
+      } catch (error: any) {
+        logger.error('File upload failed:', error);
+        res.status(500).json({
+          error: 'Upload failed',
+          message: error.message
+        });
+      }
+    });
+    
+    // Create folder
+    apiV1.post('/files/folder', async (req, res) => {
+      try {
+        const { name, path: parentPath } = req.body;
+        
+        if (!name) {
+          return res.status(400).json({
+            error: 'Folder name is required'
+          });
+        }
+        
+        const folder = await fileService.createFolder(name, parentPath || '');
+        res.json({
+          message: 'Folder created successfully',
+          folder
+        });
+        
+      } catch (error: any) {
+        logger.error('Failed to create folder:', error);
+        res.status(500).json({
+          error: 'Failed to create folder',
+          message: error.message
+        });
+      }
+    });
+    
+    // Download file
+    apiV1.get('/files/download', async (req, res) => {
+      try {
+        const filePath = req.query.path as string;
+        
+        if (!filePath) {
+          return res.status(400).json({
+            error: 'File path is required'
+          });
+        }
+        
+        const { stream, stats, mimeType } = await fileService.getFileStream(filePath);
+        
+        // Set appropriate headers
+        res.setHeader('Content-Type', mimeType);
+        res.setHeader('Content-Length', stats.size);
+        res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(filePath.split('/').pop() || 'download')}"`);
+        
+        // Pipe the file stream to response
+        stream.pipe(res);
+        
+      } catch (error: any) {
+        logger.error('File download failed:', error);
+        res.status(404).json({
+          error: 'File not found',
+          message: error.message
+        });
+      }
+    });
+    
+    // Delete file or folder
+    apiV1.delete('/files', async (req, res) => {
+      try {
+        const filePath = req.query.path as string;
+        
+        if (!filePath) {
+          return res.status(400).json({
+            error: 'File path is required'
+          });
+        }
+        
+        await fileService.deleteFile(filePath);
+        res.json({
+          message: 'File deleted successfully'
+        });
+        
+      } catch (error: any) {
+        logger.error('File deletion failed:', error);
+        res.status(500).json({
+          error: 'Failed to delete file',
+          message: error.message
+        });
+      }
+    });
+    
+    // API status endpoint
     apiV1.get('/status', (req, res) => {
       res.json({
         message: 'wwwwwh.io API v1',
         version: '0.1.0',
         timestamp: new Date().toISOString(),
         features: {
-          contextualGenreSystem: 'implemented',
-          hierarchicalContent: 'schema-ready',
-          hardwareAuth: 'planned',
-          p2pNetwork: 'in-development'
+          fileManagement: 'implemented',
+          uploadDownload: 'implemented',
+          folderOperations: 'implemented',
+          p2pNetwork: 'disabled',
+          database: 'disabled'
+        },
+        storage: {
+          baseDirectory: fileService.getBaseDirectory()
         }
       });
     });
@@ -138,7 +293,17 @@ class Server {
 
     this.app.use('/api/v1', apiV1);
 
-    // Serve React app (placeholder)
+    // File management app
+    this.app.get('/app', (req, res) => {
+      res.sendFile('app.html', { root: 'public' });
+    });
+
+    // wwwwwh-styled file management app
+    this.app.get('/files', (req, res) => {
+      res.sendFile('wwwwwh-app.html', { root: 'public' });
+    });
+
+    // Serve main landing page for other routes
     this.app.get('*', (req, res) => {
       res.sendFile('index.html', { root: 'public' });
     });

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wwwwwh.io - File Management System</title>
+    <meta name="description" content="Modern file management and sharing platform">
+    
+    <!-- PWA manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    
+    <!-- Icons -->
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/logo192.png">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/file-navigation.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+    <div id="file-manager" class="main-layout">
+        <!-- Header -->
+        <header class="header">
+            <div class="flex items-center gap-md">
+                <h1 class="logo">wwwwwh.io</h1>
+                <div class="breadcrumb-container"></div>
+            </div>
+            
+            <div class="flex items-center gap-md">
+                <div class="search-container"></div>
+                <div class="view-toggle-container"></div>
+                
+                <!-- User Actions -->
+                <div class="flex items-center gap-sm">
+                    <button class="btn btn-outline btn-sm" id="settings-btn">
+                        ⚙️ Settings
+                    </button>
+                    <button class="btn btn-primary btn-sm" id="share-btn">
+                        🔗 Share
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="mb-lg">
+                <h3 class="mb-md">Quick Access</h3>
+                <nav class="sidebar-tree-container"></nav>
+            </div>
+            
+            <div class="mb-lg">
+                <h3 class="mb-md">Storage</h3>
+                <div class="card p-md">
+                    <div class="flex items-center justify-between mb-sm">
+                        <span class="text-sm text-secondary">Used Space</span>
+                        <span class="text-sm font-weight-500">2.3 GB</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 45%"></div>
+                    </div>
+                    <div class="text-xs text-muted mt-xs">45% of 5 GB used</div>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="mb-md">Recent Files</h3>
+                <div class="flex flex-col gap-xs">
+                    <div class="file-item file-item-compact">
+                        <div class="file-icon document">📄</div>
+                        <div class="file-info">
+                            <div class="file-name">project-notes.txt</div>
+                            <div class="file-meta">2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="file-item file-item-compact">
+                        <div class="file-icon image">🖼</div>
+                        <div class="file-info">
+                            <div class="file-name">screenshot.png</div>
+                            <div class="file-meta">Yesterday</div>
+                        </div>
+                    </div>
+                    <div class="file-item file-item-compact">
+                        <div class="file-icon archive">📦</div>
+                        <div class="file-info">
+                            <div class="file-name">backup.zip</div>
+                            <div class="file-meta">3 days ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Upload Zone -->
+            <div class="upload-zone-container mb-lg"></div>
+            
+            <!-- File Operations Toolbar -->
+            <div class="flex items-center justify-between mb-lg">
+                <div class="flex items-center gap-md">
+                    <button class="btn btn-secondary btn-sm" id="select-all-btn">
+                        Select All
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="new-folder-btn">
+                        📁 New Folder
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="upload-btn">
+                        📤 Upload Files
+                    </button>
+                </div>
+                
+                <div class="flex items-center gap-sm">
+                    <select class="form-input" id="sort-select">
+                        <option value="name-asc">Name (A-Z)</option>
+                        <option value="name-desc">Name (Z-A)</option>
+                        <option value="modified-desc">Recently Modified</option>
+                        <option value="modified-asc">Oldest First</option>
+                        <option value="size-desc">Largest First</option>
+                        <option value="size-asc">Smallest First</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- File Grid/List -->
+            <div class="file-grid-container fade-in"></div>
+            
+            <!-- Empty State -->
+            <div id="empty-state" class="text-center p-2xl hidden">
+                <div class="mb-lg">
+                    <div class="upload-icon mx-auto mb-md">📂</div>
+                    <h3 class="mb-sm">This folder is empty</h3>
+                    <p class="text-secondary">Drop files here or click the upload button to get started</p>
+                </div>
+                <button class="btn btn-primary" onclick="document.querySelector('.file-input').click()">
+                    📤 Upload Your First File
+                </button>
+            </div>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="flex items-center justify-between">
+                <div class="text-sm">
+                    © 2025 wwwwwh.io - Modern File Management
+                </div>
+                <div class="flex items-center gap-md text-sm">
+                    <span id="file-count">0 items</span>
+                    <span id="selection-info" class="hidden">0 selected</span>
+                    <div class="flex items-center gap-xs">
+                        <span class="badge badge-success">Online</span>
+                        <span>Connected</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Context Menu -->
+    <div id="context-menu" class="context-menu hidden">
+        <a href="#" class="context-menu-item" data-action="open">
+            📂 Open
+        </a>
+        <a href="#" class="context-menu-item" data-action="download">
+            ⬇️ Download
+        </a>
+        <a href="#" class="context-menu-item" data-action="rename">
+            ✏️ Rename
+        </a>
+        <div class="context-menu-separator"></div>
+        <a href="#" class="context-menu-item" data-action="copy">
+            📋 Copy
+        </a>
+        <a href="#" class="context-menu-item" data-action="cut">
+            ✂️ Cut
+        </a>
+        <a href="#" class="context-menu-item" data-action="paste">
+            📄 Paste
+        </a>
+        <div class="context-menu-separator"></div>
+        <a href="#" class="context-menu-item" data-action="share">
+            🔗 Share
+        </a>
+        <a href="#" class="context-menu-item" data-action="properties">
+            ℹ️ Properties
+        </a>
+        <div class="context-menu-separator"></div>
+        <a href="#" class="context-menu-item" data-action="delete" style="color: var(--error-color);">
+            🗑️ Delete
+        </a>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="hidden" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    ">
+        <div class="card p-xl text-center">
+            <div class="loading-spinner mx-auto mb-md"></div>
+            <div>Processing...</div>
+        </div>
+    </div>
+    
+    <!-- Modals -->
+    <div id="new-folder-modal" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Folder</h3>
+                <button class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="new-folder-form">
+                    <div class="form-group">
+                        <label class="form-label">Folder Name</label>
+                        <input type="text" class="form-input" name="folderName" placeholder="Enter folder name" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('new-folder-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="createFolder()">Create</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="/js/file-navigation.js"></script>
+    <script>
+        // Initialize modal functionality
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+        
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+        
+        // New folder functionality
+        document.getElementById('new-folder-btn').addEventListener('click', () => {
+            openModal('new-folder-modal');
+        });
+        
+        async function createFolder() {
+            const form = document.getElementById('new-folder-form');
+            const formData = new FormData(form);
+            const folderName = formData.get('folderName');
+            
+            if (!folderName) return;
+            
+            try {
+                const response = await fetch('/api/v1/files/folder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: folderName,
+                        path: window.fileManager.getState().currentPath
+                    })
+                });
+                
+                if (response.ok) {
+                    closeModal('new-folder-modal');
+                    form.reset();
+                    window.fileManager.navigateToPath(window.fileManager.getState().currentPath);
+                }
+            } catch (error) {
+                console.error('Failed to create folder:', error);
+            }
+        }
+        
+        // Context menu functionality
+        let contextMenuTarget = null;
+        
+        document.addEventListener('contextmenu', (e) => {
+            const fileItem = e.target.closest('.file-item');
+            if (fileItem) {
+                e.preventDefault();
+                contextMenuTarget = fileItem;
+                
+                const contextMenu = document.getElementById('context-menu');
+                contextMenu.style.left = e.pageX + 'px';
+                contextMenu.style.top = e.pageY + 'px';
+                contextMenu.classList.remove('hidden');
+            }
+        });
+        
+        document.addEventListener('click', () => {
+            document.getElementById('context-menu').classList.add('hidden');
+        });
+        
+        // Health check and status updates
+        async function updateStatus() {
+            try {
+                const response = await fetch('/health');
+                const status = await response.json();
+                
+                const fileCount = document.getElementById('file-count');
+                const selectionInfo = document.getElementById('selection-info');
+                
+                if (window.fileManager) {
+                    const state = window.fileManager.getState();
+                    const count = state.files.length;
+                    const selected = state.selectedFiles.length;
+                    
+                    fileCount.textContent = `${count} item${count !== 1 ? 's' : ''}`;
+                    
+                    if (selected > 0) {
+                        selectionInfo.textContent = `${selected} selected`;
+                        selectionInfo.classList.remove('hidden');
+                    } else {
+                        selectionInfo.classList.add('hidden');
+                    }
+                }
+            } catch (error) {
+                console.error('Status update failed:', error);
+            }
+        }
+        
+        // Update status every 30 seconds
+        setInterval(updateStatus, 30000);
+        
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('mobile-open');
+        }
+        
+        // Add mobile hamburger menu (if needed)
+        if (window.innerWidth <= 768) {
+            const header = document.querySelector('.header');
+            const hamburger = document.createElement('button');
+            hamburger.innerHTML = '☰';
+            hamburger.className = 'btn btn-secondary btn-sm';
+            hamburger.onclick = toggleSidebar;
+            header.prepend(hamburger);
+        }
+    </script>
+</body>
+</html>

@@ -1,352 +1,151 @@
-import { createLibp2p, Libp2p } from 'libp2p';
-import { tcp } from '@libp2p/tcp';
-import { webSockets } from '@libp2p/websockets';
-import { mplex } from '@libp2p/mplex';
-import { noise } from '@libp2p/noise';
-import { kadDHT } from '@libp2p/kad-dht';
-import { mdns } from '@libp2p/mdns';
-import { bootstrap } from '@libp2p/bootstrap';
-import { PeerId } from '@libp2p/interface-peer-id';
+/**
+ * DISABLED P2P Network Service - Cold Storage Version
+ * 
+ * This is a stub version of the P2P network service that maintains the same
+ * interface but doesn't actually perform any P2P operations. This allows us
+ * to focus on frontend development while keeping P2P functionality in cold storage.
+ */
+
 import { EventEmitter } from 'events';
 import { logger } from '../utils/logger';
-import { config } from '../utils/config';
-import { 
-  P2PMessage, 
-  ContentOffer, 
-  ContentRequest, 
-  PeerConnection,
-  RTCConnectionState 
-} from '../types';
 
 export interface P2PNetworkEvents {
-  'peer:connected': (peerId: PeerId) => void;
-  'peer:disconnected': (peerId: PeerId) => void;
-  'content:offer': (offer: ContentOffer, from: PeerId) => void;
-  'content:request': (request: ContentRequest, from: PeerId) => void;
-  'peer:discovery': (peerId: PeerId) => void;
+  'peer:connected': (peerId: string) => void;
+  'peer:disconnected': (peerId: string) => void;
+  'content:offer': (offer: any, from: string) => void;
+  'content:request': (request: any, from: string) => void;
+  'peer:discovery': (peerId: string) => void;
 }
 
 export class P2PNetworkService extends EventEmitter {
-  private node?: Libp2p;
-  private peers: Map<string, PeerConnection> = new Map();
   private isStarted = false;
 
   constructor() {
     super();
+    logger.info('P2P Network Service initialized in DISABLED mode (cold storage)');
   }
 
   /**
-   * Initialize and start the P2P network node
+   * Initialize and start the P2P network node (DISABLED)
    */
   public async start(): Promise<void> {
     if (this.isStarted) {
-      logger.warn('P2P network already started');
+      logger.warn('P2P network already started (disabled mode)');
       return;
     }
 
-    try {
-      logger.info('Starting P2P network node...');
-
-      this.node = await createLibp2p({
-        addresses: {
-          listen: [`/ip4/0.0.0.0/tcp/${config.p2p.listenPort}`]
-        },
-        transports: [
-          tcp(),
-          webSockets()
-        ],
-        streamMuxers: [
-          mplex()
-        ],
-        connectionEncryption: [
-          noise()
-        ],
-        peerDiscovery: [
-          mdns({
-            interval: 20000
-          }),
-          bootstrap({
-            list: config.p2p.bootstrapPeers
-          })
-        ],
-        services: {
-          dht: kadDHT({
-            clientMode: false
-          })
-        },
-        connectionManager: {
-          maxConnections: 100,
-          minConnections: 10
-        }
-      });
-
-      // Set up event handlers
-      this.setupEventHandlers();
-
-      // Start the node
-      await this.node.start();
-      
-      this.isStarted = true;
-      logger.info(`P2P node started with PeerId: ${this.node.peerId.toString()}`);
-      logger.info(`Listening on: ${this.node.getMultiaddrs().map(ma => ma.toString()).join(', ')}`);
-
-    } catch (error) {
-      logger.error('Failed to start P2P network:', error);
-      throw error;
-    }
+    logger.info('P2P network start called - DISABLED mode, skipping actual P2P initialization');
+    this.isStarted = true;
   }
 
   /**
-   * Stop the P2P network node
+   * Stop the P2P network node (DISABLED)
    */
   public async stop(): Promise<void> {
-    if (!this.isStarted || !this.node) {
+    if (!this.isStarted) {
       return;
     }
 
-    try {
-      logger.info('Stopping P2P network node...');
-      await this.node.stop();
-      this.isStarted = false;
-      this.peers.clear();
-      logger.info('P2P network node stopped');
-    } catch (error) {
-      logger.error('Error stopping P2P network:', error);
-      throw error;
-    }
+    logger.info('P2P network stop called - DISABLED mode');
+    this.isStarted = false;
   }
 
   /**
-   * Get current node's peer ID
+   * Get current node's peer ID (DISABLED)
    */
   public getPeerId(): string | null {
-    return this.node ? this.node.peerId.toString() : null;
+    return null; // Always return null in disabled mode
   }
 
   /**
-   * Get list of connected peers
+   * Get list of connected peers (DISABLED)
    */
-  public getConnectedPeers(): PeerConnection[] {
-    return Array.from(this.peers.values()).filter(peer => peer.isOnline);
+  public getConnectedPeers(): any[] {
+    return []; // Always return empty array
   }
 
   /**
-   * Get peer connection info
+   * Get peer connection info (DISABLED)
    */
-  public getPeer(peerId: string): PeerConnection | undefined {
-    return this.peers.get(peerId);
+  public getPeer(peerId: string): any | undefined {
+    return undefined; // Always return undefined
   }
 
   /**
-   * Send message to specific peer
+   * Send message to specific peer (DISABLED)
    */
-  public async sendToPeer(peerId: string, message: P2PMessage): Promise<void> {
-    if (!this.node) {
-      throw new Error('P2P node not started');
-    }
-
-    try {
-      const peer = this.peers.get(peerId);
-      if (!peer || !peer.isOnline) {
-        throw new Error(`Peer ${peerId} not connected`);
-      }
-
-      // TODO: Implement actual message sending via libp2p streams
-      logger.debug(`Sending message to peer ${peerId}:`, message);
-      
-    } catch (error) {
-      logger.error(`Failed to send message to peer ${peerId}:`, error);
-      throw error;
-    }
+  public async sendToPeer(peerId: string, message: any): Promise<void> {
+    logger.debug(`P2P sendToPeer called (DISABLED): ${peerId}`, message);
+    // Do nothing in disabled mode
   }
 
   /**
-   * Broadcast message to all connected peers
+   * Broadcast message to all connected peers (DISABLED)
    */
-  public async broadcast(message: P2PMessage): Promise<void> {
-    const connectedPeers = this.getConnectedPeers();
-    
-    const promises = connectedPeers.map(peer => 
-      this.sendToPeer(peer.peerId, message).catch(error => {
-        logger.warn(`Failed to send broadcast to peer ${peer.peerId}:`, error);
-      })
-    );
-
-    await Promise.allSettled(promises);
-    logger.debug(`Broadcast message sent to ${connectedPeers.length} peers`);
+  public async broadcast(message: any): Promise<void> {
+    logger.debug('P2P broadcast called (DISABLED):', message);
+    // Do nothing in disabled mode
   }
 
   /**
-   * Request content from peers
+   * Request content from peers (DISABLED)
    */
   public async requestContent(hash: string, priority: 'low' | 'medium' | 'high' = 'medium'): Promise<void> {
-    const request: ContentRequest = {
-      hash,
-      priority
-    };
-
-    const message: P2PMessage = {
-      type: 'content-request',
-      payload: request,
-      timestamp: new Date(),
-      sender: this.getPeerId() || 'unknown'
-    };
-
-    await this.broadcast(message);
-    logger.info(`Content request sent for hash: ${hash}`);
+    logger.debug(`P2P requestContent called (DISABLED): ${hash}, priority: ${priority}`);
+    // Do nothing in disabled mode
   }
 
   /**
-   * Offer content to peers
+   * Offer content to peers (DISABLED)
    */
   public async offerContent(hash: string, size: number, chunks: number, bandwidth: number): Promise<void> {
-    const offer: ContentOffer = {
-      hash,
-      size,
-      chunks,
-      bandwidth,
-      ttl: Date.now() + (60 * 60 * 1000) // 1 hour TTL
-    };
-
-    const message: P2PMessage = {
-      type: 'content-offer',
-      payload: offer,
-      timestamp: new Date(),
-      sender: this.getPeerId() || 'unknown'
-    };
-
-    await this.broadcast(message);
-    logger.info(`Content offer sent for hash: ${hash}`);
+    logger.debug(`P2P offerContent called (DISABLED): ${hash}`);
+    // Do nothing in disabled mode
   }
 
   /**
-   * Find peers that have specific content
+   * Find peers that have specific content (DISABLED)
    */
-  public async findContentPeers(hash: string): Promise<PeerConnection[]> {
-    return this.getConnectedPeers().filter(peer => 
-      peer.contentShared.includes(hash)
-    );
+  public async findContentPeers(hash: string): Promise<any[]> {
+    logger.debug(`P2P findContentPeers called (DISABLED): ${hash}`);
+    return []; // Always return empty array
   }
 
   /**
-   * Update peer connection quality
+   * Update peer connection quality (DISABLED)
    */
   public updatePeerQuality(peerId: string, quality: number, bandwidth: number): void {
-    const peer = this.peers.get(peerId);
-    if (peer) {
-      peer.connectionQuality = Math.max(0, Math.min(1, quality));
-      peer.bandwidth = bandwidth;
-      peer.lastSeen = new Date();
-    }
+    logger.debug(`P2P updatePeerQuality called (DISABLED): ${peerId}`);
+    // Do nothing in disabled mode
   }
 
   /**
-   * Add content to peer's shared list
+   * Add content to peer's shared list (DISABLED)
    */
   public addPeerContent(peerId: string, contentHash: string): void {
-    const peer = this.peers.get(peerId);
-    if (peer && !peer.contentShared.includes(contentHash)) {
-      peer.contentShared.push(contentHash);
-    }
+    logger.debug(`P2P addPeerContent called (DISABLED): ${peerId}, ${contentHash}`);
+    // Do nothing in disabled mode
   }
 
   /**
-   * Remove content from peer's shared list
+   * Remove content from peer's shared list (DISABLED)
    */
   public removePeerContent(peerId: string, contentHash: string): void {
-    const peer = this.peers.get(peerId);
-    if (peer) {
-      peer.contentShared = peer.contentShared.filter(hash => hash !== contentHash);
-    }
+    logger.debug(`P2P removePeerContent called (DISABLED): ${peerId}, ${contentHash}`);
+    // Do nothing in disabled mode
   }
 
   /**
-   * Get network statistics
+   * Get network statistics (DISABLED)
    */
   public getNetworkStats() {
-    const peers = Array.from(this.peers.values());
-    const onlinePeers = peers.filter(p => p.isOnline);
-    
     return {
-      totalPeers: peers.length,
-      onlinePeers: onlinePeers.length,
-      averageQuality: onlinePeers.reduce((sum, p) => sum + p.connectionQuality, 0) / Math.max(onlinePeers.length, 1),
-      totalBandwidth: onlinePeers.reduce((sum, p) => sum + p.bandwidth, 0),
-      uniqueContent: new Set(peers.flatMap(p => p.contentShared)).size
+      totalPeers: 0,
+      onlinePeers: 0,
+      averageQuality: 0,
+      totalBandwidth: 0,
+      uniqueContent: 0
     };
-  }
-
-  /**
-   * Set up libp2p event handlers
-   */
-  private setupEventHandlers(): void {
-    if (!this.node) return;
-
-    // Peer connection events
-    this.node.addEventListener('peer:connect', (event) => {
-      const peerId = event.detail.toString();
-      logger.info(`Peer connected: ${peerId}`);
-      
-      // Add or update peer
-      this.peers.set(peerId, {
-        peerId,
-        multiaddr: '', // TODO: Get actual multiaddr
-        isOnline: true,
-        lastSeen: new Date(),
-        connectionQuality: 0.5,
-        bandwidth: 0,
-        contentShared: []
-      });
-
-      this.emit('peer:connected', event.detail);
-    });
-
-    this.node.addEventListener('peer:disconnect', (event) => {
-      const peerId = event.detail.toString();
-      logger.info(`Peer disconnected: ${peerId}`);
-      
-      // Mark peer as offline
-      const peer = this.peers.get(peerId);
-      if (peer) {
-        peer.isOnline = false;
-      }
-
-      this.emit('peer:disconnected', event.detail);
-    });
-
-    // Peer discovery events
-    this.node.addEventListener('peer:discovery', (event) => {
-      const peerId = event.detail.id.toString();
-      logger.debug(`Peer discovered: ${peerId}`);
-      this.emit('peer:discovery', event.detail.id);
-    });
-
-    // Handle incoming streams for custom protocols
-    // TODO: Implement custom protocol handlers for content sharing
-  }
-
-  /**
-   * Handle incoming P2P messages
-   */
-  private handleIncomingMessage(message: P2PMessage, from: PeerId): void {
-    logger.debug(`Received message from ${from.toString()}:`, message);
-
-    switch (message.type) {
-      case 'content-offer':
-        this.emit('content:offer', message.payload as ContentOffer, from);
-        break;
-      
-      case 'content-request':
-        this.emit('content:request', message.payload as ContentRequest, from);
-        break;
-      
-      case 'peer-update':
-        // Handle peer status updates
-        break;
-      
-      default:
-        logger.warn(`Unknown message type: ${message.type}`);
-    }
   }
 }
 

@@ -1,0 +1,3 @@
+This is a sample document for testing the file browser functionality.
+
+You can view, edit, and manage documents like this one through the wwwwwh.io interface.

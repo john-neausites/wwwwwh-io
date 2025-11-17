@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wwwwwh.io - P2P Digital File Sharing</title>
+    <meta name="description" content="P2P/S2S digital file sharing platform with physical key authentication">
+    
+    <!-- PWA manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#000000">
+    
+    <!-- Icons -->
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/logo192.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .feature {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .feature h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .status {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        
+        .status h3 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 0.5rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+        
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .donation-tiers {
+            margin: 2rem 0;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .tier {
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            min-width: 120px;
+            transition: border-color 0.2s;
+        }
+        
+        .tier:hover {
+            border-color: #667eea;
+        }
+        
+        .tier-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .tier-name {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">wwwwwh.io</div>
+        <div class="tagline">P2P Digital File Sharing with Physical Key Authentication</div>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🔐 Physical Key Security</h3>
+                <p>Hardware-based authentication using FIDO2 security keys for tamper-resistant access control.</p>
+            </div>
+            <div class="feature">
+                <h3>🌐 Peer-to-Peer Network</h3>
+                <p>Direct connections between users with no central file storage. Your data stays private.</p>
+            </div>
+            <div class="feature">
+                <h3>🎨 Curated Collections</h3>
+                <p>Access carefully curated public domain content including the National Gallery of Art collection.</p>
+            </div>
+            <div class="feature">
+                <h3>🎯 Activity-Based Discovery</h3>
+                <p>Find content based on your current activity, mood, and social context using our contextual system.</p>
+            </div>
+        </div>
+        
+        <div class="status">
+            <h3>Platform Status</h3>
+            <p id="status-text">Loading platform status...</p>
+            <div id="network-stats"></div>
+        </div>
+        
+        <div>
+            <h3>Support the Platform</h3>
+            <p>Help us maintain this free platform by donating the cost of a meal, drink, or snack:</p>
+            <div class="donation-tiers">
+                <div class="tier">
+                    <div class="tier-price">$3</div>
+                    <div class="tier-name">Meal</div>
+                </div>
+                <div class="tier">
+                    <div class="tier-price">$8</div>
+                    <div class="tier-name">Drink</div>
+                </div>
+                <div class="tier">
+                    <div class="tier-price">$15</div>
+                    <div class="tier-name">Snack</div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 2rem;">
+            <button class="btn" onclick="checkWebAuthnSupport()">Test Hardware Key Support</button>
+            <button class="btn btn-outline" onclick="connectToPeers()">Connect to Network</button>
+        </div>
+        
+        <div style="margin-top: 2rem; font-size: 0.9rem; color: #666;">
+            <p><strong>Current Status:</strong> Prototype Phase</p>
+            <p>Hardware keys will be distributed to the first 100 users, starting with 5 beta testers.</p>
+        </div>
+    </div>
+
+    <script>
+        // Check platform status
+        async function loadStatus() {
+            try {
+                const response = await fetch('/health');
+                const status = await response.json();
+                
+                const statusText = document.getElementById('status-text');
+                const networkStats = document.getElementById('network-stats');
+                
+                if (status.status === 'ok') {
+                    statusText.textContent = '✅ Platform Online';
+                    statusText.style.color = '#28a745';
+                    
+                    if (status.network) {
+                        networkStats.innerHTML = `
+                            <div style="margin-top: 1rem; font-size: 0.9rem;">
+                                <strong>Network Stats:</strong><br>
+                                Online Peers: ${status.network.onlinePeers}<br>
+                                Unique Content: ${status.network.uniqueContent}<br>
+                                Network Quality: ${(status.network.averageQuality * 100).toFixed(1)}%
+                            </div>
+                        `;
+                    }
+                } else {
+                    statusText.textContent = '⚠️ Platform Starting Up';
+                    statusText.style.color = '#ffc107';
+                }
+            } catch (error) {
+                const statusText = document.getElementById('status-text');
+                statusText.textContent = '❌ Platform Offline';
+                statusText.style.color = '#dc3545';
+            }
+        }
+        
+        // Check WebAuthn support
+        async function checkWebAuthnSupport() {
+            if (!window.PublicKeyCredential) {
+                alert('❌ WebAuthn not supported in this browser. Please use a modern browser.');
+                return;
+            }
+            
+            const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+            const conditional = await PublicKeyCredential.isConditionalMediationAvailable?.() || false;
+            
+            let message = '✅ WebAuthn supported!\n\n';
+            message += `Platform Authenticator: ${available ? 'Available' : 'Not Available'}\n`;
+            message += `Conditional Mediation: ${conditional ? 'Supported' : 'Not Supported'}\n\n`;
+            message += 'This browser can work with FIDO2 security keys.';
+            
+            alert(message);
+        }
+        
+        // Connect to P2P network (placeholder)
+        function connectToPeers() {
+            alert('🌐 P2P network connection will be implemented in the next phase.\n\nThis will establish connections to other peers and enable content sharing.');
+        }
+        
+        // Load status on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStatus();
+            
+            // Refresh status every 30 seconds
+            setInterval(loadStatus, 30000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,387 @@
+.nga-gallery {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+}
+.nga-header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--color-secondary, #666);
+    padding-bottom: 20px;
+}
+.nga-header h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.8em;
+    font-weight: normal;
+    color: var(--color-primary, #000);
+}
+.nga-header p {
+    margin: 0;
+    color: var(--color-secondary, #666);
+    font-size: 0.9em;
+}
+.nga-search {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+.nga-search input {
+    padding: 8px 12px;
+    border: 1px solid var(--color-secondary, #666);
+    background: transparent;
+    color: var(--color-primary, #000);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9em;
+    min-width: 300px;
+}
+.nga-search input:focus {
+    outline: none;
+    border-color: var(--color-primary, #000);
+}
+.nga-search button {
+    padding: 8px 16px;
+    border: 1px solid var(--color-primary, #000);
+    background: var(--color-primary, #000);
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.nga-search button:hover {
+    background: transparent;
+    color: var(--color-primary, #000);
+}
+.nga-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+.nga-artwork {
+    border: 1px solid var(--color-secondary, #666);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+}
+.nga-artwork:hover {
+    border-color: var(--color-primary, #000);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.nga-image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+}
+.nga-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.nga-no-image {
+    color: var(--color-secondary, #666);
+    font-size: 0.8em;
+    text-align: center;
+}
+.nga-info {
+    padding: 15px;
+}
+.nga-title {
+    margin: 0 0 8px 0;
+    font-size: 1em;
+    font-weight: normal;
+    color: var(--color-primary, #000);
+    line-height: 1.3;
+}
+.nga-artist {
+    margin: 0 0 5px 0;
+    font-size: 0.9em;
+    color: var(--color-secondary, #666);
+    font-weight: 600;
+}
+.nga-date, .nga-medium, .nga-dimensions, .nga-accession {
+    margin: 0 0 3px 0;
+    font-size: 0.8em;
+    color: var(--color-secondary, #666);
+}
+.nga-load-more {
+    text-align: center;
+}
+.nga-load-more button {
+    padding: 12px 24px;
+    border: 1px solid var(--color-primary, #000);
+    background: transparent;
+    color: var(--color-primary, #000);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.nga-load-more button:hover:not(:disabled) {
+    background: var(--color-primary, #000);
+    color: white;
+}
+.nga-load-more button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.nga-loading {
+    text-align: center;
+    padding: 60px 20px;
+}
+.nga-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--color-secondary, #666);
+    border-top: 3px solid var(--color-primary, #000);
+    border-radius: 50%;
+    animation: nga-spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+@keyframes nga-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.nga-error {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--color-secondary, #666);
+}
+.nga-error h3 {
+    margin: 0 0 10px 0;
+    color: var(--color-primary, #000);
+}
+.nga-error button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: 1px solid var(--color-primary, #000);
+    background: transparent;
+    color: var(--color-primary, #000);
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+}
+.nga-error button:hover {
+    background: var(--color-primary, #000);
+    color: white;
+}
+.nga-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--color-secondary, #666);
+    font-size: 0.9em;
+}
+.nga-modal {
+    display: block;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+}
+.nga-modal-content {
+    background-color: white;
+    margin: 5% auto;
+    border: 1px solid var(--color-secondary, #666);
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+.nga-close {
+    color: var(--color-secondary, #666);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    cursor: pointer;
+    z-index: 1001;
+    background: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+.nga-close:hover {
+    color: var(--color-primary, #000);
+}
+.nga-modal-body {
+    display: flex;
+    min-height: 400px;
+}
+.nga-modal-body img {
+    flex: 1;
+    max-width: 50%;
+    object-fit: contain;
+}
+.nga-no-image-large {
+    flex: 1;
+    max-width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    color: var(--color-secondary, #666);
+}
+.nga-details {
+    flex: 1;
+    padding: 30px;
+    max-width: 50%;
+}
+.nga-details h2 {
+    margin: 0 0 20px 0;
+    font-size: 1.4em;
+    font-weight: normal;
+    color: var(--color-primary, #000);
+}
+.nga-details p {
+    margin: 0 0 10px 0;
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+.nga-details strong {
+    color: var(--color-primary, #000);
+}
+.nga-fullscreen-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.nga-modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+.nga-modal-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.nga-modal-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10001;
+    display: flex;
+    gap: 10px;
+}
+.nga-modal-controls button {
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+.nga-modal-controls button:hover {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+.nga-close-modal {
+    font-size: 16px !important;
+}
+.nga-modal-image-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.nga-modal-image {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+.nga-zoomable-image {
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+.nga-zoomable-image:hover {
+    opacity: 0.9;
+}
+@media (max-width: 768px) {
+    .nga-modal-controls {
+        top: 10px;
+        right: 10px;
+    }
+    .nga-modal-controls button {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+    }
+    .nga-modal-image {
+        max-width: 95vw;
+        max-height: 95vh;
+    }
+}
+body.nga-modal-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
+@media (max-width: 768px) {
+    .nga-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    .nga-search {
+        flex-direction: column;
+        align-items: center;
+    }
+    .nga-search input {
+        min-width: 250px;
+    }
+    .nga-modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+    .nga-modal-body {
+        flex-direction: column;
+    }
+    .nga-modal-body img,
+    .nga-no-image-large,
+    .nga-details {
+        max-width: 100%;
+    }
+    .nga-details {
+        padding: 20px;
+    }
+}

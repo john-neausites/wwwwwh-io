@@ -1,0 +1,23 @@
+{
+  "name": "wwwwwh-io",
+  "version": "1.0.0",
+  "description": "wwwwwh.io - Multi-format data access platform",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "deploy": "vercel --prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/john-neausites/wwwwwh-io.git"
+  },
+  "keywords": [
+    "wwwwwh",
+    "data-access",
+    "static-site",
+    "art-gallery",
+    "y2k-core"
+  ],
+  "author": "John Veroneau",
+  "license": "MIT"
+}

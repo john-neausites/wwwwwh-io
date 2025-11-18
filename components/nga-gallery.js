@@ -361,12 +361,12 @@ class NGAGallery {
         
         // Zoom controls
         zoomInBtn?.addEventListener('click', () => {
-            scale = Math.min(scale * 1.2, 5);
+            scale = Math.min(scale * 1.2, 20);
             this.updateImageTransform(modalImage, scale, translateX, translateY);
         });
         
         zoomOutBtn?.addEventListener('click', () => {
-            scale = Math.max(scale / 1.2, 0.5);
+            scale = Math.max(scale / 1.2, 0.1);
             this.updateImageTransform(modalImage, scale, translateX, translateY);
         });
         
@@ -374,7 +374,7 @@ class NGAGallery {
         modalImage?.addEventListener('wheel', (e) => {
             e.preventDefault();
             const delta = e.deltaY > 0 ? 0.9 : 1.1;
-            scale = Math.min(Math.max(scale * delta, 0.5), 5);
+            scale = Math.min(Math.max(scale * delta, 0.1), 20);
             this.updateImageTransform(modalImage, scale, translateX, translateY);
         });
         
@@ -435,7 +435,7 @@ class NGAGallery {
                     Math.pow(touch2.clientY - touch1.clientY, 2)
                 );
                 const scaleChange = currentDistance / initialDistance;
-                scale = Math.min(Math.max(scale * scaleChange, 0.5), 5);
+                scale = Math.min(Math.max(scale * scaleChange, 0.1), 20);
                 initialDistance = currentDistance;
                 this.updateImageTransform(modalImage, scale, translateX, translateY);
             } else if (e.touches.length === 1 && scale > 1) {
@@ -458,11 +458,11 @@ class NGAGallery {
                         break;
                     case '+':
                     case '=':
-                        scale = Math.min(scale * 1.2, 5);
+                        scale = Math.min(scale * 1.2, 20);
                         this.updateImageTransform(modalImage, scale, translateX, translateY);
                         break;
                     case '-':
-                        scale = Math.max(scale / 1.2, 0.5);
+                        scale = Math.max(scale / 1.2, 0.1);
                         this.updateImageTransform(modalImage, scale, translateX, translateY);
                         break;
                 }

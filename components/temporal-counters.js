@@ -6,6 +6,7 @@ class TemporalCounters {
         this.baseTime = null;
         this.sessionStartTime = Date.now();
         this.y2kStartTime = new Date('2000-01-01T00:00:00Z').getTime();
+        this.sessionTracked = false;
         this.init();
     }
     init() {
@@ -16,6 +17,40 @@ class TemporalCounters {
         this.setupTimeDisplays();
         this.generateCachedValues();
         this.startAllCounters();
+        this.setupSessionTracking();
+    }
+    
+    setupSessionTracking() {
+        // Track session duration on page unload
+        window.addEventListener('beforeunload', () => {
+            this.trackSessionDuration();
+        });
+        
+        // Also track on visibility change (mobile backgrounding)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && !this.sessionTracked) {
+                this.trackSessionDuration();
+            }
+        });
+    }
+    
+    trackSessionDuration() {
+        if (this.sessionTracked) return;
+        
+        const duration = (Date.now() - this.sessionStartTime) / 1000; // seconds
+        
+        // Send to API endpoint
+        const data = {
+            duration: parseFloat(duration.toFixed(2)),
+            timestamp: Date.now()
+        };
+        
+        // Use sendBeacon for reliable tracking on page unload
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+        navigator.sendBeacon('/api/session', blob);
+        
+        this.sessionTracked = true;
+        console.log(`📊 Session duration tracked: ${duration.toFixed(2)}s`);
     }
     setupTimeDisplays() {
         this.element.innerHTML = `

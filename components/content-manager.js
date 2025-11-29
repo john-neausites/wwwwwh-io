@@ -21,6 +21,11 @@ class ContentManager {
             this.loadNGAGallery();
             return;
         }
+        if (contentId === 'audio-components-instruments-keyboards-synthesizer' || 
+            contentId.includes('synthesizer')) {
+            this.loadSynthesizer();
+            return;
+        }
         this.contentElement.classList.add('loading');
         try {
             const content = await this.loadMarkdownContent(contentId);
@@ -142,6 +147,27 @@ class ContentManager {
                 showImages: true
             });
             window.ngaGallery.loadFineArt();
+            if (this.isMobile()) {
+                const contentArea = document.querySelector('.why-content');
+                if (contentArea) {
+                    contentArea.style.display = 'block';
+                }
+            }
+        }, this.options.loadingDelay);
+    }
+    
+    loadSynthesizer() {
+        this.contentElement.classList.add('loading');
+        setTimeout(() => {
+            this.contentElement.innerHTML = '<div id="synthesizer-container"></div>';
+            this.contentElement.classList.remove('loading');
+            
+            window.synthesizer = new Synthesizer('synthesizer-container', {
+                octaves: 3,
+                startOctave: 3,
+                waveform: 'sine'
+            });
+            
             if (this.isMobile()) {
                 const contentArea = document.querySelector('.why-content');
                 if (contentArea) {

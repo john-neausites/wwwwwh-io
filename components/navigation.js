@@ -15,8 +15,15 @@ class NavigationManager {
     init() {
         window.addEventListener('resize', () => this.handleResize());
         document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && this.isMobile() && this.navigationHistory.length > 0) {
-                this.navigateBack();
+            // Allow Escape to navigate back on mobile OR when unlocked
+            const isUnlocked = window.isUnlocked && window.isUnlocked();
+            if (event.key === 'Escape' && (this.isMobile() || isUnlocked)) {
+                // Check if menu has navigation stack
+                if (window.mainMenu && window.mainMenu.navigationStack && window.mainMenu.navigationStack.length > 0) {
+                    window.mainMenu.goBack();
+                } else if (this.navigationHistory.length > 0) {
+                    this.navigateBack();
+                }
             }
         });
         if (this.options.enableSwipeBack) {

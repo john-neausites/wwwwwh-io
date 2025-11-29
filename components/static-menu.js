@@ -122,7 +122,11 @@ class StaticMenu {
         if (this.options.onItemClick) {
             this.options.onItemClick(item.slug, itemId);
         }
-        if (this.isMobile()) {
+        
+        // Check if unlocked - if so, allow drill-down navigation
+        const isUnlocked = window.isUnlocked && window.isUnlocked();
+        
+        if (this.isMobile() || isUnlocked) {
             if (item.children.length > 0) {
                 this.navigationStack.push({
                     title: this.getCurrentTitle(),
@@ -132,6 +136,7 @@ class StaticMenu {
                 this.render(item.name, item.children);
             }
         } else {
+            // Desktop locked mode - do nothing (show content only)
         }
     }
     goBack() {

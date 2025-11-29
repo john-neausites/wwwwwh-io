@@ -104,6 +104,9 @@ function initializeApplication() {
         onError: handleMenuError,
         mobileBreakpoint: 480
     });
+    
+    // Expose globally for navigation integration
+    window.mainMenu = mainMenu;
 }
 function handleMenuItemClick(slug, itemId, element) {
     console.log(`Menu item clicked: ${slug} (ID: ${itemId})`);

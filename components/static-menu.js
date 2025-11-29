@@ -33,16 +33,40 @@ class StaticMenu {
             }
             const menuData = await response.json();
             console.log(`Loaded menu data v${menuData.version} generated at ${menuData.generated}`);
-            this.allItems = menuData.items.map(item => ({
-                ...item,
-                children: []
-            }));
+            
+            // Flatten nested structure from JSON
+            this.allItems = this.flattenMenuItems(menuData.items);
+            console.log(`Flattened ${this.allItems.length} menu items`);
+            
             this.buildHierarchy();
             this.showRootLevel();
         } catch (error) {
             console.error('Menu loading error:', error);
             this.showError(error.message);
         }
+    }
+    
+    flattenMenuItems(items) {
+        const flattened = [];
+        const flatten = (itemList) => {
+            itemList.forEach(item => {
+                const children = item.children || [];
+                flattened.push({
+                    id: item.id,
+                    parent_id: item.parent_id,
+                    name: item.name,
+                    slug: item.slug,
+                    immediate_children: item.immediate_children,
+                    total_descendants: item.total_descendants,
+                    children: []
+                });
+                if (children.length > 0) {
+                    flatten(children);
+                }
+            });
+        };
+        flatten(items);
+        return flattened;
     }
     buildHierarchy() {
         const itemsById = {};

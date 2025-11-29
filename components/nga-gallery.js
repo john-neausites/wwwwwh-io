@@ -368,6 +368,246 @@ class NGAGallery {
                         web: { url: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/Christinasworld.jpg/1280px-Christinasworld.jpg" }
                     },
                     description: "Wyeth's haunting realist painting of a woman in a field looking toward a distant farmhouse."
+                },
+                {
+                    id: 30,
+                    title: "The Tower of Babel",
+                    attribution: "Pieter Bruegel the Elder",
+                    displaydate: "1563",
+                    medium: "Oil on panel",
+                    dimensions: "114 cm × 155 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Pieter_Bruegel_the_Elder_-_The_Tower_of_Babel_%28Vienna%29_-_Google_Art_Project_-_edited.jpg/1280px-Pieter_Bruegel_the_Elder_-_The_Tower_of_Babel_%28Vienna%29_-_Google_Art_Project_-_edited.jpg" }
+                    },
+                    description: "Bruegel's detailed depiction of the biblical Tower of Babel with its impossible architecture."
+                },
+                {
+                    id: 31,
+                    title: "The Third of May 1808",
+                    attribution: "Francisco Goya",
+                    displaydate: "1814",
+                    medium: "Oil on canvas",
+                    dimensions: "268 cm × 347 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/El_Tres_de_Mayo%2C_by_Francisco_de_Goya%2C_from_Prado_thin_black_margin.jpg/1280px-El_Tres_de_Mayo%2C_by_Francisco_de_Goya%2C_from_Prado_thin_black_margin.jpg" }
+                    },
+                    description: "Goya's powerful depiction of Spanish resistance fighters executed by French troops during the Peninsular War."
+                },
+                {
+                    id: 32,
+                    title: "Autumn Rhythm (Number 30)",
+                    attribution: "Jackson Pollock",
+                    displaydate: "1950",
+                    medium: "Enamel on canvas",
+                    dimensions: "266 cm × 525 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/en/thumb/8/8a/Autumn_Rhythm.jpg/1280px-Autumn_Rhythm.jpg" }
+                    },
+                    description: "Pollock's abstract expressionist drip painting showcasing his revolutionary action painting technique."
+                },
+                {
+                    id: 33,
+                    title: "The Death of Marat",
+                    attribution: "Jacques-Louis David",
+                    displaydate: "1793",
+                    medium: "Oil on canvas",
+                    dimensions: "165 cm × 128 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Death_of_Marat_by_David.jpg/1024px-Death_of_Marat_by_David.jpg" }
+                    },
+                    description: "David's neoclassical painting of revolutionary leader Jean-Paul Marat assassinated in his bathtub."
+                },
+                {
+                    id: 34,
+                    title: "Whistler's Mother",
+                    attribution: "James McNeill Whistler",
+                    displaydate: "1871",
+                    medium: "Oil on canvas",
+                    dimensions: "144 cm × 163 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Whistlers_Mother_high_res.jpg/1024px-Whistlers_Mother_high_res.jpg" }
+                    },
+                    description: "Whistler's iconic portrait formally titled 'Arrangement in Grey and Black No. 1'."
+                },
+                {
+                    id: 35,
+                    title: "The Fighting Temeraire",
+                    attribution: "J.M.W. Turner",
+                    displaydate: "1838",
+                    medium: "Oil on canvas",
+                    dimensions: "91 cm × 122 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/The_Fighting_Temeraire%2C_JMW_Turner%2C_National_Gallery.jpg/1280px-The_Fighting_Temeraire%2C_JMW_Turner%2C_National_Gallery.jpg" }
+                    },
+                    description: "Turner's Romantic masterpiece depicting the warship HMS Temeraire being towed to be scrapped."
+                },
+                {
+                    id: 36,
+                    title: "Café Terrace at Night",
+                    attribution: "Vincent van Gogh",
+                    displaydate: "1888",
+                    medium: "Oil on canvas",
+                    dimensions: "81 cm × 65 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Vincent_Willem_van_Gogh_-_Cafe_Terrace_at_Night_%28Yorck%29.jpg/1024px-Vincent_Willem_van_Gogh_-_Cafe_Terrace_at_Night_%28Yorck%29.jpg" }
+                    },
+                    description: "Van Gogh's vibrant night scene of a café in Arles, one of his first starry night paintings."
+                },
+                {
+                    id: 37,
+                    title: "The Raft of the Medusa",
+                    attribution: "Théodore Géricault",
+                    displaydate: "1818–1819",
+                    medium: "Oil on canvas",
+                    dimensions: "491 cm × 716 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/JEAN_LOUIS_TH%C3%89ODORE_G%C3%89RICAULT_-_La_Balsa_de_la_Medusa_%28Museo_del_Louvre%2C_1818-19%29.jpg/1280px-JEAN_LOUIS_TH%C3%89ODORE_G%C3%89RICAULT_-_La_Balsa_de_la_Medusa_%28Museo_del_Louvre%2C_1818-19%29.jpg" }
+                    },
+                    description: "Géricault's dramatic depiction of survivors from the wreck of the French frigate Méduse."
+                },
+                {
+                    id: 38,
+                    title: "The Blue Boy",
+                    attribution: "Thomas Gainsborough",
+                    displaydate: "c. 1770",
+                    medium: "Oil on canvas",
+                    dimensions: "178 cm × 122 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Thomas_Gainsborough_-_The_Blue_Boy_%28The_Huntington_Library%2C_San_Marino_L.A.%29.jpg/1024px-Thomas_Gainsborough_-_The_Blue_Boy_%28The_Huntington_Library%2C_San_Marino_L.A.%29.jpg" }
+                    },
+                    description: "Gainsborough's iconic portrait of a young man in 17th-century costume rendered in striking blue."
+                },
+                {
+                    id: 39,
+                    title: "The Ambassadors",
+                    attribution: "Hans Holbein the Younger",
+                    displaydate: "1533",
+                    medium: "Oil on oak",
+                    dimensions: "207 cm × 209 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hans_Holbein_the_Younger_-_The_Ambassadors_-_Google_Art_Project.jpg/1024px-Hans_Holbein_the_Younger_-_The_Ambassadors_-_Google_Art_Project.jpg" }
+                    },
+                    description: "Holbein's double portrait famous for its anamorphic skull and Renaissance symbolism."
+                },
+                {
+                    id: 40,
+                    title: "The Calling of St Matthew",
+                    attribution: "Caravaggio",
+                    displaydate: "1599–1600",
+                    medium: "Oil on canvas",
+                    dimensions: "322 cm × 340 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/The_Calling_of_Saint_Matthew-Caravaggo_%281599-1600%29.jpg/1280px-The_Calling_of_Saint_Matthew-Caravaggo_%281599-1600%29.jpg" }
+                    },
+                    description: "Caravaggio's Baroque masterpiece depicting Christ calling Matthew to discipleship."
+                },
+                {
+                    id: 41,
+                    title: "Olympia",
+                    attribution: "Édouard Manet",
+                    displaydate: "1863",
+                    medium: "Oil on canvas",
+                    dimensions: "130 cm × 190 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Edouard_Manet_-_Olympia_-_Google_Art_Project_3.jpg/1280px-Edouard_Manet_-_Olympia_-_Google_Art_Project_3.jpg" }
+                    },
+                    description: "Manet's controversial modernist reworking of the reclining nude that scandalized Paris."
+                },
+                {
+                    id: 42,
+                    title: "Dance at Le Moulin de la Galette",
+                    attribution: "Pierre-Auguste Renoir",
+                    displaydate: "1876",
+                    medium: "Oil on canvas",
+                    dimensions: "131 cm × 175 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Auguste_Renoir_-_Dance_at_Le_Moulin_de_la_Galette_-_Google_Art_Project.jpg/1280px-Auguste_Renoir_-_Dance_at_Le_Moulin_de_la_Galette_-_Google_Art_Project.jpg" }
+                    },
+                    description: "Renoir's joyful Impressionist scene of a Sunday afternoon dance in Montmartre."
+                },
+                {
+                    id: 43,
+                    title: "The Gleaners",
+                    attribution: "Jean-François Millet",
+                    displaydate: "1857",
+                    medium: "Oil on canvas",
+                    dimensions: "84 cm × 111 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Jean-Fran%C3%A7ois_Millet_%28II%29_-_Gleaners_-_Google_Art_Project.jpg/1280px-Jean-Fran%C3%A7ois_Millet_%28II%29_-_Gleaners_-_Google_Art_Project.jpg" }
+                    },
+                    description: "Millet's realist depiction of three peasant women gleaning a field after harvest."
+                },
+                {
+                    id: 44,
+                    title: "The Grand Canal, Venice",
+                    attribution: "Canaletto",
+                    displaydate: "c. 1730",
+                    medium: "Oil on canvas",
+                    dimensions: "46 cm × 63 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Giovanni_Antonio_Canal%2C_il_Canaletto_-_The_Grand_Canal_in_Venice_from_Palazzo_Flangini_to_Campo_San_Marcuola_-_Google_Art_Project.jpg/1280px-Giovanni_Antonio_Canal%2C_il_Canaletto_-_The_Grand_Canal_in_Venice_from_Palazzo_Flangini_to_Campo_San_Marcuola_-_Google_Art_Project.jpg" }
+                    },
+                    description: "Canaletto's luminous veduta capturing the architectural beauty of Venice's Grand Canal."
+                },
+                {
+                    id: 45,
+                    title: "No. 5, 1948",
+                    attribution: "Jackson Pollock",
+                    displaydate: "1948",
+                    medium: "Oil on fiberboard",
+                    dimensions: "244 cm × 122 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/en/thumb/6/6e/No._5%2C_1948.jpg/800px-No._5%2C_1948.jpg" }
+                    },
+                    description: "Pollock's dense abstract expressionist work, once the world's most expensive painting."
+                },
+                {
+                    id: 46,
+                    title: "The Hunters in the Snow",
+                    attribution: "Pieter Bruegel the Elder",
+                    displaydate: "1565",
+                    medium: "Oil on wood",
+                    dimensions: "117 cm × 162 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Pieter_Bruegel_the_Elder_-_Hunters_in_the_Snow_%28Winter%29_-_Google_Art_Project.jpg/1280px-Pieter_Bruegel_the_Elder_-_Hunters_in_the_Snow_%28Winter%29_-_Google_Art_Project.jpg" }
+                    },
+                    description: "Bruegel's winter landscape masterpiece depicting hunters returning to a snow-covered village."
+                },
+                {
+                    id: 47,
+                    title: "The Sleeping Gypsy",
+                    attribution: "Henri Rousseau",
+                    displaydate: "1897",
+                    medium: "Oil on canvas",
+                    dimensions: "129 cm × 201 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/La_Boh%C3%A9mienne_endormie.jpg/1280px-La_Boh%C3%A9mienne_endormie.jpg" }
+                    },
+                    description: "Rousseau's dreamlike primitive painting of a sleeping woman with a curious lion in the moonlight."
+                },
+                {
+                    id: 48,
+                    title: "Saturn Devouring His Son",
+                    attribution: "Francisco Goya",
+                    displaydate: "1819–1823",
+                    medium: "Mural transferred to canvas",
+                    dimensions: "146 cm × 83 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Francisco_de_Goya%2C_Saturno_devorando_a_su_hijo_%281819-1823%29.jpg/1024px-Francisco_de_Goya%2C_Saturno_devorando_a_su_hijo_%281819-1823%29.jpg" }
+                    },
+                    description: "Goya's disturbing Black Painting depicting the Greek myth of Cronus consuming his children."
+                },
+                {
+                    id: 49,
+                    title: "Broadway Boogie Woogie",
+                    attribution: "Piet Mondrian",
+                    displaydate: "1942–1943",
+                    medium: "Oil on canvas",
+                    dimensions: "127 cm × 127 cm",
+                    images: {
+                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Piet_Mondriaan_-_Broadway_Boogie-Woogie_-_1942-1943_-_Museum_of_Modern_Art%2C_New_York.jpg/1280px-Piet_Mondriaan_-_Broadway_Boogie-Woogie_-_1942-1943_-_Museum_of_Modern_Art%2C_New_York.jpg" }
+                    },
+                    description: "Mondrian's vibrant late work inspired by Manhattan's grid and the energy of boogie-woogie music."
                 }
             ];
 

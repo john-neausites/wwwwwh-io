@@ -119,24 +119,33 @@ class StaticMenu {
     handleClick(itemId) {
         const item = this.findItem(itemId);
         if (!item) return;
+        
+        console.log(`Menu click: ${item.name} (ID: ${itemId}), Children: ${item.children.length}`);
+        
         if (this.options.onItemClick) {
             this.options.onItemClick(item.slug, itemId);
         }
         
         // Check if unlocked - if so, allow drill-down navigation
         const isUnlocked = window.isUnlocked && window.isUnlocked();
+        const isMobile = this.isMobile();
         
-        if (this.isMobile() || isUnlocked) {
+        console.log(`Mobile: ${isMobile}, Unlocked: ${isUnlocked}, Should navigate: ${isMobile || isUnlocked}`);
+        
+        if (isMobile || isUnlocked) {
             if (item.children.length > 0) {
+                console.log(`Navigating to children of ${item.name}`);
                 this.navigationStack.push({
                     title: this.getCurrentTitle(),
                     items: this.currentItems
                 });
                 this.currentItems = item.children;
                 this.render(item.name, item.children);
+            } else {
+                console.log(`${item.name} has no children`);
             }
         } else {
-            // Desktop locked mode - do nothing (show content only)
+            console.log('Desktop locked mode - no navigation');
         }
     }
     goBack() {

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generated": "2025-11-29T20:16:35.978368+00:00",
+  "generated": "2025-11-29T22:58:42.037035+00:00",
   "items": [
     {
       "id": 1,
@@ -983,6 +983,15 @@
               "parent_id": 12,
               "name": "Micro",
               "slug": "photo-micro",
+              "immediate_children": 0,
+              "total_descendants": 0,
+              "children": []
+            },
+            {
+              "id": 129,
+              "parent_id": 12,
+              "name": "Color",
+              "slug": "photo-color",
               "immediate_children": 0,
               "total_descendants": 0,
               "children": []

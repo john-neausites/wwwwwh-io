@@ -2,7 +2,87 @@ let mainMenu = null;
 let navigationManager = null;
 let contentManager = null;
 let protocolHandler = null;
+
+// Keyboard shortcut override system
+let keyBuffer = '';
+let keyBufferTimeout = null;
+let unlocked = false;
+
+function initKeyboardOverride() {
+    document.addEventListener('keydown', (event) => {
+        // Don't interfere with input fields
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+            return;
+        }
+        
+        // Add key to buffer
+        keyBuffer += event.key.toLowerCase();
+        
+        // Clear timeout and set new one (reset buffer after 1 second of inactivity)
+        clearTimeout(keyBufferTimeout);
+        keyBufferTimeout = setTimeout(() => {
+            keyBuffer = '';
+        }, 1000);
+        
+        // Check for 'jrv' sequence
+        if (keyBuffer.includes('jrv')) {
+            unlocked = !unlocked;
+            keyBuffer = '';
+            
+            const status = unlocked ? 'UNLOCKED' : 'LOCKED';
+            const message = `🔓 Navigation ${status}`;
+            
+            console.log(message);
+            
+            // Show visual feedback
+            showUnlockNotification(status);
+            
+            // If unlocking, remove any active NSKey modals
+            if (unlocked) {
+                document.querySelectorAll('.nskey-modal').forEach(modal => modal.remove());
+            }
+        }
+    });
+}
+
+function showUnlockNotification(status) {
+    // Remove any existing notification
+    const existing = document.querySelector('.unlock-notification');
+    if (existing) existing.remove();
+    
+    const notification = document.createElement('div');
+    notification.className = 'unlock-notification';
+    notification.textContent = `Navigation ${status}`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${status === 'UNLOCKED' ? '#4CAF50' : '#FF5722'};
+        color: white;
+        padding: 12px 24px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 14px;
+        z-index: 10000;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        animation: slideIn 0.3s ease-out;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Remove after 2 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+    }, 2000);
+}
+
+function isUnlocked() {
+    return unlocked;
+}
+
 function initializeApplication() {
+    initKeyboardOverride();
     navigationManager = new NavigationManager({
         mobileBreakpoint: 480,
         contentSelector: '.why-content',
@@ -78,9 +158,39 @@ function testHardwareKeyAuth() {
 }
 window.testAuthenticationElements = testAuthenticationElements;
 window.testHardwareKeyAuth = testHardwareKeyAuth;
+window.isUnlocked = isUnlocked;
+
+// Add CSS animations for notifications
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('wwwwwh.io initializing...');
     initializeApplication();
     console.log('wwwwwh.io initialized successfully');
     console.log('🧪 Test functions available: testAuthenticationElements(), testHardwareKeyAuth()');
+    console.log('🔑 Shortcut: Type "jrv" to toggle navigation unlock');
 });

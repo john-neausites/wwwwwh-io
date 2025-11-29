@@ -58,6 +58,13 @@ class ProtocolHandler {
     }
     handleKnowledgeBase(data) {
         console.log('Knowledge Base access requested', data);
+        
+        // Check for JRV override
+        if (window.isUnlocked && window.isUnlocked()) {
+            console.log('🔓 Override active - bypassing authentication');
+            return { protocol: 'kb', status: 'unlocked', bypassed: true };
+        }
+        
         const authStatus = this.checkAuthenticationElements();
         if (!authStatus.certificates.supported) {
             this.showNSKeyInput('KB', 'Insert NSkey');
@@ -72,6 +79,12 @@ class ProtocolHandler {
     }
     handleFTP(data) {
         console.log('FTP access requested', data);
+        
+        if (window.isUnlocked && window.isUnlocked()) {
+            console.log('🔓 Override active - bypassing authentication');
+            return { protocol: 'ftp', status: 'unlocked', bypassed: true };
+        }
+        
         const authStatus = this.checkAuthenticationElements();
         if (!authStatus.certificates.supported) {
             this.showNSKeyInput('FTP', 'Insert NSkey');
@@ -86,6 +99,12 @@ class ProtocolHandler {
     }
     handleSFTP(data) {
         console.log('SFTP access requested', data);
+        
+        if (window.isUnlocked && window.isUnlocked()) {
+            console.log('🔓 Override active - bypassing authentication');
+            return { protocol: 'sftp', status: 'unlocked', bypassed: true };
+        }
+        
         const authStatus = this.checkAuthenticationElements();
         if (!authStatus.certificates.supported) {
             this.showNSKeyInput('SFTP', 'Insert NSkey');
@@ -128,6 +147,12 @@ class ProtocolHandler {
     }
     handleSSH(data) {
         console.log('SSH access requested', data);
+        
+        if (window.isUnlocked && window.isUnlocked()) {
+            console.log('🔓 Override active - bypassing authentication');
+            return { protocol: 'ssh', status: 'unlocked', bypassed: true };
+        }
+        
         const authStatus = this.checkAuthenticationElements();
         if (!authStatus.certificates.supported) {
             this.showNSKeyInput('SSH', 'Insert NSkey');
@@ -142,6 +167,12 @@ class ProtocolHandler {
     }
     handleVPN(data) {
         console.log('VPN access requested', data);
+        
+        if (window.isUnlocked && window.isUnlocked()) {
+            console.log('🔓 Override active - bypassing authentication');
+            return { protocol: 'vpn', status: 'unlocked', bypassed: true };
+        }
+        
         const authStatus = this.checkAuthenticationElements();
         if (!authStatus.certificates.supported || !authStatus.hardwareKey.supported) {
             this.showNSKeyInput('VPN', 'Insert NSkey');
@@ -156,6 +187,12 @@ class ProtocolHandler {
     }
     handleNSTP(data) {
         console.log('NSTP access requested', data);
+        
+        if (window.isUnlocked && window.isUnlocked()) {
+            console.log('🔓 Override active - bypassing authentication');
+            return { protocol: 'nstp', status: 'unlocked', bypassed: true };
+        }
+        
         const authStatus = this.checkAuthenticationElements();
         if (!authStatus.certificates.supported) {
             this.showNSKeyInput('NSTP', 'Insert NSkey');
@@ -170,6 +207,12 @@ class ProtocolHandler {
     }
     handleJRV(data) {
         console.log('JRV access requested', data);
+        
+        if (window.isUnlocked && window.isUnlocked()) {
+            console.log('🔓 Override active - bypassing authentication');
+            return { protocol: 'jrv', status: 'unlocked', bypassed: true };
+        }
+        
         const authStatus = this.checkAuthenticationElements();
         if (!authStatus.certificates.supported) {
             this.showNSKeyInput('JRV', 'Insert NSkey');

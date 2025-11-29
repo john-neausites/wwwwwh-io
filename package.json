@@ -22,6 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
+    "@vercel/blob": "^2.0.0",
     "@vercel/kv": "^3.0.0"
   }
 }

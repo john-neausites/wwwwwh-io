@@ -1,4 +1,6 @@
-class NGAGallery {
+#!/usr/bin/env python3
+
+content = '''class NGAGallery {
     constructor(containerId, options = {}) {
         this.container = document.getElementById(containerId);
         this.options = {
@@ -29,7 +31,7 @@ class NGAGallery {
                     medium: "Oil on canvas",
                     dimensions: "44.5 cm × 39 cm",
                     images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/1024px-1665_Girl_with_a_Pearl_Earring.jpg" }
+                        web: { url: "https://api.nga.gov/iiif/8f29e3c9-a289-4d53-abf0-31a66e9e98fa/0,3273,23235,15502/!1280,854/0/default.jpg" }
                     },
                     description: "This masterpiece showcases Vermeer's exceptional ability to capture light and intimate human moments."
                 },
@@ -41,7 +43,7 @@ class NGAGallery {
                     medium: "Oil on canvas",
                     dimensions: "73.7 cm × 92.1 cm",
                     images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg" }
+                        web: { url: "https://api.nga.gov/iiif/2c964e55-3f80-43c3-a581-1d7a276b6d0f/0,1048,16998,11340/!1280,854/0/default.jpg" }
                     },
                     description: "Van Gogh's swirling night sky over a French village, painted during his stay at an asylum."
                 },
@@ -65,7 +67,7 @@ class NGAGallery {
                     medium: "Oil on canvas",
                     dimensions: "100 cm × 81 cm",
                     images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Claude_Monet_-_Woman_with_a_Parasol_-_Madame_Monet_and_Her_Son_-_Google_Art_Project.jpg/1024px-Claude_Monet_-_Woman_with_a_Parasol_-_Madame_Monet_and_Her_Son_-_Google_Art_Project.jpg" }
+                        web: { url: "https://api.nga.gov/iiif/99758d9d-c10b-4d02-a198-7e49afb1f3a6/0,0,12666,7124/!1024,576/0/default.jpg" }
                     },
                     description: "Monet's impressionist portrait of his wife Camille and their son Jean in a sunny field."
                 },
@@ -79,7 +81,7 @@ class NGAGallery {
                     images: {
                         web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/The_Great_Wave_off_Kanagawa.jpg/1280px-The_Great_Wave_off_Kanagawa.jpg" }
                     },
-                    description: "The iconic Japanese woodblock print depicting a great wave threatening boats off Kanagawa."
+                    description: "The iconic Japanese woodblock print depicting a great wave threatening boats."
                 },
                 {
                     id: 6,
@@ -91,19 +93,7 @@ class NGAGallery {
                     images: {
                         web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg/1024px-Grant_Wood_-_American_Gothic_-_Google_Art_Project.jpg" }
                     },
-                    description: "Wood's famous depiction of a farmer and his daughter standing in front of their Iowa home."
-                },
-                {
-                    id: 7,
-                    title: "The Persistence of Memory",
-                    attribution: "Salvador Dalí",
-                    displaydate: "1931",
-                    medium: "Oil on canvas",
-                    dimensions: "24 cm × 33 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/en/thumb/d/dd/The_Persistence_of_Memory.jpg/1280px-The_Persistence_of_Memory.jpg" }
-                    },
-                    description: "Dalí's surrealist masterpiece featuring melting clocks in a dreamlike landscape."
+                    description: "Wood's famous depiction of a farmer and his daughter in front of their home."
                 },
                 {
                     id: 8,
@@ -115,7 +105,7 @@ class NGAGallery {
                     images: {
                         web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Eugène_Delacroix_-_La_liberté_guidant_le_peuple.jpg/1280px-Eugène_Delacroix_-_La_liberté_guidant_le_peuple.jpg" }
                     },
-                    description: "Delacroix's romantic painting commemorating the July Revolution of 1830 in France."
+                    description: "Delacroix's romantic painting commemorating the July Revolution of 1830."
                 },
                 {
                     id: 9,
@@ -127,247 +117,7 @@ class NGAGallery {
                     images: {
                         web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/1024px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg" }
                     },
-                    description: "Munch's expressionist masterpiece depicting a figure with an agonized expression against a tumultuous sky."
-                },
-                {
-                    id: 10,
-                    title: "The Last Supper",
-                    attribution: "Leonardo da Vinci",
-                    displaydate: "1495–1498",
-                    medium: "Tempera on gesso, pitch, and mastic",
-                    dimensions: "460 cm × 880 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/%C3%9Altima_Cena_-_Da_Vinci_5.jpg/1280px-%C3%9Altima_Cena_-_Da_Vinci_5.jpg" }
-                    },
-                    description: "Da Vinci's iconic depiction of Jesus's final meal with his disciples before his crucifixion."
-                },
-                {
-                    id: 11,
-                    title: "Mona Lisa",
-                    attribution: "Leonardo da Vinci",
-                    displaydate: "c. 1503–1519",
-                    medium: "Oil on poplar panel",
-                    dimensions: "77 cm × 53 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/1024px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg" }
-                    },
-                    description: "The world's most famous portrait, known for her enigmatic smile and da Vinci's masterful technique."
-                },
-                {
-                    id: 12,
-                    title: "The Night Watch",
-                    attribution: "Rembrandt van Rijn",
-                    displaydate: "1642",
-                    medium: "Oil on canvas",
-                    dimensions: "363 cm × 437 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/The_Night_Watch_-_HD.jpg/1280px-The_Night_Watch_-_HD.jpg" }
-                    },
-                    description: "Rembrandt's masterpiece of Dutch Golden Age painting depicting a city militia in action."
-                },
-                {
-                    id: 13,
-                    title: "Guernica",
-                    attribution: "Pablo Picasso",
-                    displaydate: "1937",
-                    medium: "Oil on canvas",
-                    dimensions: "349 cm × 776 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/en/thumb/7/74/PicassoGuernica.jpg/1280px-PicassoGuernica.jpg" }
-                    },
-                    description: "Picasso's powerful anti-war painting depicting the bombing of Guernica during the Spanish Civil War."
-                },
-                {
-                    id: 14,
-                    title: "The Kiss",
-                    attribution: "Gustav Klimt",
-                    displaydate: "1907–1908",
-                    medium: "Oil and gold leaf on canvas",
-                    dimensions: "180 cm × 180 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Gustav_Klimt_016.jpg/1024px-Gustav_Klimt_016.jpg" }
-                    },
-                    description: "Klimt's golden masterpiece of the Art Nouveau period, depicting an embracing couple."
-                },
-                {
-                    id: 15,
-                    title: "The Creation of Adam",
-                    attribution: "Michelangelo",
-                    displaydate: "1508–1512",
-                    medium: "Fresco",
-                    dimensions: "280 cm × 570 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg/1280px-Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg" }
-                    },
-                    description: "The iconic Sistine Chapel ceiling fresco depicting God giving life to Adam."
-                },
-                {
-                    id: 16,
-                    title: "Water Lilies",
-                    attribution: "Claude Monet",
-                    displaydate: "1916",
-                    medium: "Oil on canvas",
-                    dimensions: "200 cm × 425 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg/1280px-Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg" }
-                    },
-                    description: "Part of Monet's famous series capturing his water garden at Giverny in various lights."
-                },
-                {
-                    id: 17,
-                    title: "Las Meninas",
-                    attribution: "Diego Velázquez",
-                    displaydate: "1656",
-                    medium: "Oil on canvas",
-                    dimensions: "318 cm × 276 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Las_Meninas%2C_by_Diego_Vel%C3%A1zquez%2C_from_Prado_in_Google_Earth.jpg/1024px-Las_Meninas%2C_by_Diego_Vel%C3%A1zquez%2C_from_Prado_in_Google_Earth.jpg" }
-                    },
-                    description: "Velázquez's complex masterpiece depicting the Spanish royal family and the artist himself."
-                },
-                {
-                    id: 18,
-                    title: "The Garden of Earthly Delights",
-                    attribution: "Hieronymus Bosch",
-                    displaydate: "1490–1510",
-                    medium: "Oil on oak panels",
-                    dimensions: "220 cm × 389 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/The_Garden_of_earthly_delights.jpg/1280px-The_Garden_of_earthly_delights.jpg" }
-                    },
-                    description: "Bosch's fantastical triptych depicting paradise, earthly pleasures, and hell."
-                },
-                {
-                    id: 19,
-                    title: "Impression, Sunrise",
-                    attribution: "Claude Monet",
-                    displaydate: "1872",
-                    medium: "Oil on canvas",
-                    dimensions: "48 cm × 63 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Monet_-_Impression%2C_Sunrise.jpg/1280px-Monet_-_Impression%2C_Sunrise.jpg" }
-                    },
-                    description: "The painting that gave the Impressionist movement its name, depicting Le Havre harbor at sunrise."
-                },
-                {
-                    id: 20,
-                    title: "The School of Athens",
-                    attribution: "Raphael",
-                    displaydate: "1509–1511",
-                    medium: "Fresco",
-                    dimensions: "500 cm × 770 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg/1280px-%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg" }
-                    },
-                    description: "Raphael's Renaissance fresco depicting ancient philosophers including Plato and Aristotle."
-                },
-                {
-                    id: 21,
-                    title: "Composition VIII",
-                    attribution: "Wassily Kandinsky",
-                    displaydate: "1923",
-                    medium: "Oil on canvas",
-                    dimensions: "140 cm × 201 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Vassily_Kandinsky%2C_1923_-_Composition_8%2C_huile_sur_toile%2C_140_cm_x_201_cm%2C_Mus%C3%A9e_Guggenheim%2C_New_York.jpg/1280px-Vassily_Kandinsky%2C_1923_-_Composition_8%2C_huile_sur_toile%2C_140_cm_x_201_cm%2C_Mus%C3%A9e_Guggenheim%2C_New_York.jpg" }
-                    },
-                    description: "Kandinsky's pioneering abstract work featuring geometric shapes and vibrant colors."
-                },
-                {
-                    id: 22,
-                    title: "The Son of Man",
-                    attribution: "René Magritte",
-                    displaydate: "1964",
-                    medium: "Oil on canvas",
-                    dimensions: "116 cm × 89 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/en/e/e5/Magritte_TheSonOfMan.jpg" }
-                    },
-                    description: "Magritte's surrealist self-portrait of a man in a bowler hat with his face obscured by an apple."
-                },
-                {
-                    id: 23,
-                    title: "Nighthawks",
-                    attribution: "Edward Hopper",
-                    displaydate: "1942",
-                    medium: "Oil on canvas",
-                    dimensions: "84 cm × 152 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Nighthawks_by_Edward_Hopper_1942.jpg/1280px-Nighthawks_by_Edward_Hopper_1942.jpg" }
-                    },
-                    description: "Hopper's iconic depiction of urban isolation in a late-night American diner."
-                },
-                {
-                    id: 24,
-                    title: "The Arnolfini Portrait",
-                    attribution: "Jan van Eyck",
-                    displaydate: "1434",
-                    medium: "Oil on oak panel",
-                    dimensions: "82 cm × 60 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Van_Eyck_-_Arnolfini_Portrait.jpg/1024px-Van_Eyck_-_Arnolfini_Portrait.jpg" }
-                    },
-                    description: "Van Eyck's masterpiece of Northern Renaissance art depicting a wealthy merchant and his wife."
-                },
-                {
-                    id: 25,
-                    title: "A Sunday Afternoon on the Island of La Grande Jatte",
-                    attribution: "Georges Seurat",
-                    displaydate: "1884–1886",
-                    medium: "Oil on canvas",
-                    dimensions: "207 cm × 308 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg/1280px-A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg" }
-                    },
-                    description: "Seurat's pointillist masterpiece depicting Parisians relaxing in a suburban park."
-                },
-                {
-                    id: 26,
-                    title: "The Swing",
-                    attribution: "Jean-Honoré Fragonard",
-                    displaydate: "1767",
-                    medium: "Oil on canvas",
-                    dimensions: "81 cm × 64 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Jean-Honor%C3%A9_Fragonard_-_The_Swing.jpg/1024px-Jean-Honor%C3%A9_Fragonard_-_The_Swing.jpg" }
-                    },
-                    description: "Fragonard's playful Rococo masterpiece depicting a young woman on a swing in a garden."
-                },
-                {
-                    id: 27,
-                    title: "Wanderer above the Sea of Fog",
-                    attribution: "Caspar David Friedrich",
-                    displaydate: "1818",
-                    medium: "Oil on canvas",
-                    dimensions: "95 cm × 75 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg/1024px-Caspar_David_Friedrich_-_Wanderer_above_the_sea_of_fog.jpg" }
-                    },
-                    description: "Friedrich's Romantic masterpiece showing a man contemplating a misty mountain landscape."
-                },
-                {
-                    id: 28,
-                    title: "The Hay Wain",
-                    attribution: "John Constable",
-                    displaydate: "1821",
-                    medium: "Oil on canvas",
-                    dimensions: "130 cm × 185 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/John_Constable_The_Hay_Wain.jpg/1280px-John_Constable_The_Hay_Wain.jpg" }
-                    },
-                    description: "Constable's beloved landscape painting of rural Suffolk depicting a hay wagon crossing a stream."
-                },
-                {
-                    id: 29,
-                    title: "Christina's World",
-                    attribution: "Andrew Wyeth",
-                    displaydate: "1948",
-                    medium: "Tempera on panel",
-                    dimensions: "82 cm × 121 cm",
-                    images: {
-                        web: { url: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/Christinasworld.jpg/1280px-Christinasworld.jpg" }
-                    },
-                    description: "Wyeth's haunting realist painting of a woman in a field looking toward a distant farmhouse."
+                    description: "Munch's expressionist masterpiece depicting a figure with an agonized expression."
                 }
             ];
 
@@ -613,12 +363,12 @@ class NGAGallery {
         
         // Zoom controls
         zoomInBtn?.addEventListener('click', () => {
-            scale = Math.min(scale * 1.2, 20);
+            scale = Math.min(scale * 1.2, 5);
             this.updateImageTransform(modalImage, scale, translateX, translateY);
         });
         
         zoomOutBtn?.addEventListener('click', () => {
-            scale = Math.max(scale / 1.2, 0.1);
+            scale = Math.max(scale / 1.2, 0.5);
             this.updateImageTransform(modalImage, scale, translateX, translateY);
         });
         
@@ -626,7 +376,7 @@ class NGAGallery {
         modalImage?.addEventListener('wheel', (e) => {
             e.preventDefault();
             const delta = e.deltaY > 0 ? 0.9 : 1.1;
-            scale = Math.min(Math.max(scale * delta, 0.1), 20);
+            scale = Math.min(Math.max(scale * delta, 0.5), 5);
             this.updateImageTransform(modalImage, scale, translateX, translateY);
         });
         
@@ -687,7 +437,7 @@ class NGAGallery {
                     Math.pow(touch2.clientY - touch1.clientY, 2)
                 );
                 const scaleChange = currentDistance / initialDistance;
-                scale = Math.min(Math.max(scale * scaleChange, 0.1), 20);
+                scale = Math.min(Math.max(scale * scaleChange, 0.5), 5);
                 initialDistance = currentDistance;
                 this.updateImageTransform(modalImage, scale, translateX, translateY);
             } else if (e.touches.length === 1 && scale > 1) {
@@ -710,11 +460,11 @@ class NGAGallery {
                         break;
                     case '+':
                     case '=':
-                        scale = Math.min(scale * 1.2, 20);
+                        scale = Math.min(scale * 1.2, 5);
                         this.updateImageTransform(modalImage, scale, translateX, translateY);
                         break;
                     case '-':
-                        scale = Math.max(scale / 1.2, 0.1);
+                        scale = Math.max(scale / 1.2, 0.5);
                         this.updateImageTransform(modalImage, scale, translateX, translateY);
                         break;
                 }
@@ -752,4 +502,9 @@ document.addEventListener('DOMContentLoaded', function() {
 // Export for module use
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = NGAGallery;
-}
+}'''
+
+with open('components/nga-gallery.js', 'w') as f:
+    f.write(content)
+
+print("Fixed nga-gallery.js with complete image URLs!")

@@ -299,6 +299,7 @@ class ContentManager {
                                 if (!seenAlbums.has(album.collectionId)) {
                                     seenAlbums.add(album.collectionId);
                                     releases.push({
+                                        collectionId: album.collectionId,
                                         title: album.collectionName,
                                         artist: album.artistName,
                                         artwork: album.artworkUrl100?.replace('100x100', '600x600'),
@@ -330,15 +331,16 @@ class ContentManager {
                     const releaseDate = new Date(release.releaseDate).toLocaleDateString();
                     
                     html += `
-                        <div class="release-card">
-                            <a href="${release.link}" target="_blank" rel="noopener">
+                        <div class="release-card" data-collection-id="${release.collectionId}">
+                            <div class="album-cover">
                                 <img src="${release.artwork}" alt="${release.title}" loading="lazy">
-                            </a>
+                            </div>
                             <h3>${release.title}</h3>
                             <p class="artist">${release.artist}</p>
                             <p class="meta">${releaseDate} • ${release.trackCount} tracks</p>
                             <p class="genre">${release.primaryGenre}</p>
-                            <a href="${release.link}" target="_blank" rel="noopener" class="view-link">View on iTunes ↗</a>
+                            <button class="preview-btn">Preview All Tracks</button>
+                            <div class="track-list" style="display: none;"></div>
                         </div>
                     `;
                 }
@@ -398,17 +400,55 @@ class ContentManager {
                                 text-transform: uppercase;
                                 letter-spacing: 0.5px;
                             }
-                            .release-card .view-link {
-                                display: inline-block;
+                            .release-card .album-cover {
+                                cursor: pointer;
+                            }
+                            .release-card .preview-btn {
+                                display: block;
+                                width: 100%;
                                 margin-top: 10px;
-                                padding: 5px 10px;
-                                border: 1px solid currentColor;
+                                padding: 8px;
+                                border: 2px solid currentColor;
+                                background: transparent;
+                                color: currentColor;
+                                font-family: 'JetBrains Mono', monospace;
                                 font-size: 11px;
+                                cursor: pointer;
                                 transition: all 0.2s ease;
                             }
-                            .release-card .view-link:hover {
+                            .release-card .preview-btn:hover {
                                 background: currentColor;
                                 color: var(--color-primary, white);
+                            }
+                            .release-card .track-list {
+                                margin-top: 15px;
+                                border-top: 1px solid currentColor;
+                                padding-top: 15px;
+                            }
+                            .release-card .track-item {
+                                padding: 8px 0;
+                                border-bottom: 1px solid rgba(128,128,128,0.2);
+                            }
+                            .release-card .track-item:last-child {
+                                border-bottom: none;
+                            }
+                            .release-card .track-number {
+                                font-size: 10px;
+                                opacity: 0.5;
+                                margin-right: 8px;
+                            }
+                            .release-card .track-name {
+                                font-size: 12px;
+                                margin-bottom: 5px;
+                            }
+                            .release-card .track-duration {
+                                font-size: 10px;
+                                opacity: 0.5;
+                            }
+                            .release-card audio {
+                                width: 100%;
+                                height: 32px;
+                                margin-top: 5px;
                             }
                             .release-card a {
                                 color: inherit;
@@ -419,6 +459,72 @@ class ContentManager {
                 `;
                 
                 this.contentElement.innerHTML = html;
+                
+                // Attach event listeners for preview buttons
+                this.contentElement.querySelectorAll('.preview-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const card = e.target.closest('.release-card');
+                        const trackList = card.querySelector('.track-list');
+                        const collectionId = card.dataset.collectionId;
+                        
+                        // Toggle if already loaded
+                        if (trackList.innerHTML !== '') {
+                            trackList.style.display = trackList.style.display === 'none' ? 'block' : 'none';
+                            e.target.textContent = trackList.style.display === 'none' ? 'Preview All Tracks' : 'Hide Tracks';
+                            return;
+                        }
+                        
+                        // Load tracks
+                        e.target.textContent = 'Loading...';
+                        e.target.disabled = true;
+                        
+                        try {
+                            const response = await fetch(`https://itunes.apple.com/lookup?id=${collectionId}&entity=song&limit=200`);
+                            const data = await response.json();
+                            
+                            if (data.results && data.results.length > 1) {
+                                const tracks = data.results.slice(1); // Skip first result (album info)
+                                
+                                let trackHtml = '';
+                                tracks.forEach((track, index) => {
+                                    const duration = track.trackTimeMillis ? Math.floor(track.trackTimeMillis / 1000 / 60) + ':' + String(Math.floor((track.trackTimeMillis / 1000) % 60)).padStart(2, '0') : '';
+                                    
+                                    trackHtml += `
+                                        <div class="track-item">
+                                            <div class="track-info">
+                                                <span class="track-number">${track.trackNumber || index + 1}.</span>
+                                                <span class="track-name">${track.trackName}</span>
+                                                ${duration ? `<span class="track-duration"> • ${duration}</span>` : ''}
+                                            </div>
+                                            ${track.previewUrl ? `
+                                                <audio controls preload="none">
+                                                    <source src="${track.previewUrl}" type="audio/mp4">
+                                                </audio>
+                                            ` : '<p class="no-preview" style="font-size: 10px; opacity: 0.4; margin-top: 5px;">No preview available</p>'}
+                                        </div>
+                                    `;
+                                });
+                                
+                                trackList.innerHTML = trackHtml;
+                                trackList.style.display = 'block';
+                                e.target.textContent = 'Hide Tracks';
+                                e.target.disabled = false;
+                            } else {
+                                trackList.innerHTML = '<p style="opacity: 0.5; font-size: 11px;">No tracks found</p>';
+                                trackList.style.display = 'block';
+                                e.target.textContent = 'Preview All Tracks';
+                                e.target.disabled = false;
+                            }
+                        } catch (error) {
+                            console.error('Error loading tracks:', error);
+                            trackList.innerHTML = '<p style="opacity: 0.5; font-size: 11px; color: red;">Failed to load tracks</p>';
+                            trackList.style.display = 'block';
+                            e.target.textContent = 'Preview All Tracks';
+                            e.target.disabled = false;
+                        }
+                    });
+                });
+                
                 this.contentElement.classList.remove('loading');
             } catch (error) {
                 console.error('Error loading new releases:', error);

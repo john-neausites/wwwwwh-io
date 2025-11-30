@@ -612,8 +612,24 @@ class MusicRadio {
         // Fetch preview from iTunes
         try {
             const searchQuery = encodeURIComponent(`${track.artist} ${track.title}`);
-            const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(`https://itunes.apple.com/search?term=${searchQuery}&media=music&entity=song&limit=5`)}`);
-            const data = await response.json();
+            const itunesUrl = `https://itunes.apple.com/search?term=${searchQuery}&media=music&entity=song&limit=5`;
+            
+            // Try direct iTunes API first
+            let response = await fetch(itunesUrl);
+            let data;
+            
+            // If direct call fails, try with CORS proxy
+            if (!response.ok) {
+                console.log('Direct iTunes API failed, trying CORS proxy...');
+                response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(itunesUrl)}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const proxyData = await response.json();
+                data = JSON.parse(proxyData.contents);
+            } else {
+                data = await response.json();
+            }
             
             if (data.results && data.results.length > 0) {
                 const result = data.results.find(r => r.previewUrl) || data.results[0];
@@ -643,13 +659,22 @@ class MusicRadio {
                     this.updateQueue();
                     
                 } else {
-                    throw new Error('No preview URL');
+                    throw new Error('No preview URL available for this track');
                 }
             } else {
-                throw new Error('No results found');
+                throw new Error('No results found from iTunes');
             }
         } catch (error) {
             console.error('Error loading track:', error);
+            // Show error to user
+            document.getElementById('track-artwork').innerHTML = `
+                <div style="padding: 20px; text-align: center; color: #ff6b6b;">
+                    <p>Unable to load preview</p>
+                    <p style="font-size: 12px; margin-top: 10px;">Skipping to next track...</p>
+                </div>
+            `;
+            // Auto-skip after 2 seconds
+            setTimeout(() => this.skipTrack(), 2000);
             throw error;
         }
     }

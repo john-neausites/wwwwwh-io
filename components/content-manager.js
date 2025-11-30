@@ -277,37 +277,68 @@ class ContentManager {
         
         setTimeout(async () => {
             try {
-                // Fetch new releases from Apple Music RSS (updated URL format)
-                const response = await fetch('https://rss.applemarker.com/api/v1/us/apple-music/top-albums/all/50/explicit.json');
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                // Use iTunes Search API for new releases - search for popular recent albums
+                const searches = [
+                    'Kendrick Lamar', 'Taylor Swift', 'Drake', 'The Weeknd', 'Bad Bunny',
+                    'Beyoncé', 'Dua Lipa', 'Billie Eilish', 'Post Malone', 'Ariana Grande',
+                    'Ed Sheeran', 'Olivia Rodrigo', 'SZA', 'Travis Scott', 'Harry Styles'
+                ];
+                
+                const releases = [];
+                const seenAlbums = new Set();
+                
+                for (const artist of searches) {
+                    try {
+                        const query = encodeURIComponent(artist);
+                        const response = await fetch(`https://itunes.apple.com/search?term=${query}&media=music&entity=album&limit=5&sort=recent`);
+                        const data = await response.json();
+                        
+                        if (data.results && data.results.length > 0) {
+                            for (const album of data.results) {
+                                // Avoid duplicates
+                                if (!seenAlbums.has(album.collectionId)) {
+                                    seenAlbums.add(album.collectionId);
+                                    releases.push({
+                                        title: album.collectionName,
+                                        artist: album.artistName,
+                                        artwork: album.artworkUrl100?.replace('100x100', '600x600'),
+                                        releaseDate: album.releaseDate,
+                                        link: album.collectionViewUrl,
+                                        trackCount: album.trackCount,
+                                        primaryGenre: album.primaryGenreName
+                                    });
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching ${artist}:`, error);
+                    }
                 }
-                const data = await response.json();
-                const releases = data.feed.results;
+                
+                // Sort by release date (newest first) and take top 50
+                releases.sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate));
+                const topReleases = releases.slice(0, 50);
                 
                 let html = `
                     <div class="new-releases">
                         <h2>🎵 New Releases</h2>
-                        <p class="subtitle">Top 50 albums on Apple Music</p>
+                        <p class="subtitle">Recent albums from top artists</p>
                         <div class="releases-grid">
                 `;
                 
-                for (const release of releases) {
-                    const title = release.name;
-                    const artist = release.artistName;
-                    const artwork = release.artworkUrl100.replace('100x100', '300x300');
+                for (const release of topReleases) {
                     const releaseDate = new Date(release.releaseDate).toLocaleDateString();
-                    const link = release.url;
                     
                     html += `
                         <div class="release-card">
-                            <a href="${link}" target="_blank" rel="noopener">
-                                <img src="${artwork}" alt="${title}" loading="lazy">
+                            <a href="${release.link}" target="_blank" rel="noopener">
+                                <img src="${release.artwork}" alt="${release.title}" loading="lazy">
                             </a>
-                            <h3>${title}</h3>
-                            <p class="artist">${artist}</p>
-                            <p class="meta">${releaseDate}</p>
-                            <a href="${link}" target="_blank" rel="noopener" class="view-link">View on Apple Music ↗</a>
+                            <h3>${release.title}</h3>
+                            <p class="artist">${release.artist}</p>
+                            <p class="meta">${releaseDate} • ${release.trackCount} tracks</p>
+                            <p class="genre">${release.primaryGenre}</p>
+                            <a href="${release.link}" target="_blank" rel="noopener" class="view-link">View on iTunes ↗</a>
                         </div>
                     `;
                 }
@@ -358,7 +389,14 @@ class ContentManager {
                             .release-card .meta {
                                 font-size: 11px;
                                 opacity: 0.5;
+                                margin-bottom: 5px;
+                            }
+                            .release-card .genre {
+                                font-size: 10px;
+                                opacity: 0.4;
                                 margin-bottom: 10px;
+                                text-transform: uppercase;
+                                letter-spacing: 0.5px;
                             }
                             .release-card .view-link {
                                 display: inline-block;

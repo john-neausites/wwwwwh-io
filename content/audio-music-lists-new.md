@@ -1,19 +1,20 @@
 # New Releases
 
-Top 50 albums on Apple Music right now.
+Recent albums from top artists.
 
-## What's Trending
+## What's New
 
-Browse the hottest albums across all genres:
-- Album artwork
+Browse the latest albums from popular artists across all genres:
+- High-resolution album artwork
 - Artist information
-- Release dates
-- Direct links to Apple Music
+- Release dates and track counts
+- Genre tags
+- Direct links to iTunes
 
 ## Source
 
-Updated daily from Apple Music charts.
+Updated in real-time using iTunes Search API.
 
 ---
 
-*Powered by Apple Music RSS*
+*Powered by iTunes Search API*

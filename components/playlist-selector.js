@@ -15,6 +15,7 @@ class PlaylistSelector {
         this.currentTrackIndex = 0;
         this.previewTracks = [];
         this.fadeInProgress = false;
+        this.currentPlaylistKey = null;
         
         // Quick preview state (for card grid)
         this.quickPreviewAudios = {};
@@ -28,6 +29,9 @@ class PlaylistSelector {
         this.lastRequestTime = 0;
         this.minRequestDelay = 800; // 800ms between requests to avoid overwhelming proxy
         this.rateLimitRetries = 3;
+        
+        // Color palette instance
+        this.colorPalette = window.colorPalette || new window.ColorPalette();
         
         // Dev mode - use pre-made playlists
         this.isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -813,8 +817,281 @@ class PlaylistSelector {
                     .playlist-selector {
                         padding: 20px;
                         font-family: 'JetBrains Mono', monospace;
-                        max-width: 1200px;
+                        max-width: 1400px;
                         margin: 0 auto;
+                    }
+                    
+                    /* ATM-STYLE BUTTON DESIGN */
+                    .playlist-card.atm-button {
+                        background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+                        border: 6px solid var(--color-accent);
+                        border-radius: 20px;
+                        padding: 40px;
+                        min-height: 350px;
+                        display: flex;
+                        flex-direction: column;
+                        transition: all 0.3s ease;
+                        position: relative;
+                        overflow: hidden;
+                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                        cursor: default;
+                    }
+                    
+                    .playlist-card.atm-button::before {
+                        content: '';
+                        position: absolute;
+                        top: -50%;
+                        left: -50%;
+                        width: 200%;
+                        height: 200%;
+                        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+                        opacity: 0;
+                        transition: opacity 0.3s ease;
+                    }
+                    
+                    .playlist-card.atm-button:hover::before {
+                        opacity: 1;
+                    }
+                    
+                    .playlist-content {
+                        position: relative;
+                        z-index: 1;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 24px;
+                        height: 100%;
+                    }
+                    
+                    .playlist-card.atm-button .playlist-title {
+                        font-size: 32px;
+                        font-weight: 800;
+                        margin: 0;
+                        color: white;
+                        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+                        text-transform: uppercase;
+                        letter-spacing: 2px;
+                        line-height: 1.2;
+                    }
+                    
+                    .playlist-card.atm-button .playlist-info {
+                        display: flex;
+                        gap: 12px;
+                        flex-wrap: wrap;
+                    }
+                    
+                    .info-badge {
+                        padding: 10px 20px;
+                        background: rgba(0, 0, 0, 0.5);
+                        border: 2px solid rgba(255, 255, 255, 0.3);
+                        border-radius: 50px;
+                        font-size: 13px;
+                        font-weight: 700;
+                        color: white;
+                        text-transform: uppercase;
+                        letter-spacing: 1.5px;
+                        backdrop-filter: blur(10px);
+                    }
+                    
+                    .playlist-stats {
+                        display: flex;
+                        gap: 20px;
+                        font-size: 18px;
+                        font-weight: 700;
+                        color: white;
+                        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+                    }
+                    
+                    .button-actions {
+                        display: grid;
+                        grid-template-columns: 2fr 1fr;
+                        gap: 16px;
+                        margin-top: auto;
+                    }
+                    
+                    .atm-action-btn {
+                        padding: 24px 32px;
+                        background: rgba(255, 255, 255, 0.95);
+                        border: 4px solid var(--color-layer);
+                        border-radius: 12px;
+                        color: #000;
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 18px;
+                        font-weight: 900;
+                        text-transform: uppercase;
+                        letter-spacing: 2px;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 12px;
+                        text-decoration: none;
+                        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+                        position: relative;
+                        overflow: hidden;
+                    }
+                    
+                    .atm-action-btn::before {
+                        content: '';
+                        position: absolute;
+                        inset: 0;
+                        background: linear-gradient(135deg, var(--color-accent), var(--color-layer));
+                        opacity: 0;
+                        transition: opacity 0.2s ease;
+                    }
+                    
+                    .atm-action-btn:hover::before {
+                        opacity: 1;
+                    }
+                    
+                    .atm-action-btn:hover {
+                        transform: translateY(-3px);
+                        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+                        color: white;
+                    }
+                    
+                    .atm-action-btn:active {
+                        transform: translateY(0);
+                        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+                    }
+                    
+                    .atm-action-btn.playing {
+                        background: rgba(255, 100, 100, 0.95);
+                        animation: pulse-playing 1.5s ease-in-out infinite;
+                    }
+                    
+                    @keyframes pulse-playing {
+                        0%, 100% { box-shadow: 0 6px 15px rgba(255, 0, 0, 0.3); }
+                        50% { box-shadow: 0 6px 25px rgba(255, 0, 0, 0.6); }
+                    }
+                    
+                    .atm-action-btn .btn-icon {
+                        font-size: 24px;
+                        position: relative;
+                        z-index: 1;
+                    }
+                    
+                    .atm-action-btn .btn-text {
+                        position: relative;
+                        z-index: 1;
+                    }
+                    
+                    .atm-action-btn:disabled {
+                        opacity: 0.5;
+                        cursor: not-allowed;
+                        transform: none;
+                    }
+                    
+                    .track-list-container {
+                        margin-top: 20px;
+                        background: rgba(0, 0, 0, 0.7);
+                        border: 3px solid var(--color-accent);
+                        border-radius: 12px;
+                        padding: 20px;
+                        backdrop-filter: blur(10px);
+                        max-height: 400px;
+                        overflow-y: auto;
+                    }
+                    
+                    .track-list-header h4 {
+                        color: white;
+                        font-size: 20px;
+                        font-weight: 700;
+                        margin: 0 0 16px 0;
+                        text-transform: uppercase;
+                        letter-spacing: 2px;
+                    }
+                    
+                    .track-list-items {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 2px;
+                    }
+                    
+                    .track-list-container .track-item {
+                        background: rgba(255, 255, 255, 0.1);
+                        padding: 12px 16px;
+                        border-radius: 6px;
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        color: white;
+                        font-size: 14px;
+                        transition: all 0.2s ease;
+                    }
+                    
+                    .track-list-container .track-item:hover {
+                        background: rgba(255, 255, 255, 0.2);
+                    }
+                    
+                    .track-list-container .track-item.playing {
+                        background: var(--color-accent);
+                        font-weight: 700;
+                        animation: pulse-track 1s ease-in-out infinite;
+                    }
+                    
+                    @keyframes pulse-track {
+                        0%, 100% { opacity: 1; }
+                        50% { opacity: 0.85; }
+                    }
+                    
+                    .track-list-container .track-number {
+                        font-weight: 700;
+                        opacity: 0.7;
+                        min-width: 30px;
+                    }
+                    
+                    .track-info-inline {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 4px;
+                    }
+                    
+                    .track-info-inline .track-name {
+                        font-weight: 600;
+                    }
+                    
+                    .track-info-inline .track-artist {
+                        font-size: 12px;
+                        opacity: 0.7;
+                    }
+                    
+                    .playing-indicator {
+                        font-size: 16px;
+                        opacity: 0;
+                        transition: opacity 0.2s ease;
+                    }
+                    
+                    .track-item.playing .playing-indicator {
+                        opacity: 1;
+                        animation: blink-indicator 1s ease-in-out infinite;
+                    }
+                    
+                    @keyframes blink-indicator {
+                        0%, 100% { opacity: 1; }
+                        50% { opacity: 0.3; }
+                    }
+                    
+                    /* Responsive ATM Buttons */
+                    @media (max-width: 768px) {
+                        .playlist-card.atm-button {
+                            padding: 30px;
+                            min-height: 300px;
+                        }
+                        
+                        .playlist-card.atm-button .playlist-title {
+                            font-size: 24px;
+                        }
+                        
+                        .button-actions {
+                            grid-template-columns: 1fr;
+                        }
+                        
+                        .atm-action-btn {
+                            padding: 20px 24px;
+                            font-size: 16px;
+                        }
                     }
                     .selector-header {
                         text-align: center;
@@ -1607,64 +1884,64 @@ class PlaylistSelector {
         const gridContainer = this.container.querySelector('#playlist-grid');
         
         const cardsHtml = playlists.map((playlist, index) => {
+            // Get random color palette for each playlist
+            const colors = this.getRandomColorPalette();
+            
             // DEV MODE: Show simplified cards with download links
             if (playlist.isDevMode) {
                 return `
-                    <div class="playlist-card dev-mode" data-key="${playlist.key}">
-                        <div class="playlist-header">
+                    <div class="playlist-card atm-button" data-key="${playlist.key}" 
+                         style="--color-primary: ${colors.primary}; --color-secondary: ${colors.secondary}; --color-accent: ${colors.accent}; --color-layer: ${colors.layer};">
+                        <div class="playlist-content">
                             <h3 class="playlist-title">${playlist.title}</h3>
-                            <a href="${playlist.downloadUrl}" download class="download-btn" title="Download Playlist">
-                                <span>💾 Download</span>
-                            </a>
+                            <div class="playlist-info">
+                                <span class="info-badge">🎵 ${playlist.trackCount} tracks</span>
+                                <span class="info-badge">⏱ ~${playlist.estimatedDuration} min</span>
+                                <span class="info-badge">🎭 ${playlist.mood}</span>
+                            </div>
+                            <div class="button-actions">
+                                <button class="atm-action-btn preview-btn" data-key="${playlist.key}">
+                                    <span class="btn-icon">▶</span>
+                                    <span class="btn-text">PREVIEW PLAYLIST</span>
+                                </button>
+                                <a href="${playlist.downloadUrl}" download class="atm-action-btn download-btn">
+                                    <span class="btn-icon">💾</span>
+                                    <span class="btn-text">DOWNLOAD</span>
+                                </a>
+                            </div>
+                            <div class="dev-badge">Pre-Generated</div>
                         </div>
-                        
-                        <div class="playlist-info">
-                            <div class="info-item">
-                                <span class="icon">🎵</span>
-                                <span>${playlist.trackCount} tracks</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="icon">⏱</span>
-                                <span>~${playlist.estimatedDuration} min</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="icon">🎭</span>
-                                <span>${playlist.mood}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="dev-badge">Pre-Generated Playlist</div>
                     </div>
                 `;
             }
             
-            // PRODUCTION MODE: Show track list instantly like New Releases
+            // PRODUCTION MODE: Giant ATM-style buttons
             return `
-                <div class="playlist-card" data-key="${playlist.key}">
-                    <div class="playlist-header">
+                <div class="playlist-card atm-button" data-key="${playlist.key}"
+                     style="--color-primary: ${colors.primary}; --color-secondary: ${colors.secondary}; --color-accent: ${colors.accent}; --color-layer: ${colors.layer};">
+                    <div class="playlist-content">
                         <h3 class="playlist-title">${playlist.title}</h3>
-                        <div class="playlist-meta">
-                            <span>${playlist.trackCount} tracks</span>
-                            <span>~${playlist.estimatedDuration} min</span>
+                        <div class="playlist-info">
+                            <span class="info-badge mood-badge">${playlist.mood.toUpperCase()}</span>
+                            <span class="info-badge company-badge">${playlist.company.toUpperCase()}</span>
+                            <span class="info-badge activity-badge">${playlist.activity.toUpperCase()}</span>
+                        </div>
+                        <div class="playlist-stats">
+                            <span>🎵 ${playlist.trackCount} TRACKS</span>
+                            <span>⏱ ~${playlist.estimatedDuration} MIN</span>
+                        </div>
+                        <div class="button-actions">
+                            <button class="atm-action-btn preview-btn" data-key="${playlist.key}">
+                                <span class="btn-icon">▶</span>
+                                <span class="btn-text">PREVIEW</span>
+                            </button>
+                            <button class="atm-action-btn generate-btn" data-key="${playlist.key}">
+                                <span class="btn-icon">🔄</span>
+                                <span class="btn-text">NEW</span>
+                            </button>
                         </div>
                     </div>
-                    
-                    <div class="playlist-tags">
-                        <span class="tag">${playlist.mood}</span>
-                        <span class="tag">${playlist.company}</span>
-                        <span class="tag">${playlist.activity}</span>
-                    </div>
-                    
-                    <div class="playlist-actions-top">
-                        <button class="preview-all-btn" data-key="${playlist.key}" title="Preview All Tracks">
-                            Preview All Tracks
-                        </button>
-                        <button class="generate-new-btn" title="Generate New Playlist">
-                            🔄 Generate New
-                        </button>
-                    </div>
-                    
-                    <div class="track-list" data-key="${playlist.key}" style="display: none;">
+                    <div class="track-list-container" data-key="${playlist.key}" style="display: none;">
                         <div class="loading-message">Loading tracks...</div>
                     </div>
                 </div>
@@ -1676,122 +1953,208 @@ class PlaylistSelector {
     }
 
     getRandomColorPalette() {
-        const palettes = [
-            { primary: '#FF3366', secondary: '#00D9FF', accent: '#FFE600' },
-            { primary: '#00FFC6', secondary: '#B066FF', accent: '#FF6B9D' },
-            { primary: '#0066FF', secondary: '#FF0099', accent: '#00FFCC' },
-            { primary: '#FF6B00', secondary: '#00D4FF', accent: '#B3FF00' },
-            { primary: '#FF0066', secondary: '#00FF99', accent: '#6B66FF' },
-            { primary: '#00CCFF', secondary: '#FF3399', accent: '#FFCC00' },
-            { primary: '#9D00FF', secondary: '#00FFD4', accent: '#FF6600' },
-            { primary: '#FF0080', secondary: '#00E5FF', accent: '#CCFF00' },
-            { primary: '#0099FF', secondary: '#FF0066', accent: '#00FF88' },
-            { primary: '#FF3D00', secondary: '#00D9A3', accent: '#8B5FFF' }
-        ];
-        return palettes[Math.floor(Math.random() * palettes.length)];
+        // Use the color palette module to get distinct colors
+        const colors = Object.values(this.colorPalette.colors);
+        const shuffled = [...colors].sort(() => Math.random() - 0.5);
+        return {
+            primary: shuffled[0],
+            secondary: shuffled[1],
+            accent: shuffled[2],
+            layer: shuffled[3]
+        };
     }
 
     attachCardEventListeners() {
-        // Track cards - play on click
-        this.container.querySelectorAll('.track-card.playable').forEach(card => {
-            card.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const key = card.dataset.key;
-                const idx = parseInt(card.dataset.index);
-                this.playQuickPreview(key, idx, card);
-            });
-        });
-
-        // View all buttons
-        this.container.querySelectorAll('.view-all-btn').forEach(btn => {
+        // Preview buttons - consecutive playback
+        this.container.querySelectorAll('.preview-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 const key = btn.dataset.key;
-                await this.togglePlaylistExpand(key);
-            });
-        });
-
-        // Preview all buttons - like New Releases
-        this.container.querySelectorAll('.preview-all-btn').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                console.log('Preview button clicked!');
-                e.stopPropagation();
-                const key = btn.dataset.key;
-                console.log('Playlist key:', key);
-                const trackList = this.container.querySelector(`.track-list[data-key="${key}"]`);
-                console.log('Track list element:', trackList);
                 
-                // Toggle if already loaded
-                if (trackList.innerHTML !== '<div class="loading-message">Loading tracks...</div>') {
-                    const isHidden = trackList.style.display === 'none';
-                    trackList.style.display = isHidden ? 'block' : 'none';
-                    btn.textContent = isHidden ? 'Hide Tracks' : 'Preview All Tracks';
-                    btn.classList.toggle('active', isHidden);
+                // If currently playing this playlist, stop it
+                if (this.isPreviewPlaying && this.currentPlaylistKey === key) {
+                    this.stopConsecutivePreview();
                     return;
                 }
                 
-                // Load tracks with previews from iTunes
-                btn.textContent = 'Loading...';
-                btn.disabled = true;
-                btn.classList.add('active');
-                
-                try {
-                    const playlist = this.playlists[key];
-                    console.log('Loading tracks for playlist:', key, playlist.songs.length, 'songs');
-                    
-                    const tracks = await this.searchItunesForPlaylist(playlist.songs);
-                    console.log('Loaded tracks:', tracks.length, 'results');
-                    
-                    if (tracks.length === 0) {
-                        trackList.innerHTML = '<p class="no-preview" style="padding: 12px;">No tracks found</p>';
-                        trackList.style.display = 'block';
-                        btn.textContent = 'Preview All Tracks';
-                        btn.disabled = false;
-                        btn.classList.remove('active');
-                        return;
-                    }
-                    
-                    let trackHtml = '';
-                    tracks.forEach((track, index) => {
-                        trackHtml += `
-                            <div class="track-item">
-                                <div class="track-info">
-                                    <span class="track-number">${index + 1}.</span>
-                                    <span class="track-name">${track.title}</span>
-                                    <span class="track-artist"> • ${track.artist}</span>
-                                </div>
-                                ${track.previewUrl ? `
-                                    <audio controls preload="none">
-                                        <source src="${track.previewUrl}" type="audio/mp4">
-                                    </audio>
-                                ` : '<p class="no-preview">No preview available</p>'}
-                            </div>
-                        `;
-                    });
-                    
-                    trackList.innerHTML = trackHtml;
-                    trackList.style.display = 'block';
-                    btn.textContent = 'Hide Tracks';
-                    btn.disabled = false;
-                    console.log('Track list rendered successfully');
-                } catch (error) {
-                    console.error('Error loading tracks:', error);
-                    trackList.innerHTML = `<p class="no-preview" style="padding: 12px; color: red;">Failed to load tracks: ${error.message}</p>`;
-                    trackList.style.display = 'block';
-                    btn.textContent = 'Preview All Tracks';
-                    btn.disabled = false;
-                    btn.classList.remove('active');
+                // Stop any other playing previews
+                if (this.isPreviewPlaying) {
+                    this.stopConsecutivePreview();
                 }
+                
+                // Start consecutive preview
+                await this.startConsecutivePreview(key, btn);
+            });
+        });
+
+        // Generate new buttons
+        this.container.querySelectorAll('.generate-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.generateNewPlaylist();
             });
         });
         
-        // Generate new button
+        // Legacy support for old button classes
         this.container.querySelectorAll('.generate-new-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.generateNewPlaylist();
             });
         });
+    }
+    
+    async startConsecutivePreview(key, btn) {
+        const playlist = this.playlists[key];
+        const trackListContainer = this.container.querySelector(`.track-list-container[data-key="${key}"]`);
+        
+        // Update button state
+        const btnText = btn.querySelector('.btn-text');
+        const btnIcon = btn.querySelector('.btn-icon');
+        if (btnText) btnText.textContent = 'LOADING...';
+        btn.disabled = true;
+        
+        try {
+            // Load tracks if not already loaded
+            const tracks = await this.searchItunesForPlaylist(playlist.songs);
+            
+            // Filter tracks with previews
+            const playableTracks = tracks.filter(t => t.previewUrl);
+            
+            if (playableTracks.length === 0) {
+                if (btnText) btnText.textContent = 'NO PREVIEWS';
+                btn.disabled = false;
+                return;
+            }
+            
+            // Store tracks for playback
+            this.previewTracks = playableTracks;
+            this.currentTrackIndex = 0;
+            this.currentPlaylistKey = key;
+            this.isPreviewPlaying = true;
+            
+            // Show track list
+            if (trackListContainer) {
+                trackListContainer.innerHTML = this.renderTrackList(playableTracks, key);
+                trackListContainer.style.display = 'block';
+            }
+            
+            // Update button to stop state
+            if (btnIcon) btnIcon.textContent = '⏹';
+            if (btnText) btnText.textContent = 'STOP';
+            btn.disabled = false;
+            btn.classList.add('playing');
+            
+            // Start playing first track
+            this.playNextTrack();
+            
+        } catch (error) {
+            console.error('Error starting preview:', error);
+            if (btnText) btnText.textContent = 'ERROR';
+            btn.disabled = false;
+        }
+    }
+    
+    playNextTrack() {
+        if (!this.isPreviewPlaying || this.currentTrackIndex >= this.previewTracks.length) {
+            this.stopConsecutivePreview();
+            return;
+        }
+        
+        const track = this.previewTracks[this.currentTrackIndex];
+        const key = this.currentPlaylistKey;
+        
+        // Update track list UI to show current track
+        const trackListContainer = this.container.querySelector(`.track-list-container[data-key="${key}"]`);
+        if (trackListContainer) {
+            const trackItems = trackListContainer.querySelectorAll('.track-item');
+            trackItems.forEach((item, idx) => {
+                item.classList.toggle('playing', idx === this.currentTrackIndex);
+            });
+        }
+        
+        // Create and play audio
+        if (this.currentAudio) {
+            this.currentAudio.pause();
+            this.currentAudio = null;
+        }
+        
+        this.currentAudio = new Audio(track.previewUrl);
+        this.currentAudio.volume = 0.7;
+        
+        // When track ends, play next
+        this.currentAudio.addEventListener('ended', () => {
+            this.currentTrackIndex++;
+            this.playNextTrack();
+        });
+        
+        // Handle errors
+        this.currentAudio.addEventListener('error', (e) => {
+            console.error('Audio playback error:', e);
+            this.currentTrackIndex++;
+            this.playNextTrack();
+        });
+        
+        this.currentAudio.play().catch(err => {
+            console.error('Failed to play track:', err);
+            this.currentTrackIndex++;
+            this.playNextTrack();
+        });
+    }
+    
+    stopConsecutivePreview() {
+        this.isPreviewPlaying = false;
+        
+        if (this.currentAudio) {
+            this.currentAudio.pause();
+            this.currentAudio = null;
+        }
+        
+        // Reset button state
+        const key = this.currentPlaylistKey;
+        if (key) {
+            const btn = this.container.querySelector(`.preview-btn[data-key="${key}"]`);
+            if (btn) {
+                const btnText = btn.querySelector('.btn-text');
+                const btnIcon = btn.querySelector('.btn-icon');
+                if (btnIcon) btnIcon.textContent = '▶';
+                if (btnText) btnText.textContent = 'PREVIEW';
+                btn.classList.remove('playing');
+                btn.disabled = false;
+            }
+            
+            // Remove playing highlights
+            const trackListContainer = this.container.querySelector(`.track-list-container[data-key="${key}"]`);
+            if (trackListContainer) {
+                trackListContainer.querySelectorAll('.track-item').forEach(item => {
+                    item.classList.remove('playing');
+                });
+            }
+        }
+        
+        this.currentPlaylistKey = null;
+        this.previewTracks = [];
+        this.currentTrackIndex = 0;
+    }
+    
+    renderTrackList(tracks, key) {
+        return `
+            <div class="track-list-header">
+                <h4>Now Playing</h4>
+            </div>
+            <div class="track-list-items">
+                ${tracks.map((track, index) => `
+                    <div class="track-item" data-index="${index}">
+                        <span class="track-number">${index + 1}.</span>
+                        <div class="track-info-inline">
+                            <span class="track-name">${track.title}</span>
+                            <span class="track-artist">${track.artist}</span>
+                        </div>
+                        <span class="playing-indicator">▶</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
     }
 
     async togglePlaylistExpand(key) {

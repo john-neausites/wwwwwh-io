@@ -84,6 +84,11 @@ class MusicTournament {
     }
 
     getKnownSoundCloudUrl(artist, songTitle) {
+        // Feature flag: SoundCloud integration disabled for now
+        const ENABLE_SOUNDCLOUD = false;
+        
+        if (!ENABLE_SOUNDCLOUD) return null;
+        
         // Hardcoded SoundCloud URLs for popular tracks (avoiding CORS issues)
         const knownTracks = {
             'kavinsky-nightcall': 'https://soundcloud.com/kavinskylive/nightcall',
@@ -106,7 +111,7 @@ class MusicTournament {
     }
 
     async searchItunes(songTitle, artist) {
-        // Check for known SoundCloud tracks first
+        // Check for known SoundCloud tracks first (feature flagged)
         const soundCloudResult = this.getKnownSoundCloudUrl(artist, songTitle);
         if (soundCloudResult) {
             return soundCloudResult;

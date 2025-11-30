@@ -330,6 +330,11 @@ class PlaylistSelector {
     }
 
     getKnownSoundCloudUrl(artist, title) {
+        // Feature flag: SoundCloud integration disabled for now
+        const ENABLE_SOUNDCLOUD = false;
+        
+        if (!ENABLE_SOUNDCLOUD) return null;
+        
         // Hardcoded SoundCloud URLs for popular synthwave/electronic tracks
         const knownTracks = {
             'kavinsky-nightcall': 'https://soundcloud.com/kavinskylive/nightcall',
@@ -357,7 +362,7 @@ class PlaylistSelector {
         for (const song of songs) {
             let bestResult = null;
             
-            // Check for known SoundCloud tracks first
+            // Check for known SoundCloud tracks first (feature flagged)
             const soundCloudResult = this.getKnownSoundCloudUrl(song.artist, song.title);
             if (soundCloudResult) {
                 results.push({

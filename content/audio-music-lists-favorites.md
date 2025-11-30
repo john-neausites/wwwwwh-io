@@ -1,26 +1,18 @@
-# Favorite Music
+# Curated Playlists
 
-User-curated collection of frequently played and starred tracks.
+Curated for any mood, activity, and company.
 
-## Smart Favorites
+## How It Works
 
-Algorithmically selected based on:
-- Play count (weighted by recency)
-- Skip rate (lower is better)
-- Manual star ratings
-- Playlist inclusion frequency
+Choose four things to get your perfect playlist:
 
-## Manual Favorites
+1. **Mood** - How you're feeling (energetic, calm, happy, melancholic, focused)
+2. **Company** - Who you're with (alone, partner, friends, family)
+3. **Activity** - What you're doing (work, exercise, relax, party, drive, study, create, dinner, read)
+4. **Length** - How long you need (10 songs, 15 min, 30 min, or 60 min)
 
-Explicitly starred tracks. Independent of play statistics.
-
-## Metadata
-
-- **Total Tracks**: Dynamically counted
-- **Last Updated**: Real-time
-- **Storage**: Local preferences + cloud sync
-- **Export**: M3U, PLS, XSPF playlist formats supported
+Each combination generates a hand-picked playlist with iTunes previews and artwork.
 
 ---
 
-*Star a track by right-clicking or using keyboard shortcut `S`*
+*Over 30+ curated playlists • 10 songs each • Time-based options*

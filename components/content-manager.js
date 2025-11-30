@@ -31,11 +31,19 @@ class ContentManager {
             this.loadColorPaletteBuilder();
             return;
         }
-        // Music tournament for music lists
-        if (contentId === 'audio-music-lists-new' || 
-            contentId === 'audio-music-lists-favorites' || 
-            contentId === 'audio-music-lists-popular') {
+        // Music tournament for popular
+        if (contentId === 'audio-music-lists-popular') {
             this.loadMusicTournament();
+            return;
+        }
+        // New releases from iTunes
+        if (contentId === 'audio-music-lists-new') {
+            this.loadNewReleases();
+            return;
+        }
+        // Curated playlist selector
+        if (contentId === 'audio-music-lists-favorites') {
+            this.loadPlaylistSelector();
             return;
         }
         this.contentElement.classList.add('loading');
@@ -259,6 +267,380 @@ class ContentManager {
                     contentArea.style.display = 'block';
                 }
             }
+        }, this.options.loadingDelay);
+    }
+    loadNewReleases() {
+        console.log('Loading new releases from iTunes...');
+        
+        this.contentElement.classList.add('loading');
+        this.contentElement.innerHTML = '<div class="loading-message">Loading New Releases...</div>';
+        
+        setTimeout(async () => {
+            try {
+                // Fetch new releases from iTunes
+                const response = await fetch('https://itunes.apple.com/us/rss/newreleases/limit=50/json');
+                const data = await response.json();
+                const releases = data.feed.entry;
+                
+                let html = `
+                    <div class="new-releases">
+                        <h2>🎵 New Releases</h2>
+                        <p class="subtitle">Latest albums and singles from iTunes</p>
+                        <div class="releases-grid">
+                `;
+                
+                for (const release of releases) {
+                    const title = release['im:name'].label;
+                    const artist = release['im:artist'].label;
+                    const artwork = release['im:image'][2].label; // largest image
+                    const releaseDate = new Date(release['im:releaseDate'].attributes.label).toLocaleDateString();
+                    const price = release['im:price'].label;
+                    const link = release.link.attributes.href;
+                    const previewUrl = release.link.filter(l => l.attributes.type === 'audio/x-m4a')[0]?.attributes?.href;
+                    
+                    html += `
+                        <div class="release-card">
+                            <a href="${link}" target="_blank" rel="noopener">
+                                <img src="${artwork}" alt="${title}" loading="lazy">
+                            </a>
+                            <h3>${title}</h3>
+                            <p class="artist">${artist}</p>
+                            <p class="meta">${releaseDate} • ${price}</p>
+                            ${previewUrl ? `
+                                <audio controls preload="none">
+                                    <source src="${previewUrl}" type="audio/mp4">
+                                </audio>
+                            ` : ''}
+                        </div>
+                    `;
+                }
+                
+                html += `
+                        </div>
+                        <style>
+                            .new-releases {
+                                padding: 20px;
+                                font-family: 'JetBrains Mono', monospace;
+                            }
+                            .new-releases h2 {
+                                font-size: 32px;
+                                margin-bottom: 10px;
+                            }
+                            .subtitle {
+                                opacity: 0.7;
+                                margin-bottom: 30px;
+                            }
+                            .releases-grid {
+                                display: grid;
+                                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                                gap: 20px;
+                            }
+                            .release-card {
+                                border: 2px solid currentColor;
+                                padding: 15px;
+                                transition: transform 0.2s ease;
+                            }
+                            .release-card:hover {
+                                transform: translateY(-5px);
+                            }
+                            .release-card img {
+                                width: 100%;
+                                display: block;
+                                margin-bottom: 10px;
+                            }
+                            .release-card h3 {
+                                font-size: 14px;
+                                margin: 10px 0 5px;
+                                line-height: 1.3;
+                            }
+                            .release-card .artist {
+                                font-size: 12px;
+                                opacity: 0.7;
+                                margin-bottom: 5px;
+                            }
+                            .release-card .meta {
+                                font-size: 11px;
+                                opacity: 0.5;
+                                margin-bottom: 10px;
+                            }
+                            .release-card audio {
+                                width: 100%;
+                                height: 32px;
+                            }
+                            .release-card a {
+                                color: inherit;
+                                text-decoration: none;
+                            }
+                        </style>
+                    </div>
+                `;
+                
+                this.contentElement.innerHTML = html;
+                this.contentElement.classList.remove('loading');
+            } catch (error) {
+                console.error('Error loading new releases:', error);
+                this.contentElement.innerHTML = '<div class="error">Failed to load new releases</div>';
+                this.contentElement.classList.remove('loading');
+            }
+        }, this.options.loadingDelay);
+    }
+    loadPlaylistSelector() {
+        console.log('Loading playlist selector...');
+        
+        this.contentElement.classList.add('loading');
+        this.contentElement.innerHTML = '<div class="loading-message">Loading Playlist Selector...</div>';
+        
+        setTimeout(() => {
+            if (typeof window.PlaylistSelector === 'undefined') {
+                console.error('PlaylistSelector class not found');
+                this.contentElement.innerHTML = '<div class="error">Playlist selector not available</div>';
+                this.contentElement.classList.remove('loading');
+                return;
+            }
+            
+            const selector = new window.PlaylistSelector(this.contentElement);
+            selector.render();
+            
+            this.contentElement.classList.remove('loading');
+            console.log('Playlist selector loaded successfully');
+            return;
+        }, this.options.loadingDelay);
+    }
+    loadMoodPlaylistsOld() {
+        console.log('Loading old mood playlists...');
+        
+        this.contentElement.classList.add('loading');
+        this.contentElement.innerHTML = '<div class="loading-message">Loading Playlists...</div>';
+        
+        setTimeout(() => {
+            const playlists = {
+                'Focus': {
+                    icon: '🎯',
+                    description: 'Deep work, coding, studying',
+                    songs: [
+                        { artist: 'Brian Eno', title: 'Music for Airports', album: 'Ambient 1' },
+                        { artist: 'Max Richter', title: 'On the Nature of Daylight', album: 'The Blue Notebooks' },
+                        { artist: 'Nils Frahm', title: 'Says', album: 'Spaces' },
+                        { artist: 'Ólafur Arnalds', title: 'Near Light', album: 'For Now I Am Winter' },
+                        { artist: 'Ryuichi Sakamoto', title: 'Merry Christmas Mr. Lawrence', album: 'BTTB' }
+                    ]
+                },
+                'Energy': {
+                    icon: '⚡',
+                    description: 'Workouts, running, motivation',
+                    songs: [
+                        { artist: 'Daft Punk', title: 'Harder Better Faster Stronger', album: 'Discovery' },
+                        { artist: 'The Prodigy', title: 'Firestarter', album: 'The Fat of the Land' },
+                        { artist: 'Chemical Brothers', title: 'Block Rockin\' Beats', album: 'Dig Your Own Hole' },
+                        { artist: 'Justice', title: 'Genesis', album: 'Cross' },
+                        { artist: 'MSTRKRFT', title: 'Easy Love', album: 'The Looks' }
+                    ]
+                },
+                'Chill': {
+                    icon: '🌙',
+                    description: 'Relaxation, evening, unwinding',
+                    songs: [
+                        { artist: 'Bonobo', title: 'Kiara', album: 'Black Sands' },
+                        { artist: 'Tycho', title: 'A Walk', album: 'Dive' },
+                        { artist: 'Boards of Canada', title: 'Dayvan Cowboy', album: 'The Campfire Headphase' },
+                        { artist: 'Air', title: 'La Femme d\'Argent', album: 'Moon Safari' },
+                        { artist: 'Khruangbin', title: 'Time (You and I)', album: 'Con Todo El Mundo' }
+                    ]
+                },
+                'Social': {
+                    icon: '🎉',
+                    description: 'Parties, gatherings, friends',
+                    songs: [
+                        { artist: 'Dua Lipa', title: 'Levitating', album: 'Future Nostalgia' },
+                        { artist: 'Mark Ronson', title: 'Uptown Funk', album: 'Uptown Special' },
+                        { artist: 'Chromeo', title: 'Jealous', album: 'White Women' },
+                        { artist: 'LCD Soundsystem', title: 'Dance Yrself Clean', album: 'This Is Happening' },
+                        { artist: 'Disclosure', title: 'Latch', album: 'Settle' }
+                    ]
+                },
+                'Drive': {
+                    icon: '🚗',
+                    description: 'Road trips, commutes, travel',
+                    songs: [
+                        { artist: 'M83', title: 'Midnight City', album: 'Hurry Up, We\'re Dreaming' },
+                        { artist: 'Phoenix', title: '1901', album: 'Wolfgang Amadeus Phoenix' },
+                        { artist: 'MGMT', title: 'Electric Feel', album: 'Oracular Spectacular' },
+                        { artist: 'Tame Impala', title: 'The Less I Know the Better', album: 'Currents' },
+                        { artist: 'Foster the People', title: 'Pumped Up Kicks', album: 'Torches' }
+                    ]
+                },
+                'Morning': {
+                    icon: '☀️',
+                    description: 'Wake up, breakfast, start fresh',
+                    songs: [
+                        { artist: 'Jon Hopkins', title: 'Open Eye Signal', album: 'Immunity' },
+                        { artist: 'Four Tet', title: 'Angel Echoes', album: 'Beautiful Rewind' },
+                        { artist: 'Caribou', title: 'Can\'t Do Without You', album: 'Our Love' },
+                        { artist: 'Jamie xx', title: 'Loud Places', album: 'In Colour' },
+                        { artist: 'Moderat', title: 'A New Error', album: 'Moderat' }
+                    ]
+                },
+                'Late Night': {
+                    icon: '🌃',
+                    description: 'After hours, introspection, solitude',
+                    songs: [
+                        { artist: 'The xx', title: 'Intro', album: 'xx' },
+                        { artist: 'Massive Attack', title: 'Teardrop', album: 'Mezzanine' },
+                        { artist: 'Portishead', title: 'Glory Box', album: 'Dummy' },
+                        { artist: 'Burial', title: 'Archangel', album: 'Untrue' },
+                        { artist: 'James Blake', title: 'Retrograde', album: 'Overgrown' }
+                    ]
+                },
+                'Creative': {
+                    icon: '🎨',
+                    description: 'Design, writing, brainstorming',
+                    songs: [
+                        { artist: 'Aphex Twin', title: 'Windowlicker', album: 'Windowlicker EP' },
+                        { artist: 'Autechre', title: 'Pen Expers', album: 'Exai' },
+                        { artist: 'Flying Lotus', title: 'Do the Astral Plane', album: 'Cosmogramma' },
+                        { artist: 'Squarepusher', title: 'Come On My Selector', album: 'Hard Normal Daddy' },
+                        { artist: 'Amon Tobin', title: 'Easy Muffin', album: 'Permutation' }
+                    ]
+                }
+            };
+            
+            let html = `
+                <div class="mood-playlists">
+                    <h2>🎵 Mood Playlists</h2>
+                    <p class="subtitle">Curated selections for every moment</p>
+                    <div class="playlists-grid">
+            `;
+            
+            for (const [mood, playlist] of Object.entries(playlists)) {
+                html += `
+                    <div class="playlist-card">
+                        <div class="playlist-header">
+                            <span class="playlist-icon">${playlist.icon}</span>
+                            <h3>${mood}</h3>
+                        </div>
+                        <p class="playlist-description">${playlist.description}</p>
+                        <div class="playlist-songs">
+                            ${playlist.songs.map(song => `
+                                <div class="song-item">
+                                    <div class="song-title">${song.title}</div>
+                                    <div class="song-artist">${song.artist}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button class="play-playlist-btn" data-mood="${mood}">
+                            ▶ Play on iTunes
+                        </button>
+                    </div>
+                `;
+            }
+            
+            html += `
+                    </div>
+                    <style>
+                        .mood-playlists {
+                            padding: 20px;
+                            font-family: 'JetBrains Mono', monospace;
+                        }
+                        .mood-playlists h2 {
+                            font-size: 32px;
+                            margin-bottom: 10px;
+                        }
+                        .subtitle {
+                            opacity: 0.7;
+                            margin-bottom: 30px;
+                        }
+                        .playlists-grid {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                            gap: 20px;
+                        }
+                        .playlist-card {
+                            border: 2px solid currentColor;
+                            padding: 20px;
+                            transition: all 0.2s ease;
+                        }
+                        .playlist-card:hover {
+                            transform: translateY(-5px);
+                            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                        }
+                        .playlist-header {
+                            display: flex;
+                            align-items: center;
+                            gap: 10px;
+                            margin-bottom: 10px;
+                        }
+                        .playlist-icon {
+                            font-size: 32px;
+                        }
+                        .playlist-card h3 {
+                            font-size: 20px;
+                            margin: 0;
+                        }
+                        .playlist-description {
+                            font-size: 12px;
+                            opacity: 0.7;
+                            margin-bottom: 15px;
+                        }
+                        .playlist-songs {
+                            margin: 15px 0;
+                            max-height: 200px;
+                            overflow-y: auto;
+                        }
+                        .song-item {
+                            padding: 8px 0;
+                            border-bottom: 1px solid rgba(128,128,128,0.2);
+                        }
+                        .song-item:last-child {
+                            border-bottom: none;
+                        }
+                        .song-title {
+                            font-size: 13px;
+                            font-weight: 600;
+                            margin-bottom: 3px;
+                        }
+                        .song-artist {
+                            font-size: 11px;
+                            opacity: 0.6;
+                        }
+                        .play-playlist-btn {
+                            width: 100%;
+                            padding: 12px;
+                            font-size: 14px;
+                            font-weight: 600;
+                            border: 2px solid currentColor;
+                            background: transparent;
+                            color: currentColor;
+                            cursor: pointer;
+                            transition: all 0.2s ease;
+                            font-family: 'JetBrains Mono', monospace;
+                            margin-top: 10px;
+                        }
+                        .play-playlist-btn:hover {
+                            background: currentColor;
+                            color: var(--color-primary, white);
+                        }
+                        @media (max-width: 768px) {
+                            .playlists-grid {
+                                grid-template-columns: 1fr;
+                            }
+                        }
+                    </style>
+                </div>
+            `;
+            
+            this.contentElement.innerHTML = html;
+            this.contentElement.classList.remove('loading');
+            
+            // Add click handlers for playlist buttons
+            this.contentElement.querySelectorAll('.play-playlist-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const mood = e.target.dataset.mood;
+                    const playlist = playlists[mood];
+                    const firstSong = playlist.songs[0];
+                    const query = encodeURIComponent(`${firstSong.artist} ${firstSong.title}`);
+                    window.open(`https://music.apple.com/search?term=${query}`, '_blank');
+                });
+            });
         }, this.options.loadingDelay);
     }
     getContentForSection(sectionId) {

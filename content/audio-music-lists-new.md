@@ -1,22 +1,19 @@
-# New Music
+# New Releases
 
-Recently added to the collection. Sorted by acquisition date.
+Latest albums and singles from iTunes. Updated in real-time.
 
-## This Week
+## What's New
 
-Tracks added in the last 7 days appear here automatically.
+Browse the newest music releases across all genres. Each entry includes:
+- Album artwork
+- Release date and pricing
+- Preview clips when available
+- Direct links to iTunes
 
-## This Month
+## Source
 
-Current month's additions, excluding the current week.
-
-## Metadata
-
-- **Auto-refresh**: Every 24 hours
-- **Source**: File system scan + metadata extraction
-- **Format**: All supported audio formats (FLAC, MP3, AAC, OGG, WAV)
-- **Sorting**: Newest first, file creation timestamp
+Live data from iTunes RSS feed - top 50 new releases updated hourly.
 
 ---
 
-*Collection updates daily at 03:00 UTC*
+*Powered by iTunes API*

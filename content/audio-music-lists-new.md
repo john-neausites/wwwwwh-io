@@ -1,19 +1,19 @@
 # New Releases
 
-Latest albums and singles from iTunes. Updated in real-time.
+Top 50 albums on Apple Music right now.
 
-## What's New
+## What's Trending
 
-Browse the newest music releases across all genres. Each entry includes:
+Browse the hottest albums across all genres:
 - Album artwork
-- Release date and pricing
-- Preview clips when available
-- Direct links to iTunes
+- Artist information
+- Release dates
+- Direct links to Apple Music
 
 ## Source
 
-Live data from iTunes RSS feed - top 50 new releases updated hourly.
+Updated daily from Apple Music charts.
 
 ---
 
-*Powered by iTunes API*
+*Powered by Apple Music RSS*

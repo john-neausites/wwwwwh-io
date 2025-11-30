@@ -277,26 +277,27 @@ class ContentManager {
         
         setTimeout(async () => {
             try {
-                // Fetch new releases from iTunes
-                const response = await fetch('https://itunes.apple.com/us/rss/newreleases/limit=50/json');
+                // Fetch new releases from Apple Music RSS (updated URL format)
+                const response = await fetch('https://rss.applemarker.com/api/v1/us/apple-music/top-albums/all/50/explicit.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
                 const data = await response.json();
-                const releases = data.feed.entry;
+                const releases = data.feed.results;
                 
                 let html = `
                     <div class="new-releases">
                         <h2>🎵 New Releases</h2>
-                        <p class="subtitle">Latest albums and singles from iTunes</p>
+                        <p class="subtitle">Top 50 albums on Apple Music</p>
                         <div class="releases-grid">
                 `;
                 
                 for (const release of releases) {
-                    const title = release['im:name'].label;
-                    const artist = release['im:artist'].label;
-                    const artwork = release['im:image'][2].label; // largest image
-                    const releaseDate = new Date(release['im:releaseDate'].attributes.label).toLocaleDateString();
-                    const price = release['im:price'].label;
-                    const link = release.link.attributes.href;
-                    const previewUrl = release.link.filter(l => l.attributes.type === 'audio/x-m4a')[0]?.attributes?.href;
+                    const title = release.name;
+                    const artist = release.artistName;
+                    const artwork = release.artworkUrl100.replace('100x100', '300x300');
+                    const releaseDate = new Date(release.releaseDate).toLocaleDateString();
+                    const link = release.url;
                     
                     html += `
                         <div class="release-card">
@@ -305,12 +306,8 @@ class ContentManager {
                             </a>
                             <h3>${title}</h3>
                             <p class="artist">${artist}</p>
-                            <p class="meta">${releaseDate} • ${price}</p>
-                            ${previewUrl ? `
-                                <audio controls preload="none">
-                                    <source src="${previewUrl}" type="audio/mp4">
-                                </audio>
-                            ` : ''}
+                            <p class="meta">${releaseDate}</p>
+                            <a href="${link}" target="_blank" rel="noopener" class="view-link">View on Apple Music ↗</a>
                         </div>
                     `;
                 }
@@ -363,9 +360,17 @@ class ContentManager {
                                 opacity: 0.5;
                                 margin-bottom: 10px;
                             }
-                            .release-card audio {
-                                width: 100%;
-                                height: 32px;
+                            .release-card .view-link {
+                                display: inline-block;
+                                margin-top: 10px;
+                                padding: 5px 10px;
+                                border: 1px solid currentColor;
+                                font-size: 11px;
+                                transition: all 0.2s ease;
+                            }
+                            .release-card .view-link:hover {
+                                background: currentColor;
+                                color: var(--color-primary, white);
                             }
                             .release-card a {
                                 color: inherit;

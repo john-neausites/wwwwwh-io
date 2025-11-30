@@ -103,23 +103,43 @@ class MusicTournament {
                 const data = await response.json();
                 
                 if (data.results && data.results.length > 0) {
-                    // Try to find a result with a preview URL
-                    const resultWithPreview = data.results.find(r => r.previewUrl);
-                    
-                    if (resultWithPreview) {
-                        console.log(`✓ Found preview for: ${cleanTitle} - ${cleanArtist}`);
-                        return {
-                            previewUrl: resultWithPreview.previewUrl,
-                            artwork: resultWithPreview.artworkUrl100?.replace('100x100', '600x600'),
-                            albumName: resultWithPreview.collectionName,
-                            releaseDate: resultWithPreview.releaseDate,
-                            iTunesUrl: resultWithPreview.trackViewUrl
-                        };
+                    // Try each result's collection to find tracks with previews using lookup API
+                    for (const result of data.results) {
+                        if (result.collectionId) {
+                            try {
+                                // Use lookup API to get full track info (avoids CSP redirect issues)
+                                const lookupResponse = await fetch(`https://itunes.apple.com/lookup?id=${result.collectionId}&entity=song&limit=200`);
+                                const lookupData = await lookupResponse.json();
+                                
+                                if (lookupData.results && lookupData.results.length > 1) {
+                                    // Find the matching track with preview
+                                    const tracks = lookupData.results.slice(1); // Skip album info
+                                    const matchingTrack = tracks.find(t => 
+                                        t.trackName && t.previewUrl && 
+                                        (t.trackName.toLowerCase().includes(cleanTitle.toLowerCase()) ||
+                                         cleanTitle.toLowerCase().includes(t.trackName.toLowerCase()))
+                                    );
+                                    
+                                    if (matchingTrack && matchingTrack.previewUrl) {
+                                        console.log(`✓ Found preview for: ${cleanTitle} - ${cleanArtist}`);
+                                        return {
+                                            previewUrl: matchingTrack.previewUrl,
+                                            artwork: matchingTrack.artworkUrl100?.replace('100x100', '600x600'),
+                                            albumName: matchingTrack.collectionName,
+                                            releaseDate: matchingTrack.releaseDate,
+                                            iTunesUrl: matchingTrack.trackViewUrl
+                                        };
+                                    }
+                                }
+                            } catch (lookupError) {
+                                console.error('Lookup API error:', lookupError);
+                            }
+                        }
                     }
                     
                     // Fallback to first result even without preview
                     const result = data.results[0];
-                    console.log(`⚠ No preview for: ${cleanTitle} - ${cleanArtist}`);
+                    console.log(`⚠ No preview found via lookup for: ${cleanTitle} - ${cleanArtist}`);
                     return {
                         previewUrl: null,
                         artwork: result.artworkUrl100?.replace('100x100', '600x600'),

@@ -348,13 +348,42 @@ class PlaylistSelector {
                     const data = await response.json();
                     
                     if (data.results && data.results.length > 0) {
-                        // Try to find a result with a preview URL
-                        const resultWithPreview = data.results.find(r => r.previewUrl);
-                        bestResult = resultWithPreview || data.results[0];
+                        // Try each result's collection to find tracks with previews using lookup API
+                        for (const result of data.results) {
+                            if (result.collectionId) {
+                                try {
+                                    // Use lookup API to get full track info (avoids CSP redirect issues)
+                                    const lookupResponse = await fetch(`https://itunes.apple.com/lookup?id=${result.collectionId}&entity=song&limit=200`);
+                                    const lookupData = await lookupResponse.json();
+                                    
+                                    if (lookupData.results && lookupData.results.length > 1) {
+                                        // Find the matching track with preview
+                                        const tracks = lookupData.results.slice(1); // Skip album info
+                                        const matchingTrack = tracks.find(t => 
+                                            t.trackName && t.previewUrl && 
+                                            (t.trackName.toLowerCase().includes(song.title.toLowerCase()) ||
+                                             song.title.toLowerCase().includes(t.trackName.toLowerCase()))
+                                        );
+                                        
+                                        if (matchingTrack && matchingTrack.previewUrl) {
+                                            bestResult = matchingTrack;
+                                            break;
+                                        }
+                                    }
+                                } catch (lookupError) {
+                                    console.error('Lookup API error:', lookupError);
+                                }
+                            }
+                        }
                         
-                        // If we found one with a preview, use it and stop searching
-                        if (resultWithPreview) {
+                        // If we found one with a preview via lookup, use it
+                        if (bestResult) {
                             break;
+                        }
+                        
+                        // Otherwise keep the first search result as fallback
+                        if (!bestResult) {
+                            bestResult = data.results[0];
                         }
                     }
                 }

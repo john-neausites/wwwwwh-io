@@ -1714,9 +1714,12 @@ class PlaylistSelector {
         // Preview all buttons - like New Releases
         this.container.querySelectorAll('.preview-all-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
+                console.log('Preview button clicked!');
                 e.stopPropagation();
                 const key = btn.dataset.key;
+                console.log('Playlist key:', key);
                 const trackList = this.container.querySelector(`.track-list[data-key="${key}"]`);
+                console.log('Track list element:', trackList);
                 
                 // Toggle if already loaded
                 if (trackList.innerHTML !== '<div class="loading-message">Loading tracks...</div>') {

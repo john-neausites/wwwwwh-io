@@ -83,31 +83,31 @@ class MusicTournament {
         };
     }
 
-    async searchSoundCloud(artist, songTitle) {
-        try {
-            const query = encodeURIComponent(`${artist} ${songTitle}`);
-            const response = await fetch(`https://soundcloud.com/search/sounds?q=${query}`);
-            const html = await response.text();
-            
-            // Extract first track URL from search results
-            const match = html.match(/https:\/\/soundcloud\.com\/[^\/]+\/[^\s"<>]+/);
-            if (match) {
-                const trackUrl = match[0];
-                console.log(`✓ Found on SoundCloud: ${songTitle} - ${artist}`);
-                return {
-                    soundCloudUrl: trackUrl,
-                    source: 'soundcloud'
-                };
-            }
-        } catch (error) {
-            console.error(`SoundCloud error for ${songTitle}:`, error);
+    getKnownSoundCloudUrl(artist, songTitle) {
+        // Hardcoded SoundCloud URLs for popular tracks (avoiding CORS issues)
+        const knownTracks = {
+            'kavinsky-nightcall': 'https://soundcloud.com/kavinskylive/nightcall',
+            'carpenter brut-turbo killer': 'https://soundcloud.com/carpenter_brut/turbo-killer',
+            'perturbator-future club': 'https://soundcloud.com/perturbator/future-club',
+            'gunship-tech noir': 'https://soundcloud.com/gunshipmusic/tech-noir',
+            'lazerhawk-overdrive': 'https://soundcloud.com/lazerhawk/overdrive',
+            'dance with the dead-riot': 'https://soundcloud.com/dance-with-the-dead/riot',
+        };
+        
+        const key = `${artist.toLowerCase()}-${songTitle.toLowerCase()}`;
+        if (knownTracks[key]) {
+            console.log(`✓ Using known SoundCloud URL: ${songTitle} - ${artist}`);
+            return {
+                soundCloudUrl: knownTracks[key],
+                source: 'soundcloud'
+            };
         }
         return null;
     }
 
     async searchItunes(songTitle, artist) {
-        // Try SoundCloud first for better compatibility
-        const soundCloudResult = await this.searchSoundCloud(artist, songTitle);
+        // Check for known SoundCloud tracks first
+        const soundCloudResult = this.getKnownSoundCloudUrl(artist, songTitle);
         if (soundCloudResult) {
             return soundCloudResult;
         }

@@ -329,25 +329,25 @@ class PlaylistSelector {
         return database;
     }
 
-    async searchSoundCloudForSong(artist, title) {
-        try {
-            // SoundCloud search via their widget API (no auth needed)
-            const query = encodeURIComponent(`${artist} ${title}`);
-            const response = await fetch(`https://soundcloud.com/search/sounds?q=${query}`);
-            const html = await response.text();
-            
-            // Extract first track URL from search results
-            const match = html.match(/https:\/\/soundcloud\.com\/[^\/]+\/[^\s"<>]+/);
-            if (match) {
-                const trackUrl = match[0];
-                console.log(`✓ Found on SoundCloud: ${title} - ${artist}`);
-                return {
-                    soundCloudUrl: trackUrl,
-                    source: 'soundcloud'
-                };
-            }
-        } catch (error) {
-            console.error(`SoundCloud error for ${title}:`, error);
+    getKnownSoundCloudUrl(artist, title) {
+        // Hardcoded SoundCloud URLs for popular synthwave/electronic tracks
+        const knownTracks = {
+            'kavinsky-nightcall': 'https://soundcloud.com/kavinskylive/nightcall',
+            'carpenter brut-turbo killer': 'https://soundcloud.com/carpenter_brut/turbo-killer',
+            'perturbator-future club': 'https://soundcloud.com/perturbator/future-club',
+            'gunship-tech noir': 'https://soundcloud.com/gunshipmusic/tech-noir',
+            'lazerhawk-overdrive': 'https://soundcloud.com/lazerhawk/overdrive',
+            'dance with the dead-riot': 'https://soundcloud.com/dance-with-the-dead/riot',
+            'miami nights 1984-accelerated': 'https://soundcloud.com/rosso-corsa-records/miami-nights-1984-accelerated',
+        };
+        
+        const key = `${artist.toLowerCase()}-${title.toLowerCase()}`;
+        if (knownTracks[key]) {
+            console.log(`✓ Using known SoundCloud URL: ${title} - ${artist}`);
+            return {
+                soundCloudUrl: knownTracks[key],
+                source: 'soundcloud'
+            };
         }
         return null;
     }
@@ -357,8 +357,8 @@ class PlaylistSelector {
         for (const song of songs) {
             let bestResult = null;
             
-            // Try SoundCloud for electronic/indie artists (faster and more reliable)
-            const soundCloudResult = await this.searchSoundCloudForSong(song.artist, song.title);
+            // Check for known SoundCloud tracks first
+            const soundCloudResult = this.getKnownSoundCloudUrl(song.artist, song.title);
             if (soundCloudResult) {
                 results.push({
                     ...song,

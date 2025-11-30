@@ -292,9 +292,14 @@ body {
 button.active,
 .preview-btn.active,
 .selector-btn.selected {
-    background: currentColor !important;
-    color: var(--color-primary, white) !important;
+    background: var(--color-accent) !important;
+    color: var(--color-primary) !important;
     font-weight: 600;
+    border-color: var(--color-accent) !important;
+}
+
+.selector-btn.selected:hover {
+    opacity: 0.9;
 }
 
 button:disabled {

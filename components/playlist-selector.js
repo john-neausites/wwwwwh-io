@@ -982,22 +982,55 @@ class PlaylistSelector {
                         letter-spacing: 0.05em;
                         opacity: 0.7;
                     }
+                    .playlist-actions-top {
+                        display: grid;
+                        grid-template-columns: 1fr auto;
+                        gap: 8px;
+                        margin-bottom: 16px;
+                    }
+                    .preview-all-btn, .generate-new-btn {
+                        padding: 12px;
+                        border: 2px solid currentColor;
+                        background: transparent;
+                        color: currentColor;
+                        cursor: pointer;
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 11px;
+                        transition: all 0.2s ease;
+                        text-align: center;
+                    }
+                    .preview-all-btn:hover, .generate-new-btn:hover {
+                        background: currentColor;
+                        color: var(--color-primary);
+                    }
+                    .preview-all-btn.active {
+                        background: currentColor;
+                        color: var(--color-primary);
+                        font-weight: 600;
+                    }
+                    .preview-all-btn:disabled, .generate-new-btn:disabled {
+                        opacity: 0.5;
+                        cursor: not-allowed;
+                    }
                     .track-list {
                         max-height: 400px;
                         overflow-y: auto;
-                        margin-bottom: 16px;
+                        margin-top: 16px;
                         border: 1px solid currentColor;
-                        padding: 12px;
+                        padding: 0;
                     }
                     .track-item {
-                        padding: 8px 0;
+                        padding: 8px 12px;
                         border-bottom: 1px solid rgba(128,128,128,0.2);
                         font-size: 11px;
-                        display: flex;
-                        align-items: baseline;
                     }
                     .track-item:last-child {
                         border-bottom: none;
+                    }
+                    .track-item .track-info {
+                        display: flex;
+                        align-items: baseline;
+                        margin-bottom: 5px;
                     }
                     .track-number {
                         opacity: 0.5;
@@ -1011,25 +1044,15 @@ class PlaylistSelector {
                         opacity: 0.6;
                         margin-left: 4px;
                     }
-                    .playlist-actions {
-                        display: grid;
-                        grid-template-columns: 1fr 1fr;
-                        gap: 8px;
+                    .track-item audio {
+                        width: 100%;
+                        height: 32px;
+                        margin-top: 5px;
                     }
-                    .save-btn, .generate-new-btn {
-                        padding: 12px;
-                        border: 2px solid currentColor;
-                        background: transparent;
-                        color: currentColor;
-                        cursor: pointer;
-                        font-family: 'JetBrains Mono', monospace;
-                        font-size: 11px;
-                        transition: all 0.2s ease;
-                        text-align: center;
-                    }
-                    .save-btn:hover, .generate-new-btn:hover {
-                        background: currentColor;
-                        color: var(--color-primary);
+                    .no-preview {
+                        font-size: 10px;
+                        opacity: 0.4;
+                        margin-top: 5px;
                     }
                     
                     /* Track Grid */
@@ -1625,23 +1648,17 @@ class PlaylistSelector {
                         <span class="tag">${playlist.activity}</span>
                     </div>
                     
-                    <div class="track-list">
-                        ${(playlist.songs || []).map((song, index) => `
-                            <div class="track-item">
-                                <span class="track-number">${index + 1}.</span>
-                                <span class="track-name">${song.title}</span>
-                                <span class="track-artist"> • ${song.artist}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                    
-                    <div class="playlist-actions">
-                        <button class="save-btn" data-key="${playlist.key}" title="Save Playlist">
-                            💾 Save Playlist
+                    <div class="playlist-actions-top">
+                        <button class="preview-all-btn" data-key="${playlist.key}" title="Preview All Tracks">
+                            Preview All Tracks
                         </button>
                         <button class="generate-new-btn" title="Generate New Playlist">
                             🔄 Generate New
                         </button>
+                    </div>
+                    
+                    <div class="track-list" data-key="${playlist.key}" style="display: none;">
+                        <div class="loading-message">Loading tracks...</div>
                     </div>
                 </div>
             `;
@@ -1687,12 +1704,63 @@ class PlaylistSelector {
             });
         });
 
-        // Save buttons
-        this.container.querySelectorAll('.save-btn').forEach(btn => {
+        // Preview all buttons - like New Releases
+        this.container.querySelectorAll('.preview-all-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.stopPropagation();
                 const key = btn.dataset.key;
-                await this.downloadPlaylist(key);
+                const trackList = this.container.querySelector(`.track-list[data-key="${key}"]`);
+                
+                // Toggle if already loaded
+                if (trackList.innerHTML !== '<div class="loading-message">Loading tracks...</div>') {
+                    const isHidden = trackList.style.display === 'none';
+                    trackList.style.display = isHidden ? 'block' : 'none';
+                    btn.textContent = isHidden ? 'Hide Tracks' : 'Preview All Tracks';
+                    btn.classList.toggle('active', isHidden);
+                    return;
+                }
+                
+                // Load tracks with previews from iTunes
+                btn.textContent = 'Loading...';
+                btn.disabled = true;
+                btn.classList.add('active');
+                
+                try {
+                    const playlist = this.playlists[key];
+                    const tracks = await this.searchItunesForPlaylist(playlist.songs);
+                    
+                    let trackHtml = '';
+                    tracks.forEach((track, index) => {
+                        const duration = track.duration ? Math.floor(track.duration / 60) + ':' + String(Math.floor(track.duration % 60)).padStart(2, '0') : '';
+                        
+                        trackHtml += `
+                            <div class="track-item">
+                                <div class="track-info">
+                                    <span class="track-number">${index + 1}.</span>
+                                    <span class="track-name">${track.title}</span>
+                                    ${duration ? `<span class="track-duration"> • ${duration}</span>` : ''}
+                                </div>
+                                ${track.previewUrl ? `
+                                    <audio controls preload="none">
+                                        <source src="${track.previewUrl}" type="audio/mp4">
+                                    </audio>
+                                ` : '<p class="no-preview">No preview available</p>'}
+                            </div>
+                        `;
+                    });
+                    
+                    trackList.innerHTML = trackHtml;
+                    trackList.style.display = 'block';
+                    btn.textContent = 'Hide Tracks';
+                    btn.disabled = false;
+                } catch (error) {
+                    console.error('Error loading tracks:', error);
+                    trackList.innerHTML = '<p class="no-preview" style="padding: 12px;">Failed to load tracks</p>';
+                    trackList.style.display = 'block';
+                    btn.textContent = 'Preview All Tracks';
+                    btn.disabled = false;
+                    btn.classList.remove('active');
+                }
             });
         });
         

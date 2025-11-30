@@ -8,7 +8,7 @@
       "name": "Media",
       "slug": "media",
       "immediate_children": 4,
-      "total_descendants": 85,
+      "total_descendants": 86,
       "children": [
         {
           "id": 11,
@@ -16,15 +16,15 @@
           "name": "Audio",
           "slug": "media-audio",
           "immediate_children": 7,
-          "total_descendants": 31,
+          "total_descendants": 32,
           "children": [
             {
               "id": 111,
               "parent_id": 11,
               "name": "Music",
               "slug": "audio-music",
-              "immediate_children": 4,
-              "total_descendants": 7,
+              "immediate_children": 5,
+              "total_descendants": 8,
               "children": [
                 {
                   "id": 1111,
@@ -62,6 +62,15 @@
                       "children": []
                     }
                   ]
+                },
+                {
+                  "id": 1115,
+                  "parent_id": 111,
+                  "name": "Radio",
+                  "slug": "audio-music-radio",
+                  "immediate_children": 0,
+                  "total_descendants": 0,
+                  "children": []
                 },
                 {
                   "id": 1112,

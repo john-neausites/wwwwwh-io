@@ -46,6 +46,11 @@ class ContentManager {
             this.loadPlaylistSelector();
             return;
         }
+        // Music Radio
+        if (contentId === 'audio-music-radio') {
+            this.loadMusicRadio();
+            return;
+        }
         this.contentElement.classList.add('loading');
         try {
             const content = await this.loadMarkdownContent(contentId);
@@ -597,6 +602,37 @@ class ContentManager {
             this.contentElement.classList.remove('loading');
             console.log('Playlist selector loaded successfully');
             return;
+        }, this.options.loadingDelay);
+    }
+    loadMusicRadio() {
+        console.log('Loading music radio...');
+        
+        // Track content load
+        if (window.analytics) {
+            window.analytics.trackContentLoad('music_radio', 'audio-music-radio');
+        }
+        
+        this.contentElement.classList.add('loading');
+        this.contentElement.innerHTML = '<div class="loading-message">Loading Music Radio...</div>';
+        
+        setTimeout(() => {
+            if (typeof window.MusicRadio === 'undefined') {
+                console.error('MusicRadio class not found');
+                this.contentElement.innerHTML = '<div class="error">Music radio not available</div>';
+                this.contentElement.classList.remove('loading');
+                
+                if (window.analytics) {
+                    window.analytics.trackError('music_radio_load', 'Class not found', {});
+                }
+                return;
+            }
+            
+            const radio = new window.MusicRadio(this.contentElement);
+            window.musicRadio = radio; // Make globally available for inline handlers
+            radio.render();
+            
+            this.contentElement.classList.remove('loading');
+            console.log('Music radio loaded successfully');
         }, this.options.loadingDelay);
     }
     loadMoodPlaylistsOld() {

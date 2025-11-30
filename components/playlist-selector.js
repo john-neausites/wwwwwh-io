@@ -659,7 +659,6 @@ class PlaylistSelector {
 
     async loadAllPlaylists() {
         const gridContainer = this.container.querySelector('#playlist-grid');
-        gridContainer.innerHTML = '<div class="loading-playlists">Loading playlists...</div>';
 
         // DEV MODE: Use pre-made playlists
         if (this.isDevelopment) {
@@ -679,38 +678,28 @@ class PlaylistSelector {
             return;
         }
 
-        // PRODUCTION MODE: Get 10 random playlist combinations
+        // PRODUCTION MODE: Show one instant playlist to avoid loading delays
         const allKeys = Object.keys(this.playlists);
-        const selectedKeys = this.getRandomPlaylists(allKeys, 10);
+        const selectedKey = allKeys[Math.floor(Math.random() * allKeys.length)];
+        const playlist = this.playlists[selectedKey];
+        const [mood, company, activity] = selectedKey.split('-');
         
-        const playlistCards = [];
-        
-        // First pass: load preview songs quickly
-        for (const key of selectedKeys) {
-            const playlist = this.playlists[key];
-            const [mood, company, activity] = key.split('-');
-            
-            // Fetch iTunes data for first 3 songs as preview (for quick loading)
-            const previewSongs = await this.searchItunesForPlaylist(playlist.songs.slice(0, 3));
-            
-            playlistCards.push({
-                key,
-                title: playlist.title,
-                mood,
-                company,
-                activity,
-                songs: playlist.songs,
-                previewSongs,
-                allTracks: null,
-                trackCount: playlist.songs.length,
-                estimatedDuration: Math.round(playlist.songs.length * 3.5)
-            });
-        }
+        // Show static playlist immediately - no API calls
+        const playlistCards = [{
+            key: selectedKey,
+            title: playlist.title,
+            mood,
+            company,
+            activity,
+            songs: playlist.songs,
+            previewSongs: [], // No previews to keep it instant
+            allTracks: null,
+            trackCount: playlist.songs.length,
+            estimatedDuration: Math.round(playlist.songs.length * 3.5),
+            isStatic: true // Flag for static display
+        }];
 
         this.renderPlaylistCards(playlistCards);
-        
-        // Second pass: prefetch all tracks in background
-        this.prefetchAllTracks(playlistCards);
     }
     
     async prefetchAllTracks(playlistCards) {
@@ -949,6 +938,15 @@ class PlaylistSelector {
                         letter-spacing: 0.05em;
                         text-align: center;
                         opacity: 0.5;
+                    }
+                    .static-note {
+                        padding: 12px;
+                        border: 1px solid currentColor;
+                        background: rgba(128,128,128,0.05);
+                        font-size: 10px;
+                        text-align: center;
+                        opacity: 0.7;
+                        font-style: italic;
                     }
                     
                     /* Playlist Header */
@@ -1558,7 +1556,39 @@ class PlaylistSelector {
                 `;
             }
             
-            // PRODUCTION MODE: Show full cards with previews
+            // PRODUCTION MODE: Show static playlist or full preview
+            if (playlist.isStatic) {
+                // Static mode: instant display, no API calls
+                return `
+                    <div class="playlist-card static-mode" data-key="${playlist.key}">
+                        <div class="playlist-header">
+                            <h3 class="playlist-title">${playlist.title}</h3>
+                            <button class="save-btn" data-key="${playlist.key}" title="Save Playlist">
+                                <span>💾</span>
+                            </button>
+                        </div>
+                        
+                        <div class="playlist-info">
+                            <div class="info-item">
+                                <span class="icon">🎵</span>
+                                <span>${playlist.trackCount} tracks</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="icon">⏱</span>
+                                <span>~${playlist.estimatedDuration} min</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="icon">🎭</span>
+                                <span>${playlist.mood}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="static-note">Click save to download your personalized playlist</div>
+                    </div>
+                `;
+            }
+            
+            // Full preview mode with track grid
             const tracks = playlist.previewSongs || [];
             
             return `

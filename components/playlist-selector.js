@@ -329,16 +329,51 @@ class PlaylistSelector {
         return database;
     }
 
+    async searchSoundCloudForSong(artist, title) {
+        try {
+            // SoundCloud search via their widget API (no auth needed)
+            const query = encodeURIComponent(`${artist} ${title}`);
+            const response = await fetch(`https://soundcloud.com/search/sounds?q=${query}`);
+            const html = await response.text();
+            
+            // Extract first track URL from search results
+            const match = html.match(/https:\/\/soundcloud\.com\/[^\/]+\/[^\s"<>]+/);
+            if (match) {
+                const trackUrl = match[0];
+                console.log(`✓ Found on SoundCloud: ${title} - ${artist}`);
+                return {
+                    soundCloudUrl: trackUrl,
+                    source: 'soundcloud'
+                };
+            }
+        } catch (error) {
+            console.error(`SoundCloud error for ${title}:`, error);
+        }
+        return null;
+    }
+
     async searchItunesForPlaylist(songs) {
         const results = [];
         for (const song of songs) {
+            let bestResult = null;
+            
+            // Try SoundCloud for electronic/indie artists (faster and more reliable)
+            const soundCloudResult = await this.searchSoundCloudForSong(song.artist, song.title);
+            if (soundCloudResult) {
+                results.push({
+                    ...song,
+                    soundCloudUrl: soundCloudResult.soundCloudUrl,
+                    source: 'soundcloud'
+                });
+                continue;
+            }
+            
+            // Fallback to iTunes for mainstream artists
             try {
                 // Search for artist's albums (entity=album works better with CSP)
                 const query = encodeURIComponent(song.artist);
                 const response = await fetch(`https://itunes.apple.com/search?term=${query}&media=music&entity=album&limit=10`);
                 const data = await response.json();
-                
-                let bestResult = null;
                 
                 if (data.results && data.results.length > 0) {
                     // Try each album to find the song with preview
@@ -377,10 +412,11 @@ class PlaylistSelector {
                         previewUrl: bestResult.previewUrl,
                         artwork: bestResult.artworkUrl100?.replace('100x100', '300x300'),
                         albumName: bestResult.collectionName,
-                        iTunesUrl: bestResult.trackViewUrl
+                        iTunesUrl: bestResult.trackViewUrl,
+                        source: 'itunes'
                     });
                 } else {
-                    console.log(`No preview found for: ${song.title} - ${song.artist}`);
+                    console.log(`⚠ No preview found for: ${song.title} - ${song.artist}`);
                     results.push({ ...song, previewUrl: null, artwork: null, iTunesUrl: null });
                 }
             } catch (error) {
@@ -466,14 +502,19 @@ class PlaylistSelector {
                         ${song.albumName ? `<div class="track-album">${song.albumName}</div>` : ''}
                     </div>
                     <div class="track-actions">
-                        ${song.previewUrl ? `
+                        ${song.source === 'soundcloud' && song.soundCloudUrl ? `
+                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" 
+                                src="https://w.soundcloud.com/player/?url=${encodeURIComponent(song.soundCloudUrl)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false">
+                            </iframe>
+                        ` : song.previewUrl ? `
                             <audio controls preload="none">
                                 <source src="${song.previewUrl}" type="audio/mp4">
                             </audio>
                         ` : song.iTunesUrl ? 
                             `<span class="no-preview">No preview available</span>` :
                             '<span class="no-preview">Not found</span>'}
-                        ${song.iTunesUrl ? `<a href="${song.iTunesUrl}" target="_blank" rel="noopener" class="itunes-link">Listen on iTunes ↗</a>` : ''}
+                        ${song.soundCloudUrl ? `<a href="${song.soundCloudUrl}" target="_blank" rel="noopener" class="soundcloud-link">Listen on SoundCloud ↗</a>` : 
+                          song.iTunesUrl ? `<a href="${song.iTunesUrl}" target="_blank" rel="noopener" class="itunes-link">Listen on iTunes ↗</a>` : ''}
                     </div>
                 </div>
             `;

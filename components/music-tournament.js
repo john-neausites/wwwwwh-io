@@ -83,7 +83,36 @@ class MusicTournament {
         };
     }
 
+    async searchSoundCloud(artist, songTitle) {
+        try {
+            const query = encodeURIComponent(`${artist} ${songTitle}`);
+            const response = await fetch(`https://soundcloud.com/search/sounds?q=${query}`);
+            const html = await response.text();
+            
+            // Extract first track URL from search results
+            const match = html.match(/https:\/\/soundcloud\.com\/[^\/]+\/[^\s"<>]+/);
+            if (match) {
+                const trackUrl = match[0];
+                console.log(`✓ Found on SoundCloud: ${songTitle} - ${artist}`);
+                return {
+                    soundCloudUrl: trackUrl,
+                    source: 'soundcloud'
+                };
+            }
+        } catch (error) {
+            console.error(`SoundCloud error for ${songTitle}:`, error);
+        }
+        return null;
+    }
+
     async searchItunes(songTitle, artist) {
+        // Try SoundCloud first for better compatibility
+        const soundCloudResult = await this.searchSoundCloud(artist, songTitle);
+        if (soundCloudResult) {
+            return soundCloudResult;
+        }
+
+        // Fallback to iTunes
         try {
             // Clean up search terms
             const cleanTitle = songTitle.replace(/[()]/g, '').trim();
@@ -114,20 +143,15 @@ class MusicTournament {
                                 );
                                 
                                 if (matchingTrack) {
-                                    console.log(`✓ Found preview for: ${cleanTitle} - ${cleanArtist}`);
+                                    console.log(`✓ Found preview on iTunes: ${cleanTitle} - ${cleanArtist}`);
                                     return {
                                         previewUrl: matchingTrack.previewUrl,
                                         artwork: matchingTrack.artworkUrl100?.replace('100x100', '600x600'),
                                         albumName: matchingTrack.collectionName,
                                         releaseDate: matchingTrack.releaseDate,
-                                        iTunesUrl: matchingTrack.trackViewUrl
+                                        iTunesUrl: matchingTrack.trackViewUrl,
+                                        source: 'itunes'
                                     };
-                                }
-                                
-                                // Also check for tracks without exact match but have preview
-                                const anyTrackWithPreview = tracks.find(t => t.previewUrl);
-                                if (anyTrackWithPreview) {
-                                    console.log(`⚠ Found album but not exact song match for: ${cleanTitle} - ${cleanArtist}`);
                                 }
                             }
                         } catch (lookupError) {
@@ -242,12 +266,18 @@ class MusicTournament {
                     </div>
                     <h3>${song1.title}</h3>
                     <p class="artist">${song1.artist}</p>
-                    ${song1.data?.previewUrl ? `
+                    ${song1.data?.source === 'soundcloud' && song1.data?.soundCloudUrl ? `
+                        <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" 
+                            src="https://w.soundcloud.com/player/?url=${encodeURIComponent(song1.data.soundCloudUrl)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false">
+                        </iframe>
+                    ` : song1.data?.previewUrl ? `
                         <audio controls preload="none">
                             <source src="${song1.data.previewUrl}" type="audio/mp4">
                         </audio>
-                    ` : song1.data?.iTunesUrl ? 
-                        `<p class="no-preview">No preview • <a href="${song1.data.iTunesUrl}" target="_blank" rel="noopener">Listen on iTunes ↗</a></p>` :
+                    ` : song1.data?.soundCloudUrl ? 
+                        `<p class="no-preview"><a href="${song1.data.soundCloudUrl}" target="_blank" rel="noopener">Listen on SoundCloud ↗</a></p>` :
+                      song1.data?.iTunesUrl ? 
+                        `<p class="no-preview"><a href="${song1.data.iTunesUrl}" target="_blank" rel="noopener">Listen on iTunes ↗</a></p>` :
                         '<p class="no-preview">Preview unavailable</p>'}
                     <button class="vote-btn" data-winner="1">Vote for This</button>
                 </div>
@@ -262,12 +292,18 @@ class MusicTournament {
                     </div>
                     <h3>${song2.title}</h3>
                     <p class="artist">${song2.artist}</p>
-                    ${song2.data?.previewUrl ? `
+                    ${song2.data?.source === 'soundcloud' && song2.data?.soundCloudUrl ? `
+                        <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" 
+                            src="https://w.soundcloud.com/player/?url=${encodeURIComponent(song2.data.soundCloudUrl)}&color=%23ff5500&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false">
+                        </iframe>
+                    ` : song2.data?.previewUrl ? `
                         <audio controls preload="none">
                             <source src="${song2.data.previewUrl}" type="audio/mp4">
                         </audio>
-                    ` : song2.data?.iTunesUrl ? 
-                        `<p class="no-preview">No preview • <a href="${song2.data.iTunesUrl}" target="_blank" rel="noopener">Listen on iTunes ↗</a></p>` :
+                    ` : song2.data?.soundCloudUrl ? 
+                        `<p class="no-preview"><a href="${song2.data.soundCloudUrl}" target="_blank" rel="noopener">Listen on SoundCloud ↗</a></p>` :
+                      song2.data?.iTunesUrl ? 
+                        `<p class="no-preview"><a href="${song2.data.iTunesUrl}" target="_blank" rel="noopener">Listen on iTunes ↗</a></p>` :
                         '<p class="no-preview">Preview unavailable</p>'}
                     <button class="vote-btn" data-winner="2">Vote for This</button>
                 </div>

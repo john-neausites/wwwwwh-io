@@ -449,12 +449,17 @@ class PlaylistSelector {
 
     async searchItunesForPlaylist(songs) {
         const results = [];
-        for (const song of songs) {
+        console.log(`Starting iTunes search for ${songs.length} songs`);
+        
+        for (let i = 0; i < songs.length; i++) {
+            const song = songs[i];
+            console.log(`[${i + 1}/${songs.length}] Searching for: ${song.title} by ${song.artist}`);
             let bestResult = null;
             
             // Check for known SoundCloud tracks first (feature flagged)
             const soundCloudResult = this.getKnownSoundCloudUrl(song.artist, song.title);
             if (soundCloudResult) {
+                console.log(`Found SoundCloud track for ${song.title}`);
                 results.push({
                     ...song,
                     soundCloudUrl: soundCloudResult.soundCloudUrl,
@@ -467,8 +472,10 @@ class PlaylistSelector {
             try {
                 // Search for artist's albums (entity=album works better with CSP)
                 const query = encodeURIComponent(song.artist);
+                console.log(`Fetching albums for ${song.artist}...`);
                 const response = await this.fetchWithTimeout(`https://itunes.apple.com/search?term=${query}&media=music&entity=album&limit=10`);
                 const data = await response.json();
+                console.log(`Got ${data.results?.length || 0} albums for ${song.artist}`);
                 
                 if (data.results && data.results.length > 0) {
                     // Try each album to find the song with preview
@@ -1727,18 +1734,28 @@ class PlaylistSelector {
                 
                 try {
                     const playlist = this.playlists[key];
+                    console.log('Loading tracks for playlist:', key, playlist.songs.length, 'songs');
+                    
                     const tracks = await this.searchItunesForPlaylist(playlist.songs);
+                    console.log('Loaded tracks:', tracks.length, 'results');
+                    
+                    if (tracks.length === 0) {
+                        trackList.innerHTML = '<p class="no-preview" style="padding: 12px;">No tracks found</p>';
+                        trackList.style.display = 'block';
+                        btn.textContent = 'Preview All Tracks';
+                        btn.disabled = false;
+                        btn.classList.remove('active');
+                        return;
+                    }
                     
                     let trackHtml = '';
                     tracks.forEach((track, index) => {
-                        const duration = track.duration ? Math.floor(track.duration / 60) + ':' + String(Math.floor(track.duration % 60)).padStart(2, '0') : '';
-                        
                         trackHtml += `
                             <div class="track-item">
                                 <div class="track-info">
                                     <span class="track-number">${index + 1}.</span>
                                     <span class="track-name">${track.title}</span>
-                                    ${duration ? `<span class="track-duration"> • ${duration}</span>` : ''}
+                                    <span class="track-artist"> • ${track.artist}</span>
                                 </div>
                                 ${track.previewUrl ? `
                                     <audio controls preload="none">
@@ -1753,9 +1770,10 @@ class PlaylistSelector {
                     trackList.style.display = 'block';
                     btn.textContent = 'Hide Tracks';
                     btn.disabled = false;
+                    console.log('Track list rendered successfully');
                 } catch (error) {
                     console.error('Error loading tracks:', error);
-                    trackList.innerHTML = '<p class="no-preview" style="padding: 12px;">Failed to load tracks</p>';
+                    trackList.innerHTML = `<p class="no-preview" style="padding: 12px; color: red;">Failed to load tracks: ${error.message}</p>`;
                     trackList.style.display = 'block';
                     btn.textContent = 'Preview All Tracks';
                     btn.disabled = false;

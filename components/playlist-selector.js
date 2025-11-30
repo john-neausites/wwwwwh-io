@@ -333,25 +333,47 @@ class PlaylistSelector {
         const results = [];
         for (const song of songs) {
             try {
-                const query = encodeURIComponent(`${song.artist} ${song.title}`);
-                const response = await fetch(`https://itunes.apple.com/search?term=${query}&media=music&limit=1`);
-                const data = await response.json();
+                // Try multiple search strategies to find a match with preview
+                const searches = [
+                    `${song.title} ${song.artist}`,
+                    `${song.artist} ${song.title}`,
+                    song.title // Sometimes just the song title works better
+                ];
                 
-                if (data.results && data.results.length > 0) {
-                    const result = data.results[0];
+                let bestResult = null;
+                
+                for (const searchTerm of searches) {
+                    const query = encodeURIComponent(searchTerm);
+                    const response = await fetch(`https://itunes.apple.com/search?term=${query}&media=music&limit=5`);
+                    const data = await response.json();
+                    
+                    if (data.results && data.results.length > 0) {
+                        // Try to find a result with a preview URL
+                        const resultWithPreview = data.results.find(r => r.previewUrl);
+                        bestResult = resultWithPreview || data.results[0];
+                        
+                        // If we found one with a preview, use it and stop searching
+                        if (resultWithPreview) {
+                            break;
+                        }
+                    }
+                }
+                
+                if (bestResult) {
                     results.push({
                         ...song,
-                        previewUrl: result.previewUrl,
-                        artwork: result.artworkUrl100?.replace('100x100', '300x300'),
-                        albumName: result.collectionName,
-                        iTunesUrl: result.trackViewUrl
+                        previewUrl: bestResult.previewUrl || null,
+                        artwork: bestResult.artworkUrl100?.replace('100x100', '300x300'),
+                        albumName: bestResult.collectionName,
+                        iTunesUrl: bestResult.trackViewUrl
                     });
                 } else {
-                    results.push({ ...song, previewUrl: null, artwork: null });
+                    console.log(`No iTunes results for: ${song.title} - ${song.artist}`);
+                    results.push({ ...song, previewUrl: null, artwork: null, iTunesUrl: null });
                 }
             } catch (error) {
                 console.error(`Error fetching ${song.title}:`, error);
-                results.push({ ...song, previewUrl: null, artwork: null });
+                results.push({ ...song, previewUrl: null, artwork: null, iTunesUrl: null });
             }
         }
         return results;
@@ -436,8 +458,10 @@ class PlaylistSelector {
                             <audio controls preload="none">
                                 <source src="${song.previewUrl}" type="audio/mp4">
                             </audio>
-                        ` : '<span class="no-preview">No preview</span>'}
-                        ${song.iTunesUrl ? `<a href="${song.iTunesUrl}" target="_blank" rel="noopener" class="itunes-link">iTunes ↗</a>` : ''}
+                        ` : song.iTunesUrl ? 
+                            `<span class="no-preview">No preview available</span>` :
+                            '<span class="no-preview">Not found</span>'}
+                        ${song.iTunesUrl ? `<a href="${song.iTunesUrl}" target="_blank" rel="noopener" class="itunes-link">Listen on iTunes ↗</a>` : ''}
                     </div>
                 </div>
             `;

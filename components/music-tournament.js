@@ -85,19 +85,41 @@ class MusicTournament {
 
     async searchItunes(songTitle, artist) {
         try {
-            const query = encodeURIComponent(`${songTitle} ${artist}`);
-            const response = await fetch(`https://itunes.apple.com/search?term=${query}&media=music&limit=1`);
-            const data = await response.json();
+            // Try multiple search strategies to find a match with preview
+            const searches = [
+                `${songTitle} ${artist}`,
+                `${artist} ${songTitle}`,
+                songTitle // Sometimes just the song title works better
+            ];
             
-            if (data.results && data.results.length > 0) {
-                const result = data.results[0];
-                return {
-                    previewUrl: result.previewUrl,
-                    artwork: result.artworkUrl100.replace('100x100', '600x600'),
-                    albumName: result.collectionName,
-                    releaseDate: result.releaseDate
-                };
+            for (const searchTerm of searches) {
+                const query = encodeURIComponent(searchTerm);
+                const response = await fetch(`https://itunes.apple.com/search?term=${query}&media=music&limit=5`);
+                const data = await response.json();
+                
+                if (data.results && data.results.length > 0) {
+                    // Try to find a result with a preview URL
+                    const resultWithPreview = data.results.find(r => r.previewUrl);
+                    const result = resultWithPreview || data.results[0];
+                    
+                    if (result) {
+                        const hasPreview = !!result.previewUrl;
+                        if (!hasPreview) {
+                            console.log(`No preview for: ${searchTerm}`);
+                        }
+                        
+                        return {
+                            previewUrl: result.previewUrl || null,
+                            artwork: result.artworkUrl100?.replace('100x100', '600x600'),
+                            albumName: result.collectionName,
+                            releaseDate: result.releaseDate,
+                            iTunesUrl: result.trackViewUrl
+                        };
+                    }
+                }
             }
+            
+            console.log(`No iTunes results for: ${songTitle} - ${artist}`);
             return null;
         } catch (error) {
             console.error('iTunes API error:', error);
@@ -195,7 +217,9 @@ class MusicTournament {
                         <audio controls preload="none">
                             <source src="${song1.data.previewUrl}" type="audio/mp4">
                         </audio>
-                    ` : '<p class="no-preview">Preview unavailable</p>'}
+                    ` : song1.data?.iTunesUrl ? 
+                        `<p class="no-preview">No preview • <a href="${song1.data.iTunesUrl}" target="_blank" rel="noopener">Listen on iTunes ↗</a></p>` :
+                        '<p class="no-preview">Preview unavailable</p>'}
                     <button class="vote-btn" data-winner="1">Vote for This</button>
                 </div>
 
@@ -213,7 +237,9 @@ class MusicTournament {
                         <audio controls preload="none">
                             <source src="${song2.data.previewUrl}" type="audio/mp4">
                         </audio>
-                    ` : '<p class="no-preview">Preview unavailable</p>'}
+                    ` : song2.data?.iTunesUrl ? 
+                        `<p class="no-preview">No preview • <a href="${song2.data.iTunesUrl}" target="_blank" rel="noopener">Listen on iTunes ↗</a></p>` :
+                        '<p class="no-preview">Preview unavailable</p>'}
                     <button class="vote-btn" data-winner="2">Vote for This</button>
                 </div>
             </div>

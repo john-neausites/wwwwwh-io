@@ -402,9 +402,8 @@ class PlaylistSelector {
         }
         this.lastRequestTime = Date.now();
         
-        // Use CORS proxy for localhost development
-        const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const fetchUrl = isDevelopment ? `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}` : url;
+        // Use CORS proxy for all iTunes API requests (iTunes doesn't support CORS)
+        const fetchUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
         
         const controller = new AbortController();
         const id = setTimeout(() => controller.abort(), timeout);

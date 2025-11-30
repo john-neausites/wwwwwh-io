@@ -31,6 +31,13 @@ class ContentManager {
             this.loadColorPaletteBuilder();
             return;
         }
+        // Music tournament for music lists
+        if (contentId === 'audio-music-lists-new' || 
+            contentId === 'audio-music-lists-favorites' || 
+            contentId === 'audio-music-lists-popular') {
+            this.loadMusicTournament();
+            return;
+        }
         this.contentElement.classList.add('loading');
         try {
             const content = await this.loadMarkdownContent(contentId);
@@ -211,6 +218,40 @@ class ContentManager {
             window.colorBuilder.attachEventListeners();
             
             console.log('Color palette builder loaded successfully');
+            
+            if (this.isMobile()) {
+                const contentArea = document.querySelector('.why-content');
+                if (contentArea) {
+                    contentArea.style.display = 'block';
+                }
+            }
+        }, this.options.loadingDelay);
+    }
+    loadMusicTournament() {
+        console.log('Loading music tournament...');
+        
+        // Clear and show loading
+        this.contentElement.classList.add('loading');
+        this.contentElement.innerHTML = '<div class="loading-message">Loading Music Tournament...</div>';
+        
+        setTimeout(() => {
+            console.log('MusicTournament available:', typeof window.MusicTournament !== 'undefined');
+            
+            if (typeof window.MusicTournament === 'undefined') {
+                console.error('MusicTournament class not found');
+                this.contentElement.innerHTML = '<div class="error">Music Tournament not available</div>';
+                this.contentElement.classList.remove('loading');
+                return;
+            }
+            
+            console.log('Creating MusicTournament instance...');
+            const tournament = new window.MusicTournament(this.contentElement);
+            
+            console.log('Initializing tournament...');
+            tournament.init();
+            
+            this.contentElement.classList.remove('loading');
+            console.log('Music tournament loaded successfully');
             
             if (this.isMobile()) {
                 const contentArea = document.querySelector('.why-content');

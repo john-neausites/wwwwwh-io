@@ -333,57 +333,40 @@ class PlaylistSelector {
         const results = [];
         for (const song of songs) {
             try {
-                // Try multiple search strategies to find a match with preview
-                const searches = [
-                    `${song.title} ${song.artist}`,
-                    `${song.artist} ${song.title}`,
-                    song.title // Sometimes just the song title works better
-                ];
+                // Search for artist's albums (entity=album works better with CSP)
+                const query = encodeURIComponent(song.artist);
+                const response = await fetch(`https://itunes.apple.com/search?term=${query}&media=music&entity=album&limit=10`);
+                const data = await response.json();
                 
                 let bestResult = null;
                 
-                for (const searchTerm of searches) {
-                    const query = encodeURIComponent(searchTerm);
-                    const response = await fetch(`https://itunes.apple.com/search?term=${query}&media=music&limit=5`);
-                    const data = await response.json();
-                    
-                    if (data.results && data.results.length > 0) {
-                        // Try each result's collection to find tracks with previews using lookup API
-                        for (const result of data.results) {
-                            if (result.collectionId) {
-                                try {
-                                    // Use lookup API to get full track info (avoids CSP redirect issues)
-                                    const lookupResponse = await fetch(`https://itunes.apple.com/lookup?id=${result.collectionId}&entity=song&limit=200`);
-                                    const lookupData = await lookupResponse.json();
+                if (data.results && data.results.length > 0) {
+                    // Try each album to find the song with preview
+                    for (const album of data.results) {
+                        if (album.collectionId) {
+                            try {
+                                // Use lookup API to get all tracks from this album
+                                const lookupResponse = await fetch(`https://itunes.apple.com/lookup?id=${album.collectionId}&entity=song&limit=200`);
+                                const lookupData = await lookupResponse.json();
+                                
+                                if (lookupData.results && lookupData.results.length > 1) {
+                                    const tracks = lookupData.results.slice(1); // Skip album info
                                     
-                                    if (lookupData.results && lookupData.results.length > 1) {
-                                        // Find the matching track with preview
-                                        const tracks = lookupData.results.slice(1); // Skip album info
-                                        const matchingTrack = tracks.find(t => 
-                                            t.trackName && t.previewUrl && 
-                                            (t.trackName.toLowerCase().includes(song.title.toLowerCase()) ||
-                                             song.title.toLowerCase().includes(t.trackName.toLowerCase()))
-                                        );
-                                        
-                                        if (matchingTrack && matchingTrack.previewUrl) {
-                                            bestResult = matchingTrack;
-                                            break;
-                                        }
+                                    // Find matching track with preview
+                                    const matchingTrack = tracks.find(t => 
+                                        t.trackName && t.previewUrl && 
+                                        (t.trackName.toLowerCase().includes(song.title.toLowerCase()) ||
+                                         song.title.toLowerCase().includes(t.trackName.toLowerCase()))
+                                    );
+                                    
+                                    if (matchingTrack) {
+                                        bestResult = matchingTrack;
+                                        break; // Found it, stop searching
                                     }
-                                } catch (lookupError) {
-                                    console.error('Lookup API error:', lookupError);
                                 }
+                            } catch (lookupError) {
+                                console.error('Lookup API error:', lookupError);
                             }
-                        }
-                        
-                        // If we found one with a preview via lookup, use it
-                        if (bestResult) {
-                            break;
-                        }
-                        
-                        // Otherwise keep the first search result as fallback
-                        if (!bestResult) {
-                            bestResult = data.results[0];
                         }
                     }
                 }
@@ -391,13 +374,13 @@ class PlaylistSelector {
                 if (bestResult) {
                     results.push({
                         ...song,
-                        previewUrl: bestResult.previewUrl || null,
+                        previewUrl: bestResult.previewUrl,
                         artwork: bestResult.artworkUrl100?.replace('100x100', '300x300'),
                         albumName: bestResult.collectionName,
                         iTunesUrl: bestResult.trackViewUrl
                     });
                 } else {
-                    console.log(`No iTunes results for: ${song.title} - ${song.artist}`);
+                    console.log(`No preview found for: ${song.title} - ${song.artist}`);
                     results.push({ ...song, previewUrl: null, artwork: null, iTunesUrl: null });
                 }
             } catch (error) {

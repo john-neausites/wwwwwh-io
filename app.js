@@ -3,6 +3,7 @@ let navigationManager = null;
 let contentManager = null;
 let protocolHandler = null;
 let colorPalette = null;
+let analytics = null;
 
 // Keyboard shortcut override system
 let keyBuffer = '';
@@ -119,6 +120,17 @@ function styleColorButton() {
 function initializeApplication() {
     initKeyboardOverride();
     
+    // Initialize analytics
+    analytics = new Analytics();
+    window.analytics = analytics; // Expose globally
+    analytics.track('app_init', {
+        userAgent: navigator.userAgent,
+        viewport: {
+            width: window.innerWidth,
+            height: window.innerHeight
+        }
+    });
+    
     // Initialize color palette system
     colorPalette = new ColorPalette();
     window.colorPalette = colorPalette; // Expose globally
@@ -170,6 +182,11 @@ function initializeApplication() {
 }
 function handleMenuItemClick(slug, itemId, element) {
     console.log(`Menu item clicked: ${slug} (ID: ${itemId})`);
+    
+    // Track navigation
+    if (analytics) {
+        analytics.trackNavigation(slug, itemId);
+    }
     
     // Special handling for Color button - toggle color state
     if (slug === 'photo-color') {
@@ -283,10 +300,58 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
+// Analytics helper functions
+function playbackJourney(speed = 1) {
+    if (analytics) {
+        analytics.playbackJourney(speed);
+    } else {
+        console.error('Analytics not initialized');
+    }
+}
+
+function exportSession() {
+    if (analytics) {
+        analytics.exportSession();
+    } else {
+        console.error('Analytics not initialized');
+    }
+}
+
+function showJourney() {
+    if (analytics) {
+        return analytics.getJourney();
+    } else {
+        console.error('Analytics not initialized');
+    }
+}
+
+function showSummary() {
+    if (analytics) {
+        return analytics.printSummary();
+    } else {
+        console.error('Analytics not initialized');
+    }
+}
+
+function clearAnalytics() {
+    if (analytics) {
+        analytics.clearSession();
+    } else {
+        console.error('Analytics not initialized');
+    }
+}
+
+window.playbackJourney = playbackJourney;
+window.exportSession = exportSession;
+window.showJourney = showJourney;
+window.showSummary = showSummary;
+window.clearAnalytics = clearAnalytics;
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('wwwwwh.io initializing...');
     initializeApplication();
     console.log('wwwwwh.io initialized successfully');
     console.log('🧪 Test functions available: testAuthenticationElements(), testHardwareKeyAuth()');
     console.log('🔑 Shortcut: Type "jrv" to toggle navigation unlock');
+    console.log('📊 Analytics functions: playbackJourney(speed), showJourney(), showSummary(), exportSession(), clearAnalytics()');
 });

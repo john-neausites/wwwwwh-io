@@ -97,9 +97,16 @@ class CityTimeTicker {
         });
         const ms = String(now.getMilliseconds()).padStart(3, '0');
         const utcWithMs = `${timeStr}.${ms.substring(0, 2)}`;
+        
+        // Generate multiple date formats
+        const dateFormats = this.generateDateFormats(now);
+        
         const bannerItems = [
             `UTC: ${utcWithMs}`,
-            ...this.generateCityTimeItems()
+            ...this.generateCityTimeItems(),
+            `Date: ${dateFormats.spelledOut}`,
+            `${dateFormats.short}`,
+            `${dateFormats.dayOfWeek}`
         ];
         const tickerText = bannerItems.join('  •  ');
         const repeatedText = tickerText + '  •  ' + tickerText + '  •  ' + tickerText + '  •  ';
@@ -108,6 +115,43 @@ class CityTimeTicker {
             this.updateTickerAnimation();
             this.animationInitialized = true;
         }
+    }
+    
+    generateDateFormats(date) {
+        const options = { timeZone: 'UTC' };
+        
+        // Spelled out: "Friday, November 29, 2024"
+        const spelledOut = date.toLocaleDateString('en-US', {
+            ...options,
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        // Long: "November 29, 2024"
+        const long = date.toLocaleDateString('en-US', {
+            ...options,
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        // Short: "11/29/24"
+        const short = date.toLocaleDateString('en-US', {
+            ...options,
+            year: '2-digit',
+            month: '2-digit',
+            day: '2-digit'
+        });
+        
+        // Day of week: "Friday"
+        const dayOfWeek = date.toLocaleDateString('en-US', {
+            ...options,
+            weekday: 'long'
+        });
+        
+        return { spelledOut, long, short, dayOfWeek };
     }
     updateTickerAnimation() {
         if (!this.element) return;

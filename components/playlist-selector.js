@@ -357,6 +357,23 @@ class PlaylistSelector {
         return null;
     }
 
+    async fetchWithTimeout(url, timeout = 15000) {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout);
+        try {
+            const response = await fetch(url, {
+                signal: controller.signal,
+                mode: 'cors',
+                cache: 'default'
+            });
+            clearTimeout(id);
+            return response;
+        } catch (error) {
+            clearTimeout(id);
+            throw error;
+        }
+    }
+
     async searchItunesForPlaylist(songs) {
         const results = [];
         for (const song of songs) {
@@ -377,7 +394,7 @@ class PlaylistSelector {
             try {
                 // Search for artist's albums (entity=album works better with CSP)
                 const query = encodeURIComponent(song.artist);
-                const response = await fetch(`https://itunes.apple.com/search?term=${query}&media=music&entity=album&limit=10`);
+                const response = await this.fetchWithTimeout(`https://itunes.apple.com/search?term=${query}&media=music&entity=album&limit=10`);
                 const data = await response.json();
                 
                 if (data.results && data.results.length > 0) {
@@ -386,7 +403,7 @@ class PlaylistSelector {
                         if (album.collectionId) {
                             try {
                                 // Use lookup API to get all tracks from this album
-                                const lookupResponse = await fetch(`https://itunes.apple.com/lookup?id=${album.collectionId}&entity=song&limit=200`);
+                                const lookupResponse = await this.fetchWithTimeout(`https://itunes.apple.com/lookup?id=${album.collectionId}&entity=song&limit=200`);
                                 const lookupData = await lookupResponse.json();
                                 
                                 if (lookupData.results && lookupData.results.length > 1) {

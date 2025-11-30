@@ -678,28 +678,30 @@ class PlaylistSelector {
             return;
         }
 
-        // PRODUCTION MODE: Show one instant playlist to avoid loading delays
+        // PRODUCTION MODE: Show one random playlist instantly with track list
+        this.generateNewPlaylist();
+    }
+    
+    generateNewPlaylist() {
+        const gridContainer = this.container.querySelector('#playlist-grid');
         const allKeys = Object.keys(this.playlists);
         const selectedKey = allKeys[Math.floor(Math.random() * allKeys.length)];
         const playlist = this.playlists[selectedKey];
         const [mood, company, activity] = selectedKey.split('-');
         
-        // Show static playlist immediately - no API calls
-        const playlistCards = [{
+        // Show playlist instantly with track list
+        const playlistCard = {
             key: selectedKey,
             title: playlist.title,
             mood,
             company,
             activity,
             songs: playlist.songs,
-            previewSongs: [], // No previews to keep it instant
-            allTracks: null,
             trackCount: playlist.songs.length,
-            estimatedDuration: Math.round(playlist.songs.length * 3.5),
-            isStatic: true // Flag for static display
-        }];
+            estimatedDuration: Math.round(playlist.songs.length * 3.5)
+        };
 
-        this.renderPlaylistCards(playlistCards);
+        this.renderPlaylistCards([playlistCard]);
     }
     
     async prefetchAllTracks(playlistCards) {
@@ -952,30 +954,80 @@ class PlaylistSelector {
                     /* Playlist Header */
                     .playlist-header {
                         display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        gap: 12px;
+                        flex-direction: column;
+                        gap: 8px;
+                        margin-bottom: 12px;
                     }
                     .playlist-title {
-                        font-size: 14px;
-                        font-weight: 500;
+                        font-size: 18px;
+                        font-weight: 600;
                         margin: 0;
-                        flex: 1;
                     }
-                    .save-btn {
-                        width: 36px;
-                        height: 36px;
+                    .playlist-meta {
+                        font-size: 11px;
+                        opacity: 0.6;
+                        display: flex;
+                        gap: 12px;
+                    }
+                    .playlist-tags {
+                        display: flex;
+                        gap: 8px;
+                        margin-bottom: 16px;
+                    }
+                    .tag {
+                        padding: 4px 10px;
                         border: 1px solid currentColor;
+                        font-size: 10px;
+                        text-transform: uppercase;
+                        letter-spacing: 0.05em;
+                        opacity: 0.7;
+                    }
+                    .track-list {
+                        max-height: 400px;
+                        overflow-y: auto;
+                        margin-bottom: 16px;
+                        border: 1px solid currentColor;
+                        padding: 12px;
+                    }
+                    .track-item {
+                        padding: 8px 0;
+                        border-bottom: 1px solid rgba(128,128,128,0.2);
+                        font-size: 11px;
+                        display: flex;
+                        align-items: baseline;
+                    }
+                    .track-item:last-child {
+                        border-bottom: none;
+                    }
+                    .track-number {
+                        opacity: 0.5;
+                        margin-right: 8px;
+                        min-width: 25px;
+                    }
+                    .track-name {
+                        font-weight: 500;
+                    }
+                    .track-artist {
+                        opacity: 0.6;
+                        margin-left: 4px;
+                    }
+                    .playlist-actions {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 8px;
+                    }
+                    .save-btn, .generate-new-btn {
+                        padding: 12px;
+                        border: 2px solid currentColor;
                         background: transparent;
                         color: currentColor;
                         cursor: pointer;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 16px;
+                        font-family: 'JetBrains Mono', monospace;
+                        font-size: 11px;
                         transition: all 0.2s ease;
+                        text-align: center;
                     }
-                    .save-btn:hover {
+                    .save-btn:hover, .generate-new-btn:hover {
                         background: currentColor;
                         color: var(--color-primary);
                     }
@@ -1556,74 +1608,40 @@ class PlaylistSelector {
                 `;
             }
             
-            // PRODUCTION MODE: Show static playlist or full preview
-            if (playlist.isStatic) {
-                // Static mode: instant display, no API calls
-                return `
-                    <div class="playlist-card static-mode" data-key="${playlist.key}">
-                        <div class="playlist-header">
-                            <h3 class="playlist-title">${playlist.title}</h3>
-                            <button class="save-btn" data-key="${playlist.key}" title="Save Playlist">
-                                <span>💾</span>
-                            </button>
-                        </div>
-                        
-                        <div class="playlist-info">
-                            <div class="info-item">
-                                <span class="icon">🎵</span>
-                                <span>${playlist.trackCount} tracks</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="icon">⏱</span>
-                                <span>~${playlist.estimatedDuration} min</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="icon">🎭</span>
-                                <span>${playlist.mood}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="static-note">Click save to download your personalized playlist</div>
-                    </div>
-                `;
-            }
-            
-            // Full preview mode with track grid
-            const tracks = playlist.previewSongs || [];
-            
+            // PRODUCTION MODE: Show track list instantly like New Releases
             return `
                 <div class="playlist-card" data-key="${playlist.key}">
                     <div class="playlist-header">
                         <h3 class="playlist-title">${playlist.title}</h3>
-                        <button class="save-btn" data-key="${playlist.key}" title="Save Playlist">
-                            <span>💾</span>
-                        </button>
+                        <div class="playlist-meta">
+                            <span>${playlist.trackCount} tracks</span>
+                            <span>~${playlist.estimatedDuration} min</span>
+                        </div>
                     </div>
                     
-                    <div class="track-grid">
-                        ${tracks.slice(0, 3).map((song, idx) => `
-                            <div class="track-card ${song.previewUrl ? 'playable' : ''}" data-key="${playlist.key}" data-index="${idx}">
-                                <div class="track-artwork">
-                                    ${song.artwork ? 
-                                        `<img src="${song.artwork.replace('100x100', '300x300')}" alt="">` :
-                                        `<div class="artwork-placeholder">♪</div>`
-                                    }
-                                    ${song.previewUrl ? '<div class="play-overlay"><span>▶</span></div>' : ''}
-                                </div>
-                                <div class="track-details">
-                                    <div class="track-title">${song.title}</div>
-                                    <div class="track-artist">${song.artist}</div>
-                                </div>
+                    <div class="playlist-tags">
+                        <span class="tag">${playlist.mood}</span>
+                        <span class="tag">${playlist.company}</span>
+                        <span class="tag">${playlist.activity}</span>
+                    </div>
+                    
+                    <div class="track-list">
+                        ${(playlist.songs || []).map((song, index) => `
+                            <div class="track-item">
+                                <span class="track-number">${index + 1}.</span>
+                                <span class="track-name">${song.title}</span>
+                                <span class="track-artist"> • ${song.artist}</span>
                             </div>
                         `).join('')}
                     </div>
                     
-                    <button class="view-all-btn" data-key="${playlist.key}">
-                        View All ${playlist.trackCount} Tracks
-                    </button>
-                    
-                    <div class="expanded-tracks" id="expanded-${playlist.key}" style="display: none;">
-                        <div class="loading-message">Loading...</div>
+                    <div class="playlist-actions">
+                        <button class="save-btn" data-key="${playlist.key}" title="Save Playlist">
+                            💾 Save Playlist
+                        </button>
+                        <button class="generate-new-btn" title="Generate New Playlist">
+                            🔄 Generate New
+                        </button>
                     </div>
                 </div>
             `;
@@ -1675,6 +1693,14 @@ class PlaylistSelector {
                 e.stopPropagation();
                 const key = btn.dataset.key;
                 await this.downloadPlaylist(key);
+            });
+        });
+        
+        // Generate new button
+        this.container.querySelectorAll('.generate-new-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.generateNewPlaylist();
             });
         });
     }

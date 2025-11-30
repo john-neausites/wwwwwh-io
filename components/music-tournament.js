@@ -85,11 +85,16 @@ class MusicTournament {
 
     async searchItunes(songTitle, artist) {
         try {
+            // Clean up search terms
+            const cleanTitle = songTitle.replace(/[()]/g, '').trim();
+            const cleanArtist = artist.replace(/[()]/g, '').trim();
+            
             // Try multiple search strategies to find a match with preview
             const searches = [
-                `${songTitle} ${artist}`,
-                `${artist} ${songTitle}`,
-                songTitle // Sometimes just the song title works better
+                `${cleanTitle} ${cleanArtist}`,
+                `${cleanArtist} ${cleanTitle}`,
+                cleanTitle, // Sometimes just the song title works better
+                `${artist} ${songTitle}` // Original formatting as fallback
             ];
             
             for (const searchTerm of searches) {
@@ -100,26 +105,32 @@ class MusicTournament {
                 if (data.results && data.results.length > 0) {
                     // Try to find a result with a preview URL
                     const resultWithPreview = data.results.find(r => r.previewUrl);
-                    const result = resultWithPreview || data.results[0];
                     
-                    if (result) {
-                        const hasPreview = !!result.previewUrl;
-                        if (!hasPreview) {
-                            console.log(`No preview for: ${searchTerm}`);
-                        }
-                        
+                    if (resultWithPreview) {
+                        console.log(`✓ Found preview for: ${cleanTitle} - ${cleanArtist}`);
                         return {
-                            previewUrl: result.previewUrl || null,
-                            artwork: result.artworkUrl100?.replace('100x100', '600x600'),
-                            albumName: result.collectionName,
-                            releaseDate: result.releaseDate,
-                            iTunesUrl: result.trackViewUrl
+                            previewUrl: resultWithPreview.previewUrl,
+                            artwork: resultWithPreview.artworkUrl100?.replace('100x100', '600x600'),
+                            albumName: resultWithPreview.collectionName,
+                            releaseDate: resultWithPreview.releaseDate,
+                            iTunesUrl: resultWithPreview.trackViewUrl
                         };
                     }
+                    
+                    // Fallback to first result even without preview
+                    const result = data.results[0];
+                    console.log(`⚠ No preview for: ${cleanTitle} - ${cleanArtist}`);
+                    return {
+                        previewUrl: null,
+                        artwork: result.artworkUrl100?.replace('100x100', '600x600'),
+                        albumName: result.collectionName,
+                        releaseDate: result.releaseDate,
+                        iTunesUrl: result.trackViewUrl
+                    };
                 }
             }
             
-            console.log(`No iTunes results for: ${songTitle} - ${artist}`);
+            console.log(`✗ No iTunes results for: ${songTitle} - ${artist}`);
             return null;
         } catch (error) {
             console.error('iTunes API error:', error);
@@ -143,7 +154,18 @@ class MusicTournament {
 
     parseSongString(songString) {
         const [artist, title] = songString.split(' - ');
-        return { artist: artist.trim(), title: title.trim(), fullName: songString };
+        // Clean up special characters and formatting for better iTunes matching
+        const cleanArtist = artist.trim().replace(/\s+/g, ' ');
+        const cleanTitle = title.trim()
+            .replace(/\(I Can't Get No\)/i, 'I Can\'t Get No')
+            .replace(/\'/g, "'") // Normalize apostrophes
+            .replace(/\s+/g, ' ');
+        
+        return { 
+            artist: cleanArtist, 
+            title: cleanTitle, 
+            fullName: songString 
+        };
     }
 
     async loadMatchupData(matchup) {

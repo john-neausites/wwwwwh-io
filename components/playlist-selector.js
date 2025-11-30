@@ -451,11 +451,23 @@ class PlaylistSelector {
         return this.rateLimitedFetch(url, timeout, 0);
     }
 
-    async searchItunesForPlaylist(songs) {
+    async searchItunesForPlaylist(songs, maxTimeMs = 20000) {
         const results = [];
-        console.log(`Starting iTunes search for ${songs.length} songs`);
+        console.log(`Starting iTunes search for ${songs.length} songs (max ${maxTimeMs}ms)`);
+        
+        const startTime = Date.now();
         
         for (let i = 0; i < songs.length; i++) {
+            // Check if we've exceeded time limit
+            if (Date.now() - startTime > maxTimeMs) {
+                console.log(`⏱️ Time limit reached, returning ${results.length} tracks`);
+                // Add remaining songs without previews
+                for (let j = i; j < songs.length; j++) {
+                    results.push({ ...songs[j], previewUrl: null, artwork: null, iTunesUrl: null });
+                }
+                break;
+            }
+            
             const song = songs[i];
             console.log(`[${i + 1}/${songs.length}] Searching for: ${song.title} by ${song.artist}`);
             let bestResult = null;
@@ -472,22 +484,20 @@ class PlaylistSelector {
                 continue;
             }
             
-            // Fallback to iTunes for mainstream artists
+            // Fallback to iTunes for mainstream artists with shorter timeout
             try {
                 // Search for artist's albums (entity=album works better with CSP)
                 const query = encodeURIComponent(song.artist);
-                console.log(`Fetching albums for ${song.artist}...`);
-                const response = await this.fetchWithTimeout(`https://itunes.apple.com/search?term=${query}&media=music&entity=album&limit=10`);
+                const response = await this.fetchWithTimeout(`https://itunes.apple.com/search?term=${query}&media=music&entity=album&limit=5`, 5000);
                 const data = await response.json();
-                console.log(`Got ${data.results?.length || 0} albums for ${song.artist}`);
                 
                 if (data.results && data.results.length > 0) {
-                    // Try each album to find the song with preview
-                    for (const album of data.results) {
-                        if (album.collectionId) {
+                    // Try only first 2 albums to find the song with preview
+                    for (const album of data.results.slice(0, 2)) {
+                        if (album.collectionId && !bestResult) {
                             try {
                                 // Use lookup API to get all tracks from this album
-                                const lookupResponse = await this.fetchWithTimeout(`https://itunes.apple.com/lookup?id=${album.collectionId}&entity=song&limit=200`);
+                                const lookupResponse = await this.fetchWithTimeout(`https://itunes.apple.com/lookup?id=${album.collectionId}&entity=song&limit=200`, 5000);
                                 const lookupData = await lookupResponse.json();
                                 
                                 if (lookupData.results && lookupData.results.length > 1) {
@@ -506,10 +516,7 @@ class PlaylistSelector {
                                     }
                                 }
                             } catch (lookupError) {
-                                // Silent fail for lookup errors to reduce console spam
-                                if (lookupError.message && !lookupError.message.includes('429')) {
-                                    // Only log non-rate-limit errors
-                                }
+                                // Silent fail for lookup errors
                             }
                         }
                     }
@@ -524,18 +531,18 @@ class PlaylistSelector {
                         iTunesUrl: bestResult.trackViewUrl,
                         source: 'itunes'
                     });
+                    console.log(`✓ Found preview for ${song.title}`);
                 } else {
-                    // Silent fail for missing previews
                     results.push({ ...song, previewUrl: null, artwork: null, iTunesUrl: null });
+                    console.log(`✗ No preview for ${song.title}`);
                 }
             } catch (error) {
-                // Only log non-rate-limit errors to reduce console spam
-                if (!error.message || !error.message.includes('429')) {
-                    // Silent fail
-                }
                 results.push({ ...song, previewUrl: null, artwork: null, iTunesUrl: null });
+                console.log(`✗ Error searching ${song.title}`);
             }
         }
+        
+        console.log(`✓ Search complete: ${results.filter(r => r.previewUrl).length}/${results.length} tracks with previews`);
         return results;
     }
 
@@ -1071,6 +1078,22 @@ class PlaylistSelector {
                     @keyframes blink-indicator {
                         0%, 100% { opacity: 1; }
                         50% { opacity: 0.3; }
+                    }
+                    
+                    .no-preview-badge {
+                        font-size: 11px;
+                        padding: 4px 8px;
+                        background: rgba(255, 100, 100, 0.3);
+                        border: 1px solid rgba(255, 100, 100, 0.5);
+                        border-radius: 4px;
+                        color: rgba(255, 255, 255, 0.7);
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                    }
+                    
+                    .track-item.loading {
+                        opacity: 0.6;
+                        animation: pulse-loading 1.5s ease-in-out infinite;
                     }
                     
                     /* Responsive ATM Buttons */
@@ -2014,16 +2037,54 @@ class PlaylistSelector {
         if (btnText) btnText.textContent = 'LOADING...';
         btn.disabled = true;
         
+        // Show track list immediately with placeholder data
+        if (trackListContainer) {
+            trackListContainer.innerHTML = this.renderTrackList(playlist.songs.map((song, idx) => ({
+                title: song.title,
+                artist: song.artist,
+                previewUrl: null,
+                loading: true
+            })), key);
+            trackListContainer.style.display = 'block';
+        }
+        
         try {
-            // Load tracks if not already loaded
-            const tracks = await this.searchItunesForPlaylist(playlist.songs);
+            // Load tracks in background with timeout
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Timeout')), 30000)
+            );
+            
+            const tracksPromise = this.searchItunesForPlaylist(playlist.songs);
+            const tracks = await Promise.race([tracksPromise, timeoutPromise]).catch(() => []);
             
             // Filter tracks with previews
             const playableTracks = tracks.filter(t => t.previewUrl);
             
             if (playableTracks.length === 0) {
                 if (btnText) btnText.textContent = 'NO PREVIEWS';
+                if (btnIcon) btnIcon.textContent = '❌';
                 btn.disabled = false;
+                
+                // Update track list to show no previews
+                if (trackListContainer) {
+                    trackListContainer.innerHTML = `
+                        <div class="track-list-header">
+                            <h4>Playlist Tracks</h4>
+                        </div>
+                        <div class="track-list-items">
+                            ${playlist.songs.map((song, index) => `
+                                <div class="track-item">
+                                    <span class="track-number">${index + 1}.</span>
+                                    <div class="track-info-inline">
+                                        <span class="track-name">${song.title}</span>
+                                        <span class="track-artist">${song.artist}</span>
+                                    </div>
+                                    <span class="no-preview-badge">No Preview</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
                 return;
             }
             
@@ -2033,10 +2094,9 @@ class PlaylistSelector {
             this.currentPlaylistKey = key;
             this.isPreviewPlaying = true;
             
-            // Show track list
+            // Update track list with actual data
             if (trackListContainer) {
                 trackListContainer.innerHTML = this.renderTrackList(playableTracks, key);
-                trackListContainer.style.display = 'block';
             }
             
             // Update button to stop state
@@ -2050,8 +2110,19 @@ class PlaylistSelector {
             
         } catch (error) {
             console.error('Error starting preview:', error);
-            if (btnText) btnText.textContent = 'ERROR';
+            if (btnText) btnText.textContent = 'TRY AGAIN';
+            if (btnIcon) btnIcon.textContent = '⚠️';
             btn.disabled = false;
+            
+            // Show error in track list
+            if (trackListContainer) {
+                trackListContainer.innerHTML = `
+                    <div class="track-list-header">
+                        <h4>Error Loading Tracks</h4>
+                        <p style="font-size: 14px; opacity: 0.7; margin-top: 8px;">Unable to load preview tracks. Please try again.</p>
+                    </div>
+                `;
+            }
         }
     }
     

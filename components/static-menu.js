@@ -6,12 +6,14 @@ class StaticMenu {
             onItemClick: options.onItemClick || null,
             onError: options.onError || null,
             mobileBreakpoint: options.mobileBreakpoint || 480,
+            showClickCounts: options.showClickCounts !== false, // default true
             ...options
         };
         this.allItems = [];
         this.currentItems = [];
         this.navigationStack = [];
         this.isLoading = true;
+        this.clickCounts = {}; // Store click counts from server
         this.init();
     }
     init() {
@@ -39,10 +41,28 @@ class StaticMenu {
             console.log(`Flattened ${this.allItems.length} menu items`);
             
             this.buildHierarchy();
+            
+            // Load click counts from analytics
+            this.loadClickCounts();
+            
             this.showRootLevel();
         } catch (error) {
             console.error('Menu loading error:', error);
             this.showError(error.message);
+        }
+    }
+    
+    async loadClickCounts() {
+        if (!this.options.showClickCounts || !window.analytics) {
+            return;
+        }
+        try {
+            this.clickCounts = await window.analytics.getClickCounts();
+            console.log('📊 Loaded click counts for', Object.keys(this.clickCounts).length, 'sections');
+            // Re-render to show counts
+            this.render(this.getCurrentTitle(), this.currentItems);
+        } catch (error) {
+            console.warn('Failed to load click counts:', error);
         }
     }
     
@@ -112,8 +132,13 @@ class StaticMenu {
         html += '<ul class="menu-list">';
         items.forEach(item => {
             const countDisplay = this.getCountDisplay(item);
+            const clickCount = this.clickCounts[item.slug] || 0;
+            const clickBadge = this.options.showClickCounts && clickCount > 0 
+                ? `<span class="click-count" title="${clickCount} views">${this.formatCount(clickCount)}</span>` 
+                : '';
             html += `<li><a href="#" data-id="${item.id}">
                 ${item.name}
+                ${clickBadge}
                 ${countDisplay ? `<span class="item-count">${countDisplay}</span>` : ''}
             </a></li>`;
         });
@@ -230,6 +255,13 @@ class StaticMenu {
     isMobile() {
         return window.innerWidth <= this.options.mobileBreakpoint;
     }
+    formatCount(count) {
+        if (count >= 1000) {
+            return (count / 1000).toFixed(1) + 'k';
+        }
+        return count.toString();
+    }
+    
     getCountDisplay(item) {
         if (!item.immediate_children && !item.total_descendants) {
             return null; 

@@ -183,9 +183,9 @@ function initializeApplication() {
 function handleMenuItemClick(slug, itemId, element) {
     console.log(`Menu item clicked: ${slug} (ID: ${itemId})`);
     
-    // Track navigation
+    // Track section access
     if (analytics) {
-        analytics.trackNavigation(slug, itemId);
+        analytics.trackSection(slug, itemId);
     }
     
     // Special handling for Color button - toggle color state
@@ -301,33 +301,17 @@ style.textContent = `
 document.head.appendChild(style);
 
 // Analytics helper functions
-function playbackJourney(speed = 1) {
+function showStats() {
     if (analytics) {
-        analytics.playbackJourney(speed);
+        return analytics.printStats();
     } else {
         console.error('Analytics not initialized');
     }
 }
 
-function exportSession() {
+function exportStats() {
     if (analytics) {
-        analytics.exportSession();
-    } else {
-        console.error('Analytics not initialized');
-    }
-}
-
-function showJourney() {
-    if (analytics) {
-        return analytics.getJourney();
-    } else {
-        console.error('Analytics not initialized');
-    }
-}
-
-function showSummary() {
-    if (analytics) {
-        return analytics.printSummary();
+        analytics.exportStats();
     } else {
         console.error('Analytics not initialized');
     }
@@ -335,16 +319,14 @@ function showSummary() {
 
 function clearAnalytics() {
     if (analytics) {
-        analytics.clearSession();
+        analytics.clearStats();
     } else {
         console.error('Analytics not initialized');
     }
 }
 
-window.playbackJourney = playbackJourney;
-window.exportSession = exportSession;
-window.showJourney = showJourney;
-window.showSummary = showSummary;
+window.showStats = showStats;
+window.exportStats = exportStats;
 window.clearAnalytics = clearAnalytics;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -353,5 +335,5 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('wwwwwh.io initialized successfully');
     console.log('🧪 Test functions available: testAuthenticationElements(), testHardwareKeyAuth()');
     console.log('🔑 Shortcut: Type "jrv" to toggle navigation unlock');
-    console.log('📊 Analytics functions: playbackJourney(speed), showJourney(), showSummary(), exportSession(), clearAnalytics()');
+    console.log('📊 Analytics functions: showStats(), exportStats(), clearAnalytics()');
 });

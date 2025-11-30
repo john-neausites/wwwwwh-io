@@ -50,11 +50,6 @@ class ContentManager {
         try {
             const content = await this.loadMarkdownContent(contentId);
             
-            // Track successful content load
-            if (window.analytics) {
-                window.analytics.trackContentLoad('markdown', contentId);
-            }
-            
             setTimeout(() => {
                 this.contentElement.innerHTML = content;
                 this.contentElement.classList.remove('loading');
@@ -67,11 +62,6 @@ class ContentManager {
             }, this.options.loadingDelay);
         } catch (error) {
             console.error('Content loading error:', error);
-            
-            // Track error
-            if (window.analytics) {
-                window.analytics.trackError('content_load', error.message, { contentId });
-            }
             setTimeout(() => {
                 this.contentElement.innerHTML = this.getContentForSection(contentId);
                 this.contentElement.classList.remove('loading');
@@ -249,11 +239,6 @@ class ContentManager {
     loadMusicTournament() {
         console.log('Loading music tournament...');
         
-        // Track content load
-        if (window.analytics) {
-            window.analytics.trackContentLoad('music_tournament', 'audio-music-lists-popular');
-        }
-        
         // Clear and show loading
         this.contentElement.classList.add('loading');
         this.contentElement.innerHTML = '<div class="loading-message">Loading Music Tournament...</div>';
@@ -265,10 +250,6 @@ class ContentManager {
                 console.error('MusicTournament class not found');
                 this.contentElement.innerHTML = '<div class="error">Music Tournament not available</div>';
                 this.contentElement.classList.remove('loading');
-                
-                if (window.analytics) {
-                    window.analytics.trackError('music_tournament_load', 'Class not found', {});
-                }
                 return;
             }
             
@@ -571,11 +552,6 @@ class ContentManager {
     loadPlaylistSelector() {
         console.log('Loading playlist selector...');
         
-        // Track content load
-        if (window.analytics) {
-            window.analytics.trackContentLoad('playlist_selector', 'audio-music-lists-favorites');
-        }
-        
         this.contentElement.classList.add('loading');
         this.contentElement.innerHTML = '<div class="loading-message">Loading Playlist Selector...</div>';
         
@@ -584,10 +560,6 @@ class ContentManager {
                 console.error('PlaylistSelector class not found');
                 this.contentElement.innerHTML = '<div class="error">Playlist selector not available</div>';
                 this.contentElement.classList.remove('loading');
-                
-                if (window.analytics) {
-                    window.analytics.trackError('playlist_selector_load', 'Class not found', {});
-                }
                 return;
             }
             

@@ -26,6 +26,11 @@ class ContentManager {
             this.loadSynthesizer();
             return;
         }
+        if (contentId === 'photo-color') {
+            console.log('Loading color palette builder...');
+            this.loadColorPaletteBuilder();
+            return;
+        }
         this.contentElement.classList.add('loading');
         try {
             const content = await this.loadMarkdownContent(contentId);
@@ -167,6 +172,45 @@ class ContentManager {
                 startOctave: 3,
                 waveform: 'sine'
             });
+            
+            if (this.isMobile()) {
+                const contentArea = document.querySelector('.why-content');
+                if (contentArea) {
+                    contentArea.style.display = 'block';
+                }
+            }
+        }, this.options.loadingDelay);
+    }
+    
+    loadColorPaletteBuilder() {
+        console.log('loadColorPaletteBuilder called');
+        this.contentElement.classList.add('loading');
+        
+        // Make sure colorPalette is available
+        if (!window.colorPalette) {
+            console.error('ColorPalette not initialized');
+            return;
+        }
+        
+        console.log('ColorPalette available, creating builder...');
+        
+        setTimeout(() => {
+            console.log('Creating ColorPaletteBuilder instance...');
+            // Create the builder and render it
+            window.colorBuilder = new ColorPaletteBuilder(window.colorPalette);
+            const builderElement = window.colorBuilder.render();
+            
+            console.log('Builder rendered, inserting into DOM...');
+            // Insert into content area
+            this.contentElement.innerHTML = '';
+            this.contentElement.appendChild(builderElement);
+            this.contentElement.classList.remove('loading');
+            
+            console.log('Attaching event listeners...');
+            // Attach event listeners
+            window.colorBuilder.attachEventListeners();
+            
+            console.log('Color palette builder loaded successfully');
             
             if (this.isMobile()) {
                 const contentArea = document.querySelector('.why-content');

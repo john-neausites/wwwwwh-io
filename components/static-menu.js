@@ -105,12 +105,10 @@ class StaticMenu {
     }
     render(title, items) {
         let html = '';
-        if (this.isMobile()) {
-            const breadcrumbs = this.getBreadcrumbs();
-            html += `<div class="menu-header">
-                ${breadcrumbs ? `<div class="breadcrumbs">${breadcrumbs}</div>` : ''}
-            </div>`;
-        }
+        const breadcrumbs = this.getBreadcrumbs();
+        html += `<div class="menu-header">
+            ${breadcrumbs ? `<div class="breadcrumbs">${breadcrumbs}</div>` : ''}
+        </div>`;
         html += '<ul class="menu-list">';
         items.forEach(item => {
             const countDisplay = this.getCountDisplay(item);

@@ -2,6 +2,7 @@ let mainMenu = null;
 let navigationManager = null;
 let contentManager = null;
 let protocolHandler = null;
+let colorPalette = null;
 
 // Keyboard shortcut override system
 let keyBuffer = '';
@@ -81,8 +82,67 @@ function isUnlocked() {
     return unlocked;
 }
 
+function styleColorButton() {
+    // Find the Color menu item (slug: photo-color, ID: 129)
+    const menuItems = document.querySelectorAll('.menu-item');
+    const isColored = sessionStorage.getItem('colorState') === 'on';
+    
+    menuItems.forEach(item => {
+        const itemText = item.textContent.trim();
+        if (itemText === 'Color') {
+            if (isColored) {
+                // Color is ON - button should be grayscale/transparent
+                item.style.background = 'transparent';
+                item.style.color = '';
+                item.style.fontWeight = '';
+                item.style.textShadow = '';
+                item.style.border = '1px solid currentColor';
+                item.style.opacity = '0.5';
+            } else {
+                // Color is OFF - button shows the palette colors
+                const primary = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim() || '#8B5CF6';
+                const secondary = getComputedStyle(document.documentElement).getPropertyValue('--color-secondary').trim() || '#292524';
+                const accent = getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim() || '#3B82F6';
+                
+                // Show colors on the button when site is grayscale
+                item.style.background = `linear-gradient(135deg, ${primary} 0%, ${accent} 50%, ${secondary} 100%)`;
+                item.style.color = '#fff';
+                item.style.fontWeight = '700';
+                item.style.textShadow = '0 1px 2px rgba(0,0,0,0.3)';
+                item.style.border = `2px solid ${accent}`;
+                item.style.opacity = '1';
+            }
+        }
+    });
+}
+
 function initializeApplication() {
     initKeyboardOverride();
+    
+    // Initialize color palette system
+    colorPalette = new ColorPalette();
+    window.colorPalette = colorPalette; // Expose globally
+    
+    // Initialize color state
+    if (!sessionStorage.getItem('colorState')) {
+        sessionStorage.setItem('colorState', 'off');
+    }
+    
+    // Generate palette if none exists (but don't apply it yet)
+    if (!sessionStorage.getItem('colorPalette')) {
+        colorPalette.generatePalette();
+    }
+    
+    // Apply colors if state is 'on'
+    if (sessionStorage.getItem('colorState') === 'on') {
+        colorPalette.applyPalette();
+    }
+    
+    // Style the Color button after menu loads
+    setTimeout(() => {
+        styleColorButton();
+    }, 500);
+    
     navigationManager = new NavigationManager({
         mobileBreakpoint: 480,
         contentSelector: '.why-content',
@@ -110,8 +170,39 @@ function initializeApplication() {
 }
 function handleMenuItemClick(slug, itemId, element) {
     console.log(`Menu item clicked: ${slug} (ID: ${itemId})`);
+    
+    // Special handling for Color button - toggle color state
+    if (slug === 'photo-color') {
+        toggleColorState();
+        // Still load content if not loaded
+        contentManager.loadContent(slug);
+        navigationManager.handleMobileNavigation(slug);
+        return;
+    }
+    
+    // Load content for other items
     contentManager.loadContent(slug);
     navigationManager.handleMobileNavigation(slug);
+}
+
+function toggleColorState() {
+    // Check if colors are currently applied
+    const isColored = sessionStorage.getItem('colorState') === 'on';
+    
+    if (isColored) {
+        // Turn off colors - revert to grayscale
+        sessionStorage.setItem('colorState', 'off');
+        colorPalette.removePalette();
+        styleColorButton(); // Update button to show colors
+    } else {
+        // Turn on colors - apply palette
+        sessionStorage.setItem('colorState', 'on');
+        // Generate palette if none exists
+        if (!colorPalette.currentPalette) {
+            colorPalette.generatePalette();
+        }
+        colorPalette.applyPalette();
+    }
 }
 function handleProtocolClick(protocol, element, event) {
     console.log(`Protocol ${protocol} clicked`);
@@ -162,6 +253,8 @@ function testHardwareKeyAuth() {
 window.testAuthenticationElements = testAuthenticationElements;
 window.testHardwareKeyAuth = testHardwareKeyAuth;
 window.isUnlocked = isUnlocked;
+window.styleColorButton = styleColorButton;
+window.toggleColorState = toggleColorState;
 
 // Add CSS animations for notifications
 const style = document.createElement('style');

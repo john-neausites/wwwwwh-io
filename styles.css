@@ -95,6 +95,8 @@ body {
     line-height: 1.4;
     background-color: var(--color-white);
     color: var(--color-black);
+    overflow: hidden;
+    height: 100vh;
 }
 .how-nav {
     background-color: var(--color-lightest-grey);
@@ -139,7 +141,7 @@ body {
 }
 .main-container {
     display: flex;
-    min-height: calc(100vh - 60px);
+    height: calc(100vh - 60px - 24px);
 }
 .what-sidebar {
     width: 33.333%;
@@ -147,6 +149,7 @@ body {
     border-right: 2px solid var(--color-black);
     padding: var(--space-lg);
     overflow-y: auto;
+    height: 100%;
 }
 .menu-container {
     font-size: 11px;
@@ -222,6 +225,7 @@ body {
     width: 66.667%;
     padding: var(--space-xl);
     overflow-y: auto;
+    height: 100%;
 }
 #content-display {
     max-width: 800px;

@@ -7,7 +7,7 @@ let colorPalette = null;
 // Keyboard shortcut override system
 let keyBuffer = '';
 let keyBufferTimeout = null;
-let unlocked = false;
+let unlocked = true; // Desktop unlocked by default for PRD usage
 
 function initKeyboardOverride() {
     document.addEventListener('keydown', (event) => {

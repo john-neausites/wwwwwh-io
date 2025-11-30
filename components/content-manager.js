@@ -420,6 +420,15 @@ class ContentManager {
                                 background: currentColor;
                                 color: var(--color-primary, white);
                             }
+                            .release-card .preview-btn.active {
+                                background: currentColor;
+                                color: var(--color-primary, white);
+                                font-weight: 600;
+                            }
+                            .release-card .preview-btn:disabled {
+                                opacity: 0.5;
+                                cursor: not-allowed;
+                            }
                             .release-card .track-list {
                                 margin-top: 15px;
                                 border-top: 1px solid currentColor;
@@ -469,14 +478,17 @@ class ContentManager {
                         
                         // Toggle if already loaded
                         if (trackList.innerHTML !== '') {
-                            trackList.style.display = trackList.style.display === 'none' ? 'block' : 'none';
-                            e.target.textContent = trackList.style.display === 'none' ? 'Preview All Tracks' : 'Hide Tracks';
+                            const isHidden = trackList.style.display === 'none';
+                            trackList.style.display = isHidden ? 'block' : 'none';
+                            e.target.textContent = isHidden ? 'Hide Tracks' : 'Preview All Tracks';
+                            e.target.classList.toggle('active', isHidden);
                             return;
                         }
                         
                         // Load tracks
                         e.target.textContent = 'Loading...';
                         e.target.disabled = true;
+                        e.target.classList.add('active');
                         
                         try {
                             const response = await fetch(`https://itunes.apple.com/lookup?id=${collectionId}&entity=song&limit=200`);
@@ -509,11 +521,13 @@ class ContentManager {
                                 trackList.style.display = 'block';
                                 e.target.textContent = 'Hide Tracks';
                                 e.target.disabled = false;
+                                e.target.classList.add('active');
                             } else {
                                 trackList.innerHTML = '<p style="opacity: 0.5; font-size: 11px;">No tracks found</p>';
                                 trackList.style.display = 'block';
                                 e.target.textContent = 'Preview All Tracks';
                                 e.target.disabled = false;
+                                e.target.classList.remove('active');
                             }
                         } catch (error) {
                             console.error('Error loading tracks:', error);
@@ -521,6 +535,7 @@ class ContentManager {
                             trackList.style.display = 'block';
                             e.target.textContent = 'Preview All Tracks';
                             e.target.disabled = false;
+                            e.target.classList.remove('active');
                         }
                     });
                 });

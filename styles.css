@@ -287,6 +287,21 @@ body {
     opacity: 0.6;
     pointer-events: none;
 }
+
+/* Global button states for content viewer */
+button.active,
+.preview-btn.active,
+.selector-btn.selected {
+    background: currentColor !important;
+    color: var(--color-primary, white) !important;
+    font-weight: 600;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .nav-back-button {
     display: none;
     background: var(--color-primary);

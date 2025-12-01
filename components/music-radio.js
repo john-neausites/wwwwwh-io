@@ -13,10 +13,36 @@ class MusicRadio {
         this.progressInterval = null;
         
         // Generate playlist based on station
-        if (station === 'christmas') {
-            this.generateChristmasPlaylist();
-        } else {
-            this.generatePlaylist();
+        switch (station) {
+            case 'christmas':
+                this.generateChristmasPlaylist();
+                break;
+            case 'rock':
+                this.generateRockPlaylist();
+                break;
+            case 'pop':
+                this.generatePopPlaylist();
+                break;
+            case 'hiphop':
+                this.generateHipHopPlaylist();
+                break;
+            case 'electronic':
+                this.generateElectronicPlaylist();
+                break;
+            case 'jazz':
+                this.generateJazzPlaylist();
+                break;
+            case 'classical':
+                this.generateClassicalPlaylist();
+                break;
+            case 'country':
+                this.generateCountryPlaylist();
+                break;
+            case 'rnb':
+                this.generateRnBPlaylist();
+                break;
+            default:
+                this.generatePlaylist();
         }
     }
     
@@ -303,9 +329,386 @@ class MusicRadio {
         this.playlist = this.playlist.sort(() => Math.random() - 0.5);
     }
     
+    generateRockPlaylist() {
+        this.playlist = [
+            // Classic Rock
+            { artist: "Led Zeppelin", title: "Stairway to Heaven", genre: "Rock" },
+            { artist: "Pink Floyd", title: "Comfortably Numb", genre: "Rock" },
+            { artist: "The Beatles", title: "Come Together", genre: "Rock" },
+            { artist: "The Rolling Stones", title: "Paint It Black", genre: "Rock" },
+            { artist: "Queen", title: "Bohemian Rhapsody", genre: "Rock" },
+            { artist: "AC/DC", title: "Back in Black", genre: "Rock" },
+            { artist: "Guns N' Roses", title: "Sweet Child O' Mine", genre: "Rock" },
+            { artist: "Nirvana", title: "Smells Like Teen Spirit", genre: "Rock" },
+            { artist: "Metallica", title: "Enter Sandman", genre: "Rock" },
+            { artist: "Black Sabbath", title: "Paranoid", genre: "Rock" },
+            
+            // Alternative Rock
+            { artist: "Radiohead", title: "Creep", genre: "Rock" },
+            { artist: "The Smashing Pumpkins", title: "1979", genre: "Rock" },
+            { artist: "Pearl Jam", title: "Alive", genre: "Rock" },
+            { artist: "Soundgarden", title: "Black Hole Sun", genre: "Rock" },
+            { artist: "Stone Temple Pilots", title: "Interstate Love Song", genre: "Rock" },
+            { artist: "Red Hot Chili Peppers", title: "Under the Bridge", genre: "Rock" },
+            { artist: "Foo Fighters", title: "Everlong", genre: "Rock" },
+            { artist: "The White Stripes", title: "Seven Nation Army", genre: "Rock" },
+            { artist: "Arctic Monkeys", title: "Do I Wanna Know", genre: "Rock" },
+            { artist: "The Strokes", title: "Last Nite", genre: "Rock" },
+            
+            // Modern Rock
+            { artist: "Imagine Dragons", title: "Radioactive", genre: "Rock" },
+            { artist: "Twenty One Pilots", title: "Stressed Out", genre: "Rock" },
+            { artist: "The Killers", title: "Mr. Brightside", genre: "Rock" },
+            { artist: "Muse", title: "Uprising", genre: "Rock" },
+            { artist: "Linkin Park", title: "In the End", genre: "Rock" },
+            { artist: "Green Day", title: "Boulevard of Broken Dreams", genre: "Rock" },
+            { artist: "Weezer", title: "Buddy Holly", genre: "Rock" },
+            { artist: "Blink-182", title: "All the Small Things", genre: "Rock" },
+            { artist: "Fall Out Boy", title: "Sugar, We're Goin Down", genre: "Rock" },
+            { artist: "Paramore", title: "Misery Business", genre: "Rock" }
+        ];
+        this.playlist = this.playlist.sort(() => Math.random() - 0.5);
+    }
+    
+    generatePopPlaylist() {
+        this.playlist = [
+            // Modern Pop
+            { artist: "Taylor Swift", title: "Shake It Off", genre: "Pop" },
+            { artist: "Ariana Grande", title: "thank u, next", genre: "Pop" },
+            { artist: "Billie Eilish", title: "bad guy", genre: "Pop" },
+            { artist: "Dua Lipa", title: "Don't Start Now", genre: "Pop" },
+            { artist: "The Weeknd", title: "Blinding Lights", genre: "Pop" },
+            { artist: "Harry Styles", title: "Watermelon Sugar", genre: "Pop" },
+            { artist: "Olivia Rodrigo", title: "good 4 u", genre: "Pop" },
+            { artist: "Doja Cat", title: "Say So", genre: "Pop" },
+            { artist: "Lizzo", title: "Truth Hurts", genre: "Pop" },
+            { artist: "Lorde", title: "Royals", genre: "Pop" },
+            
+            // Pop Classics
+            { artist: "Michael Jackson", title: "Billie Jean", genre: "Pop" },
+            { artist: "Madonna", title: "Like a Prayer", genre: "Pop" },
+            { artist: "Prince", title: "Purple Rain", genre: "Pop" },
+            { artist: "Whitney Houston", title: "I Wanna Dance with Somebody", genre: "Pop" },
+            { artist: "Britney Spears", title: "Toxic", genre: "Pop" },
+            { artist: "Justin Timberlake", title: "Can't Stop the Feeling", genre: "Pop" },
+            { artist: "Lady Gaga", title: "Bad Romance", genre: "Pop" },
+            { artist: "Katy Perry", title: "Firework", genre: "Pop" },
+            { artist: "Rihanna", title: "Umbrella", genre: "Pop" },
+            { artist: "Beyoncé", title: "Crazy in Love", genre: "Pop" },
+            
+            // Contemporary Pop
+            { artist: "Ed Sheeran", title: "Shape of You", genre: "Pop" },
+            { artist: "Bruno Mars", title: "Uptown Funk", genre: "Pop" },
+            { artist: "Adele", title: "Rolling in the Deep", genre: "Pop" },
+            { artist: "Sam Smith", title: "Stay with Me", genre: "Pop" },
+            { artist: "Shawn Mendes", title: "Stitches", genre: "Pop" },
+            { artist: "Camila Cabello", title: "Havana", genre: "Pop" },
+            { artist: "Charlie Puth", title: "Attention", genre: "Pop" },
+            { artist: "Selena Gomez", title: "Lose You to Love Me", genre: "Pop" },
+            { artist: "Halsey", title: "Without Me", genre: "Pop" },
+            { artist: "Jonas Brothers", title: "Sucker", genre: "Pop" }
+        ];
+        this.playlist = this.playlist.sort(() => Math.random() - 0.5);
+    }
+    
+    generateHipHopPlaylist() {
+        this.playlist = [
+            // Modern Hip Hop
+            { artist: "Drake", title: "God's Plan", genre: "Hip Hop" },
+            { artist: "Kendrick Lamar", title: "HUMBLE", genre: "Hip Hop" },
+            { artist: "Post Malone", title: "Circles", genre: "Hip Hop" },
+            { artist: "Travis Scott", title: "SICKO MODE", genre: "Hip Hop" },
+            { artist: "Cardi B", title: "Bodak Yellow", genre: "Hip Hop" },
+            { artist: "Megan Thee Stallion", title: "Savage", genre: "Hip Hop" },
+            { artist: "Lil Nas X", title: "Old Town Road", genre: "Hip Hop" },
+            { artist: "21 Savage", title: "a lot", genre: "Hip Hop" },
+            { artist: "Future", title: "Mask Off", genre: "Hip Hop" },
+            { artist: "Lil Baby", title: "Drip Too Hard", genre: "Hip Hop" },
+            
+            // Classic Hip Hop
+            { artist: "Notorious B.I.G.", title: "Juicy", genre: "Hip Hop" },
+            { artist: "Tupac", title: "California Love", genre: "Hip Hop" },
+            { artist: "Dr. Dre", title: "Still D.R.E.", genre: "Hip Hop" },
+            { artist: "Snoop Dogg", title: "Gin and Juice", genre: "Hip Hop" },
+            { artist: "Eminem", title: "Lose Yourself", genre: "Hip Hop" },
+            { artist: "Jay-Z", title: "Empire State of Mind", genre: "Hip Hop" },
+            { artist: "Kanye West", title: "Stronger", genre: "Hip Hop" },
+            { artist: "50 Cent", title: "In Da Club", genre: "Hip Hop" },
+            { artist: "OutKast", title: "Hey Ya", genre: "Hip Hop" },
+            { artist: "Nas", title: "N.Y. State of Mind", genre: "Hip Hop" },
+            
+            // Contemporary Hip Hop
+            { artist: "J. Cole", title: "No Role Modelz", genre: "Hip Hop" },
+            { artist: "A$AP Rocky", title: "Praise the Lord", genre: "Hip Hop" },
+            { artist: "Tyler, The Creator", title: "Earfquake", genre: "Hip Hop" },
+            { artist: "Childish Gambino", title: "This Is America", genre: "Hip Hop" },
+            { artist: "Logic", title: "1-800-273-8255", genre: "Hip Hop" },
+            { artist: "Mac Miller", title: "Self Care", genre: "Hip Hop" },
+            { artist: "Juice WRLD", title: "Lucid Dreams", genre: "Hip Hop" },
+            { artist: "XXXTentacion", title: "SAD", genre: "Hip Hop" },
+            { artist: "Lil Uzi Vert", title: "XO Tour Llif3", genre: "Hip Hop" },
+            { artist: "Playboi Carti", title: "Magnolia", genre: "Hip Hop" }
+        ];
+        this.playlist = this.playlist.sort(() => Math.random() - 0.5);
+    }
+    
+    generateElectronicPlaylist() {
+        this.playlist = [
+            // EDM/Dance
+            { artist: "Daft Punk", title: "Get Lucky", genre: "Electronic" },
+            { artist: "Calvin Harris", title: "Summer", genre: "Electronic" },
+            { artist: "The Chainsmokers", title: "Closer", genre: "Electronic" },
+            { artist: "Avicii", title: "Wake Me Up", genre: "Electronic" },
+            { artist: "Zedd", title: "Clarity", genre: "Electronic" },
+            { artist: "David Guetta", title: "Titanium", genre: "Electronic" },
+            { artist: "Marshmello", title: "Happier", genre: "Electronic" },
+            { artist: "Kygo", title: "Firestone", genre: "Electronic" },
+            { artist: "Martin Garrix", title: "Animals", genre: "Electronic" },
+            { artist: "Tiësto", title: "Red Lights", genre: "Electronic" },
+            
+            // House/Techno
+            { artist: "Swedish House Mafia", title: "Don't You Worry Child", genre: "Electronic" },
+            { artist: "Deadmau5", title: "Ghosts 'n' Stuff", genre: "Electronic" },
+            { artist: "Skrillex", title: "Bangarang", genre: "Electronic" },
+            { artist: "Diplo", title: "Revolution", genre: "Electronic" },
+            { artist: "Major Lazer", title: "Lean On", genre: "Electronic" },
+            { artist: "Disclosure", title: "Latch", genre: "Electronic" },
+            { artist: "Flume", title: "Never Be Like You", genre: "Electronic" },
+            { artist: "ODESZA", title: "Say My Name", genre: "Electronic" },
+            { artist: "Porter Robinson", title: "Shelter", genre: "Electronic" },
+            { artist: "Madeon", title: "Pop Culture", genre: "Electronic" },
+            
+            // Electronic Pop
+            { artist: "CHVRCHES", title: "The Mother We Share", genre: "Electronic" },
+            { artist: "M83", title: "Midnight City", genre: "Electronic" },
+            { artist: "Empire of the Sun", title: "Alive", genre: "Electronic" },
+            { artist: "Passion Pit", title: "Take a Walk", genre: "Electronic" },
+            { artist: "MGMT", title: "Electric Feel", genre: "Electronic" },
+            { artist: "Foster the People", title: "Pumped Up Kicks", genre: "Electronic" },
+            { artist: "Two Door Cinema Club", title: "What You Know", genre: "Electronic" },
+            { artist: "Phoenix", title: "1901", genre: "Electronic" },
+            { artist: "Justice", title: "D.A.N.C.E.", genre: "Electronic" },
+            { artist: "The Midnight", title: "Los Angeles", genre: "Electronic" }
+        ];
+        this.playlist = this.playlist.sort(() => Math.random() - 0.5);
+    }
+    
+    generateJazzPlaylist() {
+        this.playlist = [
+            // Classic Jazz
+            { artist: "Miles Davis", title: "So What", genre: "Jazz" },
+            { artist: "John Coltrane", title: "A Love Supreme", genre: "Jazz" },
+            { artist: "Louis Armstrong", title: "What a Wonderful World", genre: "Jazz" },
+            { artist: "Ella Fitzgerald", title: "Summertime", genre: "Jazz" },
+            { artist: "Duke Ellington", title: "Take the 'A' Train", genre: "Jazz" },
+            { artist: "Billie Holiday", title: "Strange Fruit", genre: "Jazz" },
+            { artist: "Charlie Parker", title: "Ornithology", genre: "Jazz" },
+            { artist: "Dizzy Gillespie", title: "A Night in Tunisia", genre: "Jazz" },
+            { artist: "Thelonious Monk", title: "Round Midnight", genre: "Jazz" },
+            { artist: "Dave Brubeck", title: "Take Five", genre: "Jazz" },
+            
+            // Vocal Jazz
+            { artist: "Frank Sinatra", title: "Fly Me to the Moon", genre: "Jazz" },
+            { artist: "Nat King Cole", title: "Unforgettable", genre: "Jazz" },
+            { artist: "Sarah Vaughan", title: "Misty", genre: "Jazz" },
+            { artist: "Nina Simone", title: "Feeling Good", genre: "Jazz" },
+            { artist: "Tony Bennett", title: "I Left My Heart in San Francisco", genre: "Jazz" },
+            { artist: "Dinah Washington", title: "What a Diff'rence a Day Makes", genre: "Jazz" },
+            { artist: "Chet Baker", title: "My Funny Valentine", genre: "Jazz" },
+            { artist: "Peggy Lee", title: "Fever", genre: "Jazz" },
+            { artist: "Diana Krall", title: "The Look of Love", genre: "Jazz" },
+            { artist: "Norah Jones", title: "Don't Know Why", genre: "Jazz" },
+            
+            // Contemporary Jazz
+            { artist: "Snarky Puppy", title: "Lingus", genre: "Jazz" },
+            { artist: "Robert Glasper", title: "Black Radio", genre: "Jazz" },
+            { artist: "Kamasi Washington", title: "Truth", genre: "Jazz" },
+            { artist: "Esperanza Spalding", title: "Black Gold", genre: "Jazz" },
+            { artist: "Thundercat", title: "Them Changes", genre: "Jazz" },
+            { artist: "GoGo Penguin", title: "Hopopono", genre: "Jazz" },
+            { artist: "Hiatus Kaiyote", title: "Breathing Underwater", genre: "Jazz" },
+            { artist: "BadBadNotGood", title: "Time Moves Slow", genre: "Jazz" },
+            { artist: "Christian Scott", title: "Isadora", genre: "Jazz" },
+            { artist: "Gregory Porter", title: "Liquid Spirit", genre: "Jazz" }
+        ];
+        this.playlist = this.playlist.sort(() => Math.random() - 0.5);
+    }
+    
+    generateClassicalPlaylist() {
+        this.playlist = [
+            // Baroque
+            { artist: "Johann Sebastian Bach", title: "Toccata and Fugue in D Minor", genre: "Classical" },
+            { artist: "Antonio Vivaldi", title: "The Four Seasons: Spring", genre: "Classical" },
+            { artist: "George Frideric Handel", title: "Messiah: Hallelujah Chorus", genre: "Classical" },
+            { artist: "Johann Pachelbel", title: "Canon in D", genre: "Classical" },
+            
+            // Classical Period
+            { artist: "Wolfgang Amadeus Mozart", title: "Symphony No. 40", genre: "Classical" },
+            { artist: "Wolfgang Amadeus Mozart", title: "Eine kleine Nachtmusik", genre: "Classical" },
+            { artist: "Ludwig van Beethoven", title: "Symphony No. 5", genre: "Classical" },
+            { artist: "Ludwig van Beethoven", title: "Für Elise", genre: "Classical" },
+            { artist: "Ludwig van Beethoven", title: "Moonlight Sonata", genre: "Classical" },
+            { artist: "Joseph Haydn", title: "Symphony No. 94 'Surprise'", genre: "Classical" },
+            
+            // Romantic
+            { artist: "Frédéric Chopin", title: "Nocturne Op. 9 No. 2", genre: "Classical" },
+            { artist: "Pyotr Ilyich Tchaikovsky", title: "Swan Lake", genre: "Classical" },
+            { artist: "Pyotr Ilyich Tchaikovsky", title: "1812 Overture", genre: "Classical" },
+            { artist: "Johannes Brahms", title: "Hungarian Dance No. 5", genre: "Classical" },
+            { artist: "Franz Schubert", title: "Ave Maria", genre: "Classical" },
+            { artist: "Richard Wagner", title: "Ride of the Valkyries", genre: "Classical" },
+            { artist: "Giuseppe Verdi", title: "La Traviata: Brindisi", genre: "Classical" },
+            { artist: "Giacomo Puccini", title: "Nessun Dorma", genre: "Classical" },
+            
+            // Modern Classical
+            { artist: "Claude Debussy", title: "Clair de Lune", genre: "Classical" },
+            { artist: "Maurice Ravel", title: "Boléro", genre: "Classical" },
+            { artist: "Igor Stravinsky", title: "The Rite of Spring", genre: "Classical" },
+            { artist: "Sergei Rachmaninoff", title: "Piano Concerto No. 2", genre: "Classical" },
+            { artist: "Gustav Holst", title: "The Planets: Mars", genre: "Classical" },
+            { artist: "Edward Elgar", title: "Pomp and Circumstance", genre: "Classical" },
+            { artist: "Samuel Barber", title: "Adagio for Strings", genre: "Classical" },
+            { artist: "Aaron Copland", title: "Appalachian Spring", genre: "Classical" },
+            { artist: "George Gershwin", title: "Rhapsody in Blue", genre: "Classical" },
+            { artist: "Leonard Bernstein", title: "West Side Story: Overture", genre: "Classical" },
+            { artist: "Philip Glass", title: "Glassworks", genre: "Classical" },
+            { artist: "Max Richter", title: "On the Nature of Daylight", genre: "Classical" }
+        ];
+        this.playlist = this.playlist.sort(() => Math.random() - 0.5);
+    }
+    
+    generateCountryPlaylist() {
+        this.playlist = [
+            // Classic Country
+            { artist: "Johnny Cash", title: "Ring of Fire", genre: "Country" },
+            { artist: "Dolly Parton", title: "Jolene", genre: "Country" },
+            { artist: "Willie Nelson", title: "On the Road Again", genre: "Country" },
+            { artist: "Patsy Cline", title: "Crazy", genre: "Country" },
+            { artist: "Hank Williams", title: "I'm So Lonesome I Could Cry", genre: "Country" },
+            { artist: "Merle Haggard", title: "Okie from Muskogee", genre: "Country" },
+            { artist: "Loretta Lynn", title: "Coal Miner's Daughter", genre: "Country" },
+            { artist: "George Jones", title: "He Stopped Loving Her Today", genre: "Country" },
+            { artist: "Waylon Jennings", title: "Luckenbach, Texas", genre: "Country" },
+            { artist: "Tammy Wynette", title: "Stand by Your Man", genre: "Country" },
+            
+            // 90s Country
+            { artist: "Garth Brooks", title: "Friends in Low Places", genre: "Country" },
+            { artist: "Shania Twain", title: "Man! I Feel Like a Woman", genre: "Country" },
+            { artist: "Alan Jackson", title: "Chattahoochee", genre: "Country" },
+            { artist: "Reba McEntire", title: "Fancy", genre: "Country" },
+            { artist: "Brooks & Dunn", title: "Boot Scootin' Boogie", genre: "Country" },
+            { artist: "Faith Hill", title: "Breathe", genre: "Country" },
+            { artist: "Tim McGraw", title: "Live Like You Were Dying", genre: "Country" },
+            { artist: "Toby Keith", title: "Should've Been a Cowboy", genre: "Country" },
+            
+            // Modern Country
+            { artist: "Luke Bryan", title: "Country Girl (Shake It for Me)", genre: "Country" },
+            { artist: "Carrie Underwood", title: "Before He Cheats", genre: "Country" },
+            { artist: "Blake Shelton", title: "God's Country", genre: "Country" },
+            { artist: "Miranda Lambert", title: "The House That Built Me", genre: "Country" },
+            { artist: "Kenny Chesney", title: "No Shoes, No Shirt, No Problems", genre: "Country" },
+            { artist: "Jason Aldean", title: "Dirt Road Anthem", genre: "Country" },
+            { artist: "Florida Georgia Line", title: "Cruise", genre: "Country" },
+            { artist: "Kacey Musgraves", title: "Follow Your Arrow", genre: "Country" },
+            { artist: "Chris Stapleton", title: "Tennessee Whiskey", genre: "Country" },
+            { artist: "Maren Morris", title: "My Church", genre: "Country" },
+            { artist: "Kane Brown", title: "Heaven", genre: "Country" },
+            { artist: "Thomas Rhett", title: "Die a Happy Man", genre: "Country" }
+        ];
+        this.playlist = this.playlist.sort(() => Math.random() - 0.5);
+    }
+    
+    generateRnBPlaylist() {
+        this.playlist = [
+            // Classic R&B
+            { artist: "Marvin Gaye", title: "What's Going On", genre: "R&B" },
+            { artist: "Aretha Franklin", title: "Respect", genre: "R&B" },
+            { artist: "Stevie Wonder", title: "Superstition", genre: "R&B" },
+            { artist: "Al Green", title: "Let's Stay Together", genre: "R&B" },
+            { artist: "Smokey Robinson", title: "Cruisin'", genre: "R&B" },
+            { artist: "The Temptations", title: "My Girl", genre: "R&B" },
+            { artist: "Diana Ross", title: "Ain't No Mountain High Enough", genre: "R&B" },
+            { artist: "James Brown", title: "I Got You (I Feel Good)", genre: "R&B" },
+            { artist: "Otis Redding", title: "Sittin' On the Dock of the Bay", genre: "R&B" },
+            { artist: "Sam Cooke", title: "A Change Is Gonna Come", genre: "R&B" },
+            
+            // 90s/2000s R&B
+            { artist: "Usher", title: "Yeah!", genre: "R&B" },
+            { artist: "Alicia Keys", title: "Fallin'", genre: "R&B" },
+            { artist: "Mary J. Blige", title: "Be Without You", genre: "R&B" },
+            { artist: "R. Kelly", title: "I Believe I Can Fly", genre: "R&B" },
+            { artist: "TLC", title: "No Scrubs", genre: "R&B" },
+            { artist: "Destiny's Child", title: "Say My Name", genre: "R&B" },
+            { artist: "D'Angelo", title: "Untitled (How Does It Feel)", genre: "R&B" },
+            { artist: "Lauryn Hill", title: "Doo Wop (That Thing)", genre: "R&B" },
+            { artist: "Maxwell", title: "Ascension (Don't Ever Wonder)", genre: "R&B" },
+            { artist: "Erykah Badu", title: "On & On", genre: "R&B" },
+            
+            // Contemporary R&B
+            { artist: "The Weeknd", title: "Earned It", genre: "R&B" },
+            { artist: "H.E.R.", title: "Focus", genre: "R&B" },
+            { artist: "Khalid", title: "Location", genre: "R&B" },
+            { artist: "SZA", title: "The Weekend", genre: "R&B" },
+            { artist: "Frank Ocean", title: "Thinkin Bout You", genre: "R&B" },
+            { artist: "Miguel", title: "Adorn", genre: "R&B" },
+            { artist: "Jhené Aiko", title: "The Worst", genre: "R&B" },
+            { artist: "Anderson .Paak", title: "Come Down", genre: "R&B" },
+            { artist: "Daniel Caesar", title: "Best Part", genre: "R&B" },
+            { artist: "Jorja Smith", title: "Blue Lights", genre: "R&B" }
+        ];
+        this.playlist = this.playlist.sort(() => Math.random() - 0.5);
+    }
+    
+    getStationInfo() {
+        const stations = {
+            'general': {
+                title: '🎵 Music Radio',
+                subtitle: 'Discover new music • 30-second previews'
+            },
+            'christmas': {
+                title: '🎄 Christmas Radio',
+                subtitle: 'Holiday classics & modern favorites • 30-second previews'
+            },
+            'rock': {
+                title: '🎸 Rock Radio',
+                subtitle: 'Classic & modern rock anthems • 30-second previews'
+            },
+            'pop': {
+                title: '🎤 Pop Radio',
+                subtitle: 'Chart-topping pop hits • 30-second previews'
+            },
+            'hiphop': {
+                title: '🎧 Hip Hop Radio',
+                subtitle: 'Classic & contemporary rap • 30-second previews'
+            },
+            'electronic': {
+                title: '🔊 Electronic Radio',
+                subtitle: 'EDM, house & electronic beats • 30-second previews'
+            },
+            'jazz': {
+                title: '🎷 Jazz Radio',
+                subtitle: 'Classic & contemporary jazz • 30-second previews'
+            },
+            'classical': {
+                title: '🎻 Classical Radio',
+                subtitle: 'Timeless orchestral masterpieces • 30-second previews'
+            },
+            'country': {
+                title: '🤠 Country Radio',
+                subtitle: 'Classic & modern country hits • 30-second previews'
+            },
+            'rnb': {
+                title: '💿 R&B Radio',
+                subtitle: 'Soul, funk & contemporary R&B • 30-second previews'
+            }
+        };
+        return stations[this.station] || stations['general'];
+    }
+    
     async render() {
-        const stationTitle = this.station === 'christmas' ? '🎄 Christmas Radio' : '🎵 Music Radio';
-        const stationSubtitle = this.station === 'christmas' ? 'Holiday classics & modern favorites • 30-second previews' : 'Discover new music • 30-second previews';
+        const stationInfo = this.getStationInfo();
+        const stationTitle = stationInfo.title;
+        const stationSubtitle = stationInfo.subtitle;
         
         this.container.innerHTML = `
             <div class="music-radio">

@@ -8,7 +8,7 @@
       "name": "Media",
       "slug": "media",
       "immediate_children": 4,
-      "total_descendants": 87,
+      "total_descendants": 95,
       "children": [
         {
           "id": 11,
@@ -16,7 +16,7 @@
           "name": "Audio",
           "slug": "media-audio",
           "immediate_children": 7,
-          "total_descendants": 33,
+          "total_descendants": 41,
           "children": [
             {
               "id": 111,
@@ -24,7 +24,7 @@
               "name": "Music",
               "slug": "audio-music",
               "immediate_children": 5,
-              "total_descendants": 9,
+              "total_descendants": 17,
               "children": [
                 {
                   "id": 1111,
@@ -68,14 +68,86 @@
                   "parent_id": 111,
                   "name": "Radio",
                   "slug": "audio-music-radio",
-                  "immediate_children": 1,
-                  "total_descendants": 1,
+                  "immediate_children": 9,
+                  "total_descendants": 9,
                   "children": [
                     {
                       "id": 11151,
                       "parent_id": 1115,
                       "name": "Christmas",
                       "slug": "audio-music-radio-christmas",
+                      "immediate_children": 0,
+                      "total_descendants": 0,
+                      "children": []
+                    },
+                    {
+                      "id": 11152,
+                      "parent_id": 1115,
+                      "name": "Rock",
+                      "slug": "audio-music-radio-rock",
+                      "immediate_children": 0,
+                      "total_descendants": 0,
+                      "children": []
+                    },
+                    {
+                      "id": 11153,
+                      "parent_id": 1115,
+                      "name": "Pop",
+                      "slug": "audio-music-radio-pop",
+                      "immediate_children": 0,
+                      "total_descendants": 0,
+                      "children": []
+                    },
+                    {
+                      "id": 11154,
+                      "parent_id": 1115,
+                      "name": "Hip Hop",
+                      "slug": "audio-music-radio-hiphop",
+                      "immediate_children": 0,
+                      "total_descendants": 0,
+                      "children": []
+                    },
+                    {
+                      "id": 11155,
+                      "parent_id": 1115,
+                      "name": "Electronic",
+                      "slug": "audio-music-radio-electronic",
+                      "immediate_children": 0,
+                      "total_descendants": 0,
+                      "children": []
+                    },
+                    {
+                      "id": 11156,
+                      "parent_id": 1115,
+                      "name": "Jazz",
+                      "slug": "audio-music-radio-jazz",
+                      "immediate_children": 0,
+                      "total_descendants": 0,
+                      "children": []
+                    },
+                    {
+                      "id": 11157,
+                      "parent_id": 1115,
+                      "name": "Classical",
+                      "slug": "audio-music-radio-classical",
+                      "immediate_children": 0,
+                      "total_descendants": 0,
+                      "children": []
+                    },
+                    {
+                      "id": 11158,
+                      "parent_id": 1115,
+                      "name": "Country",
+                      "slug": "audio-music-radio-country",
+                      "immediate_children": 0,
+                      "total_descendants": 0,
+                      "children": []
+                    },
+                    {
+                      "id": 11159,
+                      "parent_id": 1115,
+                      "name": "R&B",
+                      "slug": "audio-music-radio-rnb",
                       "immediate_children": 0,
                       "total_descendants": 0,
                       "children": []

@@ -46,14 +46,45 @@ class ContentManager {
             this.loadPlaylistSelector();
             return;
         }
-        // Music Radio
+        // Music Radio Stations
         if (contentId === 'audio-music-radio') {
             this.loadMusicRadio('general');
             return;
         }
-        // Music Radio - Christmas Station
         if (contentId === 'audio-music-radio-christmas') {
             this.loadMusicRadio('christmas');
+            return;
+        }
+        if (contentId === 'audio-music-radio-rock') {
+            this.loadMusicRadio('rock');
+            return;
+        }
+        if (contentId === 'audio-music-radio-pop') {
+            this.loadMusicRadio('pop');
+            return;
+        }
+        if (contentId === 'audio-music-radio-hiphop') {
+            this.loadMusicRadio('hiphop');
+            return;
+        }
+        if (contentId === 'audio-music-radio-electronic') {
+            this.loadMusicRadio('electronic');
+            return;
+        }
+        if (contentId === 'audio-music-radio-jazz') {
+            this.loadMusicRadio('jazz');
+            return;
+        }
+        if (contentId === 'audio-music-radio-classical') {
+            this.loadMusicRadio('classical');
+            return;
+        }
+        if (contentId === 'audio-music-radio-country') {
+            this.loadMusicRadio('country');
+            return;
+        }
+        if (contentId === 'audio-music-radio-rnb') {
+            this.loadMusicRadio('rnb');
             return;
         }
         this.contentElement.classList.add('loading');

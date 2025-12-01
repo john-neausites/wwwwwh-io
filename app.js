@@ -183,6 +183,10 @@ function initializeApplication() {
 function handleMenuItemClick(slug, itemId, element) {
     console.log(`Menu item clicked: ${slug} (ID: ${itemId})`);
     
+    // Save navigation state
+    sessionStorage.setItem('lastSlug', slug);
+    sessionStorage.setItem('lastItemId', itemId);
+    
     // Track navigation
     if (analytics) {
         analytics.trackNavigation(slug, itemId);
@@ -354,4 +358,16 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('🧪 Test functions available: testAuthenticationElements(), testHardwareKeyAuth()');
     console.log('🔑 Shortcut: Type "jrv" to toggle navigation unlock');
     console.log('📊 Analytics functions: playbackJourney(speed), showJourney(), showSummary(), exportSession(), clearAnalytics()');
+    
+    // Restore last navigation state if exists
+    const lastSlug = sessionStorage.getItem('lastSlug');
+    const lastItemId = sessionStorage.getItem('lastItemId');
+    if (lastSlug && lastItemId && mainMenu) {
+        console.log(`Restoring navigation to: ${lastSlug} (ID: ${lastItemId})`);
+        setTimeout(() => {
+            // Navigate to the saved item
+            mainMenu.navigateToItem(parseInt(lastItemId));
+            contentManager.loadContent(lastSlug);
+        }, 100);
+    }
 });

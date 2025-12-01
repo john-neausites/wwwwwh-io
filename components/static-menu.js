@@ -206,11 +206,30 @@ class StaticMenu {
             }
             return;
         }
-        this.currentItems = this.getChildren(targetItem.id);
-        this.navigationStack = [{ title: targetItem.name, items: this.currentItems }];
-        this.render(targetItem.name, this.currentItems);
-        if (this.options.onItemClick) {
-            this.options.onItemClick(targetItem.slug, targetItem.id);
+        
+        // Build navigation stack from root to target
+        const path = this.getParentPath(itemId);
+        this.navigationStack = [];
+        
+        // Add each parent to the navigation stack
+        for (const ancestor of path) {
+            const children = this.getChildren(ancestor.id);
+            this.navigationStack.push({
+                title: ancestor.name,
+                items: children
+            });
+        }
+        
+        // Show children of target item (or target item if it's a leaf)
+        const children = this.getChildren(targetItem.id);
+        if (children.length > 0) {
+            this.currentItems = children;
+            this.render(targetItem.name, this.currentItems);
+        } else {
+            // If no children, show the parent's children with this item selected
+            const parent = this.findItem(targetItem.parent_id);
+            this.currentItems = this.getChildren(targetItem.parent_id);
+            this.render(parent ? parent.name : 'wwwwwh.io', this.currentItems);
         }
     }
     getCurrentTitle() {

@@ -101,7 +101,21 @@ class MusicRadio {
                     <div class="now-playing-card">
                         <div class="track-artwork-container">
                             <div class="artwork-placeholder" id="track-artwork">
-                                <span class="vinyl-icon">💿</span>
+                                <svg class="vinyl-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <radialGradient id="vinyl-gradient">
+                                            <stop offset="0%" style="stop-color:#1a1a1a;stop-opacity:1" />
+                                            <stop offset="40%" style="stop-color:#2d2d2d;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#0a0a0a;stop-opacity:1" />
+                                        </radialGradient>
+                                    </defs>
+                                    <circle cx="50" cy="50" r="45" fill="url(#vinyl-gradient)" stroke="#444" stroke-width="1"/>
+                                    <circle cx="50" cy="50" r="35" fill="none" stroke="#555" stroke-width="0.5" opacity="0.3"/>
+                                    <circle cx="50" cy="50" r="25" fill="none" stroke="#555" stroke-width="0.5" opacity="0.3"/>
+                                    <circle cx="50" cy="50" r="15" fill="none" stroke="#555" stroke-width="0.5" opacity="0.3"/>
+                                    <circle cx="50" cy="50" r="8" fill="#1a1a1a" stroke="#666" stroke-width="1"/>
+                                    <circle cx="50" cy="50" r="3" fill="#333"/>
+                                </svg>
                             </div>
                             <div class="genre-badge" id="genre-badge"></div>
                         </div>
@@ -113,13 +127,22 @@ class MusicRadio {
                         
                         <div class="playback-controls">
                             <button class="control-btn skip-btn" id="prev-btn" title="Previous" disabled>
-                                <span>⏮</span>
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 6v12M10 12l8-6v12l-8-6z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                </svg>
                             </button>
                             <button class="control-btn play-btn" id="play-btn" title="Play">
-                                <span>▶</span>
+                                <svg class="play-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8 5v14l11-7z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                </svg>
+                                <svg class="pause-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                                    <path d="M6 4h4v16H6zM14 4h4v16h-4z" fill="currentColor"/>
+                                </svg>
                             </button>
                             <button class="control-btn skip-btn" id="next-btn" title="Skip">
-                                <span>⏭</span>
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6v12M6 12l8 6V6l-8 6z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                </svg>
                             </button>
                         </div>
                         
@@ -300,6 +323,12 @@ class MusicRadio {
                     border-radius: 20px;
                 }
                 
+                .vinyl-icon {
+                    width: 120px;
+                    height: 120px;
+                    opacity: 0.8;
+                }
+                
                 .genre-badge {
                     position: absolute;
                     top: -10px;
@@ -343,12 +372,17 @@ class MusicRadio {
                     background: transparent;
                     border-radius: 50%;
                     cursor: pointer;
-                    font-size: 28px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     transition: all 0.2s ease;
                     color: currentColor;
+                    position: relative;
+                }
+                
+                .control-btn svg {
+                    width: 28px;
+                    height: 28px;
                 }
                 
                 .control-btn:hover:not(:disabled) {
@@ -369,8 +403,21 @@ class MusicRadio {
                 .play-btn {
                     width: 90px;
                     height: 90px;
-                    font-size: 36px;
                     border-width: 4px;
+                }
+                
+                .play-btn svg {
+                    width: 36px;
+                    height: 36px;
+                }
+                
+                .play-btn.loading {
+                    animation: pulse-btn 1.5s ease-in-out infinite;
+                }
+                
+                @keyframes pulse-btn {
+                    0%, 100% { opacity: 1; transform: scale(1); }
+                    50% { opacity: 0.6; transform: scale(0.95); }
                 }
                 
                 .skip-btn {
@@ -620,11 +667,13 @@ class MusicRadio {
         if (this.isLoading) return;
         
         const playBtn = document.getElementById('play-btn');
+        const playIcon = playBtn.querySelector('.play-icon');
+        const pauseIcon = playBtn.querySelector('.pause-icon');
         
         if (!this.currentTrack) {
             // Load first track
             this.isLoading = true;
-            playBtn.querySelector('span').textContent = '⏳';
+            playBtn.classList.add('loading');
             
             try {
                 await this.loadTrack(this.currentTrackIndex);
@@ -636,12 +685,15 @@ class MusicRadio {
                 }
                 return;
             }
+            
+            playBtn.classList.remove('loading');
         }
         
         if (this.currentAudio) {
             this.currentAudio.play();
             this.isPlaying = true;
-            playBtn.querySelector('span').textContent = '⏸';
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'block';
             document.getElementById('track-artwork').classList.add('playing');
             this.startProgressUpdate();
         }
@@ -651,7 +703,11 @@ class MusicRadio {
         if (this.currentAudio) {
             this.currentAudio.pause();
             this.isPlaying = false;
-            document.getElementById('play-btn').querySelector('span').textContent = '▶';
+            const playBtn = document.getElementById('play-btn');
+            const playIcon = playBtn.querySelector('.play-icon');
+            const pauseIcon = playBtn.querySelector('.pause-icon');
+            playIcon.style.display = 'block';
+            pauseIcon.style.display = 'none';
             document.getElementById('track-artwork').classList.remove('playing');
         }
     }

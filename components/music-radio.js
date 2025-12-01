@@ -1287,6 +1287,8 @@ class MusicRadio {
         if (this.isLoading) return;
         
         const playBtn = document.getElementById('play-btn');
+        if (!playBtn) return;
+        
         const playIcon = playBtn.querySelector('.play-icon');
         const pauseIcon = playBtn.querySelector('.pause-icon');
         
@@ -1295,43 +1297,63 @@ class MusicRadio {
             this.isLoading = true;
             playBtn.classList.add('loading');
             
-            // Try up to 10 tracks before giving up
+            // Try up to 5 tracks with delays between attempts
             let attempts = 0;
-            const maxAttempts = 10;
+            const maxAttempts = 5;
+            let success = false;
             
             while (attempts < maxAttempts && this.currentTrackIndex < this.playlist.length) {
                 try {
                     await this.loadTrack(this.currentTrackIndex);
+                    success = true;
                     break; // Success, exit loop
                 } catch (error) {
                     console.error(`Attempt ${attempts + 1}/${maxAttempts} failed:`, error.message);
                     this.currentTrackIndex++;
                     attempts++;
                     
-                    if (attempts >= maxAttempts) {
-                        console.error('❌ Failed to load any tracks after', maxAttempts, 'attempts');
-                        playBtn.classList.remove('loading');
-                        this.isLoading = false;
-                        alert('Unable to load music previews. Please try again later.');
-                        return;
+                    // Add delay between attempts to prevent rapid cycling
+                    if (attempts < maxAttempts) {
+                        await new Promise(resolve => setTimeout(resolve, 500));
                     }
                 }
             }
             
             playBtn.classList.remove('loading');
+            this.isLoading = false;
+            
+            // Show error in UI instead of alert if all attempts failed
+            if (!success) {
+                console.error('❌ Failed to load any tracks after', maxAttempts, 'attempts');
+                const artworkEl = document.getElementById('track-artwork');
+                if (artworkEl) {
+                    artworkEl.innerHTML = `
+                        <div style="padding: 30px; text-align: center; color: var(--color-layer, #ff6b6b);">
+                            <p style="font-size: 18px; margin-bottom: 10px;">⚠️ Unable to Load Music</p>
+                            <p style="font-size: 12px; opacity: 0.8;">iTunes previews unavailable</p>
+                            <p style="font-size: 12px; margin-top: 10px;">Try another station or refresh</p>
+                        </div>
+                    `;
+                }
+                document.getElementById('track-title').textContent = 'No tracks available';
+                document.getElementById('track-artist').textContent = 'Please try another station';
+                return;
+            }
         }
         
         if (this.currentAudio) {
             try {
                 await this.currentAudio.play();
                 this.isPlaying = true;
-                playIcon.style.display = 'none';
-                pauseIcon.style.display = 'block';
-                document.getElementById('track-artwork').classList.add('playing');
+                if (playIcon) playIcon.style.display = 'none';
+                if (pauseIcon) pauseIcon.style.display = 'block';
+                const artworkEl = document.getElementById('track-artwork');
+                if (artworkEl) artworkEl.classList.add('playing');
                 this.startProgressUpdate();
             } catch (error) {
                 console.error('❌ Error playing audio:', error);
-                this.skipTrack();
+                // Don't auto-skip on play error - let user retry
+                this.isLoading = false;
             }
         }
     }
@@ -1341,11 +1363,14 @@ class MusicRadio {
             this.currentAudio.pause();
             this.isPlaying = false;
             const playBtn = document.getElementById('play-btn');
-            const playIcon = playBtn.querySelector('.play-icon');
-            const pauseIcon = playBtn.querySelector('.pause-icon');
-            playIcon.style.display = 'block';
-            pauseIcon.style.display = 'none';
-            document.getElementById('track-artwork').classList.remove('playing');
+            if (playBtn) {
+                const playIcon = playBtn.querySelector('.play-icon');
+                const pauseIcon = playBtn.querySelector('.pause-icon');
+                if (playIcon) playIcon.style.display = 'block';
+                if (pauseIcon) pauseIcon.style.display = 'none';
+            }
+            const artworkEl = document.getElementById('track-artwork');
+            if (artworkEl) artworkEl.classList.remove('playing');
         }
     }
     
@@ -1360,21 +1385,28 @@ class MusicRadio {
         const track = this.playlist[index];
         this.currentTrack = track;
         
-        // Update UI
-        document.getElementById('track-title').textContent = track.title;
-        document.getElementById('track-artist').textContent = track.artist;
-        document.getElementById('genre-badge').textContent = track.genre;
+        // Update UI with null checks
+        const titleEl = document.getElementById('track-title');
+        const artistEl = document.getElementById('track-artist');
+        const genreEl = document.getElementById('genre-badge');
+        
+        if (titleEl) titleEl.textContent = track.title;
+        if (artistEl) artistEl.textContent = track.artist;
+        if (genreEl) genreEl.textContent = track.genre;
         
         // Check if liked or disliked
         const isLiked = this.likedTracks.some(t => t.artist === track.artist && t.title === track.title);
         const isDisliked = this.dislikedTracks.some(t => t.artist === track.artist && t.title === track.title);
         
-        document.getElementById('like-btn').classList.toggle('active', isLiked);
-        document.getElementById('dislike-btn').classList.toggle('active', isDisliked);
-        document.getElementById('repeat-btn').classList.remove('active');
+        const likeBtn = document.getElementById('like-btn');
+        const dislikeBtn = document.getElementById('dislike-btn');
+        const repeatBtn = document.getElementById('repeat-btn');
+        const prevBtn = document.getElementById('prev-btn');
         
-        // Enable prev button if not first track
-        document.getElementById('prev-btn').disabled = this.currentTrackIndex === 0;
+        if (likeBtn) likeBtn.classList.toggle('active', isLiked);
+        if (dislikeBtn) dislikeBtn.classList.toggle('active', isDisliked);
+        if (repeatBtn) repeatBtn.classList.remove('active');
+        if (prevBtn) prevBtn.disabled = this.currentTrackIndex === 0;
         
         // Fetch preview from iTunes
         try {
@@ -1447,16 +1479,8 @@ class MusicRadio {
             }
         } catch (error) {
             console.error(`❌ Error loading track "${track.artist} - ${track.title}":`, error.message);
-            // Show error to user
-            document.getElementById('track-artwork').innerHTML = `
-                <div style="padding: 20px; text-align: center; color: var(--color-layer, #ff6b6b);">
-                    <p>Preview not available</p>
-                    <p style="font-size: 12px; margin-top: 10px;">Skipping to next track...</p>
-                </div>
-            `;
-            // Auto-skip after 1 second
+            // Don't show error UI or auto-skip - let the retry logic handle it
             this.isLoading = false;
-            setTimeout(() => this.skipTrack(), 1000);
             throw error;
         }
     }
@@ -1466,10 +1490,33 @@ class MusicRadio {
         this.pause();
         this.currentTrack = null;
         this.currentAudio = null;
-        document.getElementById('progress-fill').style.width = '0%';
-        document.getElementById('current-time').textContent = '0:00';
-        document.getElementById('track-artwork').innerHTML = '<span class="vinyl-icon">💿</span>';
-        document.getElementById('track-artwork').classList.remove('playing');
+        
+        const progressFill = document.getElementById('progress-fill');
+        const currentTime = document.getElementById('current-time');
+        const artwork = document.getElementById('track-artwork');
+        
+        if (progressFill) progressFill.style.width = '0%';
+        if (currentTime) currentTime.textContent = '0:00';
+        if (artwork) {
+            artwork.innerHTML = `
+                <svg class="vinyl-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <radialGradient id="vinyl-gradient">
+                            <stop offset="0%" style="stop-color:#1a1a1a;stop-opacity:1" />
+                            <stop offset="40%" style="stop-color:#2d2d2d;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#0a0a0a;stop-opacity:1" />
+                        </radialGradient>
+                    </defs>
+                    <circle cx="50" cy="50" r="45" fill="url(#vinyl-gradient)" stroke="#444" stroke-width="1"/>
+                    <circle cx="50" cy="50" r="35" fill="none" stroke="#555" stroke-width="0.5" opacity="0.3"/>
+                    <circle cx="50" cy="50" r="25" fill="none" stroke="#555" stroke-width="0.5" opacity="0.3"/>
+                    <circle cx="50" cy="50" r="15" fill="none" stroke="#555" stroke-width="0.5" opacity="0.3"/>
+                    <circle cx="50" cy="50" r="8" fill="#1a1a1a" stroke="#666" stroke-width="1"/>
+                    <circle cx="50" cy="50" r="3" fill="#333"/>
+                </svg>
+            `;
+            artwork.classList.remove('playing');
+        }
         await this.play();
     }
     
@@ -1479,10 +1526,33 @@ class MusicRadio {
             this.pause();
             this.currentTrack = null;
             this.currentAudio = null;
-            document.getElementById('progress-fill').style.width = '0%';
-            document.getElementById('current-time').textContent = '0:00';
-            document.getElementById('track-artwork').innerHTML = '<span class="vinyl-icon">💿</span>';
-            document.getElementById('track-artwork').classList.remove('playing');
+            
+            const progressFill = document.getElementById('progress-fill');
+            const currentTime = document.getElementById('current-time');
+            const artwork = document.getElementById('track-artwork');
+            
+            if (progressFill) progressFill.style.width = '0%';
+            if (currentTime) currentTime.textContent = '0:00';
+            if (artwork) {
+                artwork.innerHTML = `
+                    <svg class="vinyl-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <radialGradient id="vinyl-gradient">
+                                <stop offset="0%" style="stop-color:#1a1a1a;stop-opacity:1" />
+                                <stop offset="40%" style="stop-color:#2d2d2d;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0a0a0a;stop-opacity:1" />
+                            </radialGradient>
+                        </defs>
+                        <circle cx="50" cy="50" r="45" fill="url(#vinyl-gradient)" stroke="#444" stroke-width="1"/>
+                        <circle cx="50" cy="50" r="35" fill="none" stroke="#555" stroke-width="0.5" opacity="0.3"/>
+                        <circle cx="50" cy="50" r="25" fill="none" stroke="#555" stroke-width="0.5" opacity="0.3"/>
+                        <circle cx="50" cy="50" r="15" fill="none" stroke="#555" stroke-width="0.5" opacity="0.3"/>
+                        <circle cx="50" cy="50" r="8" fill="#1a1a1a" stroke="#666" stroke-width="1"/>
+                        <circle cx="50" cy="50" r="3" fill="#333"/>
+                    </svg>
+                `;
+                artwork.classList.remove('playing');
+            }
             await this.play();
         }
     }

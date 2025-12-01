@@ -203,7 +203,7 @@ class MusicRadio {
                 }
                 
                 .now-playing-card {
-                    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+                    background: linear-gradient(135deg, var(--color-secondary, rgba(99, 102, 241, 0.1)), var(--color-layer, rgba(168, 85, 247, 0.1)));
                     border: 3px solid currentColor;
                     border-radius: 20px;
                     padding: 40px;
@@ -222,7 +222,7 @@ class MusicRadio {
                 .artwork-placeholder {
                     width: 100%;
                     height: 100%;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    background: linear-gradient(135deg, var(--color-secondary, #667eea) 0%, var(--color-layer, #764ba2) 100%);
                     border-radius: 20px;
                     display: flex;
                     align-items: center;
@@ -253,8 +253,8 @@ class MusicRadio {
                     position: absolute;
                     top: -10px;
                     right: -10px;
-                    background: var(--color-secondary, #667eea);
-                    color: white;
+                    background: var(--color-accent, #667eea);
+                    color: var(--color-primary, white);
                     padding: 8px 16px;
                     border-radius: 20px;
                     font-size: 12px;
@@ -388,21 +388,21 @@ class MusicRadio {
                 }
                 
                 .like-btn.active {
-                    background: #10b981;
-                    border-color: #10b981;
-                    color: white;
+                    background: var(--color-accent, #10b981);
+                    border-color: var(--color-accent, #10b981);
+                    color: var(--color-primary, white);
                 }
                 
                 .dislike-btn.active {
-                    background: #ef4444;
-                    border-color: #ef4444;
-                    color: white;
+                    background: var(--color-layer, #ef4444);
+                    border-color: var(--color-layer, #ef4444);
+                    color: var(--color-primary, white);
                 }
                 
                 .repeat-btn.active {
-                    background: #3b82f6;
-                    border-color: #3b82f6;
-                    color: white;
+                    background: var(--color-secondary, #3b82f6);
+                    border-color: var(--color-secondary, #3b82f6);
+                    color: var(--color-primary, white);
                 }
                 
                 .reaction-label {
@@ -490,9 +490,9 @@ class MusicRadio {
                 }
                 
                 .liked-item-remove:hover {
-                    background: #ef4444;
-                    border-color: #ef4444;
-                    color: white;
+                    background: var(--color-layer, #ef4444);
+                    border-color: var(--color-layer, #ef4444);
+                    color: var(--color-primary, white);
                 }
                 
                 @media (max-width: 768px) {
@@ -668,7 +668,7 @@ class MusicRadio {
             console.error('Error loading track:', error);
             // Show error to user
             document.getElementById('track-artwork').innerHTML = `
-                <div style="padding: 20px; text-align: center; color: #ff6b6b;">
+                <div style="padding: 20px; text-align: center; color: var(--color-layer, #ff6b6b);">
                     <p>Unable to load preview</p>
                     <p style="font-size: 12px; margin-top: 10px;">Skipping to next track...</p>
                 </div>

@@ -152,7 +152,7 @@ class MusicRadio {
                                 </svg>
                                 <span class="reaction-label">Dislike</span>
                             </button>
-                            <button class="reaction-btn repeat-btn" id="repeat-btn" title="Repeat">
+                            <button class="reaction-btn repeat-btn" id="repeat-btn" title="Repeat" style="display: none;">
                                 <svg class="gem-icon repeat" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
                                     <defs>
                                         <linearGradient id="repeat-gradient" x1="0%" y1="0%" x2="0%" y2="100%">

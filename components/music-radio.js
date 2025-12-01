@@ -133,15 +133,66 @@ class MusicRadio {
                         
                         <div class="reaction-controls">
                             <button class="reaction-btn dislike-btn" id="dislike-btn" title="Dislike">
-                                <span>👎</span>
+                                <svg class="gem-icon thumbs-down" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <linearGradient id="dislike-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+                                            <stop offset="50%" style="stop-color:#ee5a6f;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#c92a2a;stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                    <!-- Gem facets -->
+                                    <polygon points="50,10 30,40 20,70 50,110 80,70 70,40" fill="url(#dislike-gradient)" stroke="rgba(0,0,0,0.3)" stroke-width="1"/>
+                                    <polygon points="50,10 30,40 50,50" fill="rgba(255,255,255,0.4)"/>
+                                    <polygon points="50,10 70,40 50,50" fill="rgba(255,255,255,0.2)"/>
+                                    <polygon points="30,40 20,70 50,50" fill="rgba(0,0,0,0.1)"/>
+                                    <polygon points="70,40 80,70 50,50" fill="rgba(0,0,0,0.2)"/>
+                                    <!-- Thumbs down shape -->
+                                    <path d="M 45,45 L 40,45 L 40,60 L 45,60 L 48,75 L 52,75 L 55,60 L 60,60 L 60,45 L 55,45 Z" fill="rgba(255,255,255,0.9)" stroke="rgba(0,0,0,0.3)" stroke-width="1.5"/>
+                                </svg>
                                 <span class="reaction-label">Dislike</span>
                             </button>
                             <button class="reaction-btn repeat-btn" id="repeat-btn" title="Repeat">
-                                <span>🔁</span>
+                                <svg class="gem-icon repeat" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <linearGradient id="repeat-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#748ffc;stop-opacity:1" />
+                                            <stop offset="50%" style="stop-color:#5c7cfa;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#364fc7;stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                    <!-- Gem facets -->
+                                    <polygon points="50,10 30,40 20,70 50,110 80,70 70,40" fill="url(#repeat-gradient)" stroke="rgba(0,0,0,0.3)" stroke-width="1"/>
+                                    <polygon points="50,10 30,40 50,50" fill="rgba(255,255,255,0.4)"/>
+                                    <polygon points="50,10 70,40 50,50" fill="rgba(255,255,255,0.2)"/>
+                                    <polygon points="30,40 20,70 50,50" fill="rgba(0,0,0,0.1)"/>
+                                    <polygon points="70,40 80,70 50,50" fill="rgba(0,0,0,0.2)"/>
+                                    <!-- Repeat arrows -->
+                                    <path d="M 40,50 A 8,8 0 1,1 60,50" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.5" stroke-linecap="round"/>
+                                    <polygon points="38,48 35,52 41,52" fill="rgba(255,255,255,0.9)"/>
+                                    <path d="M 60,55 A 8,8 0 1,1 40,55" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.5" stroke-linecap="round"/>
+                                    <polygon points="62,57 65,53 59,53" fill="rgba(255,255,255,0.9)"/>
+                                </svg>
                                 <span class="reaction-label">Repeat</span>
                             </button>
                             <button class="reaction-btn like-btn" id="like-btn" title="Like">
-                                <span>👍</span>
+                                <svg class="gem-icon thumbs-up" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <linearGradient id="like-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#51cf66;stop-opacity:1" />
+                                            <stop offset="50%" style="stop-color:#37b24d;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#2b8a3e;stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                    <!-- Gem facets -->
+                                    <polygon points="50,10 30,40 20,70 50,110 80,70 70,40" fill="url(#like-gradient)" stroke="rgba(0,0,0,0.3)" stroke-width="1"/>
+                                    <polygon points="50,10 30,40 50,50" fill="rgba(255,255,255,0.4)"/>
+                                    <polygon points="50,10 70,40 50,50" fill="rgba(255,255,255,0.2)"/>
+                                    <polygon points="30,40 20,70 50,50" fill="rgba(0,0,0,0.1)"/>
+                                    <polygon points="70,40 80,70 50,50" fill="rgba(0,0,0,0.2)"/>
+                                    <!-- Thumbs up shape -->
+                                    <path d="M 45,60 L 40,60 L 40,45 L 45,45 L 48,30 L 52,30 L 55,45 L 60,45 L 60,60 L 55,60 Z" fill="rgba(255,255,255,0.9)" stroke="rgba(0,0,0,0.3)" stroke-width="1.5"/>
+                                </svg>
                                 <span class="reaction-label">Like</span>
                             </button>
                         </div>
@@ -368,41 +419,64 @@ class MusicRadio {
                     flex-direction: column;
                     align-items: center;
                     gap: 8px;
-                    font-size: 32px;
-                    transition: all 0.2s ease;
+                    transition: all 0.3s ease;
                     color: currentColor;
+                    position: relative;
+                }
+                
+                .gem-icon {
+                    width: 70px;
+                    height: 84px;
+                    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+                    transition: all 0.3s ease;
                 }
                 
                 .reaction-btn:hover {
-                    transform: translateY(-3px);
-                    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+                    transform: translateY(-5px);
+                    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+                }
+                
+                .reaction-btn:hover .gem-icon {
+                    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4)) brightness(1.15);
+                    transform: scale(1.1) rotate(5deg);
                 }
                 
                 .reaction-btn:active {
-                    transform: translateY(0);
+                    transform: translateY(-2px);
+                }
+                
+                .reaction-btn:active .gem-icon {
+                    transform: scale(1.05) rotate(0deg);
                 }
                 
                 .reaction-btn.active {
-                    background: currentColor;
-                    color: var(--color-primary, white);
+                    background: rgba(255, 255, 255, 0.1);
+                    border-color: currentColor;
+                    transform: translateY(-8px);
+                    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+                }
+                
+                .reaction-btn.active .gem-icon {
+                    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5)) brightness(1.3);
+                    transform: scale(1.15);
+                    animation: gem-pulse 1.5s ease-in-out infinite;
+                }
+                
+                @keyframes gem-pulse {
+                    0%, 100% { filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5)) brightness(1.3); }
+                    50% { filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.6)) brightness(1.5); }
                 }
                 
                 .like-btn.active {
-                    background: var(--color-accent, #10b981);
-                    border-color: var(--color-accent, #10b981);
-                    color: var(--color-primary, white);
+                    border-color: #51cf66;
                 }
                 
                 .dislike-btn.active {
-                    background: var(--color-layer, #ef4444);
-                    border-color: var(--color-layer, #ef4444);
-                    color: var(--color-primary, white);
+                    border-color: #ff6b6b;
                 }
                 
                 .repeat-btn.active {
-                    background: var(--color-secondary, #3b82f6);
-                    border-color: var(--color-secondary, #3b82f6);
-                    color: var(--color-primary, white);
+                    border-color: #748ffc;
                 }
                 
                 .reaction-label {

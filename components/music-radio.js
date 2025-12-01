@@ -892,27 +892,44 @@ class MusicRadio {
             this.isLoading = true;
             playBtn.classList.add('loading');
             
-            try {
-                await this.loadTrack(this.currentTrackIndex);
-            } catch (error) {
-                console.error('Error loading track:', error);
-                this.currentTrackIndex++;
-                if (this.currentTrackIndex < this.playlist.length) {
-                    await this.play();
+            // Try up to 10 tracks before giving up
+            let attempts = 0;
+            const maxAttempts = 10;
+            
+            while (attempts < maxAttempts && this.currentTrackIndex < this.playlist.length) {
+                try {
+                    await this.loadTrack(this.currentTrackIndex);
+                    break; // Success, exit loop
+                } catch (error) {
+                    console.error(`Attempt ${attempts + 1}/${maxAttempts} failed:`, error.message);
+                    this.currentTrackIndex++;
+                    attempts++;
+                    
+                    if (attempts >= maxAttempts) {
+                        console.error('❌ Failed to load any tracks after', maxAttempts, 'attempts');
+                        playBtn.classList.remove('loading');
+                        this.isLoading = false;
+                        alert('Unable to load music previews. Please try again later.');
+                        return;
+                    }
                 }
-                return;
             }
             
             playBtn.classList.remove('loading');
         }
         
         if (this.currentAudio) {
-            this.currentAudio.play();
-            this.isPlaying = true;
-            playIcon.style.display = 'none';
-            pauseIcon.style.display = 'block';
-            document.getElementById('track-artwork').classList.add('playing');
-            this.startProgressUpdate();
+            try {
+                await this.currentAudio.play();
+                this.isPlaying = true;
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+                document.getElementById('track-artwork').classList.add('playing');
+                this.startProgressUpdate();
+            } catch (error) {
+                console.error('❌ Error playing audio:', error);
+                this.skipTrack();
+            }
         }
     }
     
@@ -961,13 +978,15 @@ class MusicRadio {
             const searchQuery = encodeURIComponent(`${track.artist} ${track.title}`);
             const itunesUrl = `https://itunes.apple.com/search?term=${searchQuery}&media=music&entity=song&limit=5`;
             
+            console.log(`🎵 Searching iTunes for: ${track.artist} - ${track.title}`);
+            
             // Try direct iTunes API first
             let response = await fetch(itunesUrl);
             let data;
             
             // If direct call fails, try with CORS proxy
             if (!response.ok) {
-                console.log('Direct iTunes API failed, trying CORS proxy...');
+                console.log('⚠️ Direct iTunes API failed, trying CORS proxy...');
                 response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(itunesUrl)}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -978,10 +997,14 @@ class MusicRadio {
                 data = await response.json();
             }
             
+            console.log(`📊 iTunes results: ${data.results?.length || 0} found`);
+            
             if (data.results && data.results.length > 0) {
                 const result = data.results.find(r => r.previewUrl) || data.results[0];
                 
                 if (result.previewUrl) {
+                    console.log(`✅ Preview URL found: ${result.trackName || track.title}`);
+                    
                     // Update artwork if available
                     if (result.artworkUrl100) {
                         const artworkUrl = result.artworkUrl100.replace('100x100', '300x300');
@@ -1002,26 +1025,35 @@ class MusicRadio {
                         this.skipTrack();
                     });
                     
+                    // Error handling for audio loading
+                    this.currentAudio.addEventListener('error', (e) => {
+                        console.error(`❌ Audio load error for ${track.title}:`, e);
+                        this.skipTrack();
+                    });
+                    
                     this.isLoading = false;
                     this.updateQueue();
                     
                 } else {
+                    console.warn(`⚠️ No preview URL in results for: ${track.artist} - ${track.title}`);
                     throw new Error('No preview URL available for this track');
                 }
             } else {
+                console.warn(`⚠️ No iTunes results for: ${track.artist} - ${track.title}`);
                 throw new Error('No results found from iTunes');
             }
         } catch (error) {
-            console.error('Error loading track:', error);
+            console.error(`❌ Error loading track "${track.artist} - ${track.title}":`, error.message);
             // Show error to user
             document.getElementById('track-artwork').innerHTML = `
                 <div style="padding: 20px; text-align: center; color: var(--color-layer, #ff6b6b);">
-                    <p>Unable to load preview</p>
+                    <p>Preview not available</p>
                     <p style="font-size: 12px; margin-top: 10px;">Skipping to next track...</p>
                 </div>
             `;
-            // Auto-skip after 2 seconds
-            setTimeout(() => this.skipTrack(), 2000);
+            // Auto-skip after 1 second
+            this.isLoading = false;
+            setTimeout(() => this.skipTrack(), 1000);
             throw error;
         }
     }

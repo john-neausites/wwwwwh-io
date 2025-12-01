@@ -126,7 +126,7 @@ class MusicRadio {
                         </div>
                         
                         <div class="playback-controls">
-                            <button class="control-btn skip-btn" id="prev-btn" title="Previous" disabled>
+                            <button class="control-btn skip-btn" id="prev-btn" title="Previous" disabled style="display: none;">
                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M18 6v12M14 12l-8 6V6l8 6z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
                                 </svg>
@@ -139,7 +139,7 @@ class MusicRadio {
                                     <path d="M6 4h4v16H6zM14 4h4v16h-4z" fill="currentColor"/>
                                 </svg>
                             </button>
-                            <button class="control-btn skip-btn" id="next-btn" title="Skip">
+                            <button class="control-btn skip-btn" id="next-btn" title="Skip" style="display: none;">
                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M6 6v12M10 12l8 6V6l8-6z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
                                 </svg>

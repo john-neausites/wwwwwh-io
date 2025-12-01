@@ -1,6 +1,7 @@
 class MusicRadio {
-    constructor(container) {
+    constructor(container, station = 'general') {
         this.container = container;
+        this.station = station;
         this.currentAudio = null;
         this.currentTrack = null;
         this.currentTrackIndex = 0;
@@ -11,8 +12,12 @@ class MusicRadio {
         this.dislikedTracks = this.loadDislikedTracks();
         this.progressInterval = null;
         
-        // Generate diverse playlist
-        this.generatePlaylist();
+        // Generate playlist based on station
+        if (station === 'christmas') {
+            this.generateChristmasPlaylist();
+        } else {
+            this.generatePlaylist();
+        }
     }
     
     loadLikedTracks() {
@@ -89,12 +94,224 @@ class MusicRadio {
         this.playlist = this.playlist.sort(() => Math.random() - 0.5);
     }
     
+    generateChristmasPlaylist() {
+        // Comprehensive Christmas music playlist
+        this.playlist = [
+            // Classic Traditional
+            { artist: "Bing Crosby", title: "White Christmas", genre: "Christmas" },
+            { artist: "Nat King Cole", title: "The Christmas Song", genre: "Christmas" },
+            { artist: "Frank Sinatra", title: "Have Yourself a Merry Little Christmas", genre: "Christmas" },
+            { artist: "Judy Garland", title: "Have Yourself a Merry Little Christmas", genre: "Christmas" },
+            { artist: "Elvis Presley", title: "Blue Christmas", genre: "Christmas" },
+            { artist: "Dean Martin", title: "Let It Snow", genre: "Christmas" },
+            { artist: "Perry Como", title: "It's Beginning to Look a Lot Like Christmas", genre: "Christmas" },
+            { artist: "Andy Williams", title: "It's the Most Wonderful Time of the Year", genre: "Christmas" },
+            { artist: "Burl Ives", title: "A Holly Jolly Christmas", genre: "Christmas" },
+            { artist: "Gene Autry", title: "Rudolph the Red-Nosed Reindeer", genre: "Christmas" },
+            { artist: "Brenda Lee", title: "Rockin' Around the Christmas Tree", genre: "Christmas" },
+            
+            // Timeless Carols
+            { artist: "Bing Crosby", title: "Silent Night", genre: "Christmas" },
+            { artist: "Nat King Cole", title: "O Holy Night", genre: "Christmas" },
+            { artist: "Mahalia Jackson", title: "O Holy Night", genre: "Christmas" },
+            { artist: "Harry Simeone Chorale", title: "Little Drummer Boy", genre: "Christmas" },
+            { artist: "Bing Crosby", title: "Little Drummer Boy", genre: "Christmas" },
+            { artist: "Perry Como", title: "O Little Town of Bethlehem", genre: "Christmas" },
+            { artist: "Frank Sinatra", title: "O Little Town of Bethlehem", genre: "Christmas" },
+            { artist: "Nat King Cole", title: "Deck the Halls", genre: "Christmas" },
+            { artist: "Bing Crosby", title: "God Rest Ye Merry Gentlemen", genre: "Christmas" },
+            { artist: "Andy Williams", title: "Joy to the World", genre: "Christmas" },
+            { artist: "Nat King Cole", title: "Hark! The Herald Angels Sing", genre: "Christmas" },
+            { artist: "Johnny Mathis", title: "We Need a Little Christmas", genre: "Christmas" },
+            { artist: "Frank Sinatra", title: "Jingle Bells", genre: "Christmas" },
+            { artist: "Bing Crosby", title: "Angels We Have Heard on High", genre: "Christmas" },
+            
+            // Modern Pop Classics
+            { artist: "Mariah Carey", title: "All I Want for Christmas Is You", genre: "Christmas" },
+            { artist: "Wham!", title: "Last Christmas", genre: "Christmas" },
+            { artist: "Michael Bublé", title: "It's Beginning to Look a Lot Like Christmas", genre: "Christmas" },
+            { artist: "Michael Bublé", title: "Holly Jolly Christmas", genre: "Christmas" },
+            { artist: "Michael Bublé", title: "White Christmas", genre: "Christmas" },
+            { artist: "Michael Bublé", title: "Jingle Bells", genre: "Christmas" },
+            { artist: "Kelly Clarkson", title: "Underneath the Tree", genre: "Christmas" },
+            { artist: "Ariana Grande", title: "Santa Tell Me", genre: "Christmas" },
+            { artist: "Justin Bieber", title: "Mistletoe", genre: "Christmas" },
+            { artist: "Sia", title: "Snowman", genre: "Christmas" },
+            { artist: "Pentatonix", title: "Hallelujah", genre: "Christmas" },
+            { artist: "Pentatonix", title: "Mary, Did You Know?", genre: "Christmas" },
+            { artist: "Pentatonix", title: "Little Drummer Boy", genre: "Christmas" },
+            { artist: "Pentatonix", title: "Silent Night", genre: "Christmas" },
+            
+            // Fun & Upbeat
+            { artist: "Bobby Helms", title: "Jingle Bell Rock", genre: "Christmas" },
+            { artist: "Chuck Berry", title: "Run Rudolph Run", genre: "Christmas" },
+            { artist: "The Ronettes", title: "Sleigh Ride", genre: "Christmas" },
+            { artist: "The Jackson 5", title: "Santa Claus Is Coming to Town", genre: "Christmas" },
+            { artist: "Bruce Springsteen", title: "Santa Claus Is Comin' to Town", genre: "Christmas" },
+            { artist: "Paul McCartney", title: "Wonderful Christmastime", genre: "Christmas" },
+            { artist: "John Lennon", title: "Happy Xmas (War Is Over)", genre: "Christmas" },
+            { artist: "Band Aid", title: "Do They Know It's Christmas?", genre: "Christmas" },
+            { artist: "Jose Feliciano", title: "Feliz Navidad", genre: "Christmas" },
+            { artist: "Stevie Wonder", title: "What Christmas Means to Me", genre: "Christmas" },
+            { artist: "The Waitresses", title: "Christmas Wrapping", genre: "Christmas" },
+            { artist: "Run-DMC", title: "Christmas in Hollis", genre: "Christmas" },
+            
+            // Contemporary Artists
+            { artist: "Taylor Swift", title: "Christmas Tree Farm", genre: "Christmas" },
+            { artist: "Gwen Stefani", title: "You Make It Feel Like Christmas", genre: "Christmas" },
+            { artist: "John Legend", title: "Bring Me Love", genre: "Christmas" },
+            { artist: "Lady Gaga", title: "Christmas Tree", genre: "Christmas" },
+            { artist: "Katy Perry", title: "Cozy Little Christmas", genre: "Christmas" },
+            { artist: "Coldplay", title: "Christmas Lights", genre: "Christmas" },
+            { artist: "Maroon 5", title: "Happy Xmas (War Is Over)", genre: "Christmas" },
+            
+            // Classic Rock Christmas
+            { artist: "The Eagles", title: "Please Come Home for Christmas", genre: "Christmas" },
+            { artist: "The Beach Boys", title: "Little Saint Nick", genre: "Christmas" },
+            { artist: "Elton John", title: "Step Into Christmas", genre: "Christmas" },
+            { artist: "Greg Lake", title: "I Believe in Father Christmas", genre: "Christmas" },
+            { artist: "The Pretenders", title: "2000 Miles", genre: "Christmas" },
+            { artist: "Tom Petty", title: "Christmas All Over Again", genre: "Christmas" },
+            
+            // Country Christmas
+            { artist: "Dolly Parton", title: "Hard Candy Christmas", genre: "Christmas" },
+            { artist: "Dolly Parton", title: "All I Want for Christmas Is You", genre: "Christmas" },
+            { artist: "Carrie Underwood", title: "O Holy Night", genre: "Christmas" },
+            { artist: "Garth Brooks", title: "The Old Man's Back in Town", genre: "Christmas" },
+            { artist: "Reba McEntire", title: "Silent Night", genre: "Christmas" },
+            { artist: "Blake Shelton", title: "Jingle Bell Rock", genre: "Christmas" },
+            { artist: "Kenny Chesney", title: "All I Want for Christmas Is a Real Good Tan", genre: "Christmas" },
+            
+            // R&B/Soul Christmas
+            { artist: "Luther Vandross", title: "Every Year, Every Christmas", genre: "Christmas" },
+            { artist: "Stevie Wonder", title: "Someday at Christmas", genre: "Christmas" },
+            { artist: "The Temptations", title: "Silent Night", genre: "Christmas" },
+            { artist: "Boyz II Men", title: "Let It Snow", genre: "Christmas" },
+            { artist: "Marvin Gaye", title: "I Want to Come Home for Christmas", genre: "Christmas" },
+            { artist: "Aretha Franklin", title: "O Holy Night", genre: "Christmas" },
+            { artist: "Toni Braxton", title: "Snowflakes of Love", genre: "Christmas" },
+            { artist: "Whitney Houston", title: "Do You Hear What I Hear?", genre: "Christmas" },
+            { artist: "Alicia Keys", title: "Please Come Home for Christmas", genre: "Christmas" },
+            { artist: "John Legend", title: "This Time of the Year", genre: "Christmas" },
+            
+            // Jazz & Swing
+            { artist: "Ella Fitzgerald", title: "Sleigh Ride", genre: "Christmas" },
+            { artist: "Louis Armstrong", title: "Winter Wonderland", genre: "Christmas" },
+            { artist: "Ella Fitzgerald", title: "Let It Snow", genre: "Christmas" },
+            { artist: "Frank Sinatra", title: "Winter Wonderland", genre: "Christmas" },
+            { artist: "Dean Martin", title: "Baby, It's Cold Outside", genre: "Christmas" },
+            { artist: "Eartha Kitt", title: "Santa Baby", genre: "Christmas" },
+            { artist: "Tony Bennett", title: "The Christmas Song", genre: "Christmas" },
+            
+            // Children's Favorites
+            { artist: "Alvin and the Chipmunks", title: "The Chipmunk Song", genre: "Christmas" },
+            { artist: "The Muppets", title: "The Twelve Days of Christmas", genre: "Christmas" },
+            { artist: "Gene Autry", title: "Here Comes Santa Claus", genre: "Christmas" },
+            { artist: "Burl Ives", title: "Rudolph the Red-Nosed Reindeer", genre: "Christmas" },
+            { artist: "Jose Feliciano", title: "I Wanna Wish You a Merry Christmas", genre: "Christmas" },
+            
+            // Modern Indie/Alternative
+            { artist: "Sufjan Stevens", title: "Come Thou Fount of Every Blessing", genre: "Christmas" },
+            { artist: "Sufjan Stevens", title: "O Come O Come Emmanuel", genre: "Christmas" },
+            { artist: "She & Him", title: "Baby, It's Cold Outside", genre: "Christmas" },
+            { artist: "The Killers", title: "Don't Shoot Me Santa", genre: "Christmas" },
+            { artist: "Phoenix", title: "Alone on Christmas Day", genre: "Christmas" },
+            { artist: "Death Cab for Cutie", title: "Christmas (Baby Please Come Home)", genre: "Christmas" },
+            
+            // Instrumental Classics
+            { artist: "Trans-Siberian Orchestra", title: "Christmas Eve/Sarajevo 12/24", genre: "Christmas" },
+            { artist: "Trans-Siberian Orchestra", title: "Carol of the Bells", genre: "Christmas" },
+            { artist: "Mannheim Steamroller", title: "Deck the Halls", genre: "Christmas" },
+            { artist: "Mannheim Steamroller", title: "Carol of the Bells", genre: "Christmas" },
+            { artist: "Vince Guaraldi Trio", title: "Christmas Time Is Here", genre: "Christmas" },
+            { artist: "Vince Guaraldi Trio", title: "Linus and Lucy", genre: "Christmas" },
+            
+            // More Modern Covers
+            { artist: "Ed Sheeran", title: "Perfect Christmas", genre: "Christmas" },
+            { artist: "Ed Sheeran", title: "Merry Christmas", genre: "Christmas" },
+            { artist: "Sia", title: "Santa's Coming for Us", genre: "Christmas" },
+            { artist: "CeeLo Green", title: "Mary Did You Know?", genre: "Christmas" },
+            { artist: "Train", title: "Shake Up Christmas", genre: "Christmas" },
+            { artist: "Meghan Trainor", title: "I'll Be Home", genre: "Christmas" },
+            { artist: "Cher", title: "DJ Play a Christmas Song", genre: "Christmas" },
+            
+            // Additional Classics
+            { artist: "Johnny Mathis", title: "Sleigh Ride", genre: "Christmas" },
+            { artist: "Johnny Mathis", title: "Winter Wonderland", genre: "Christmas" },
+            { artist: "Nat King Cole", title: "Frosty the Snowman", genre: "Christmas" },
+            { artist: "Bing Crosby", title: "I'll Be Home for Christmas", genre: "Christmas" },
+            { artist: "Perry Como", title: "Home for the Holidays", genre: "Christmas" },
+            { artist: "Andy Williams", title: "Happy Holiday", genre: "Christmas" },
+            { artist: "Judy Garland", title: "The Christmas Song", genre: "Christmas" },
+            { artist: "Rosemary Clooney", title: "White Christmas", genre: "Christmas" },
+            
+            // Religious/Spiritual
+            { artist: "Amy Grant", title: "Grown-Up Christmas List", genre: "Christmas" },
+            { artist: "Amy Grant", title: "Breath of Heaven", genre: "Christmas" },
+            { artist: "Celine Dion", title: "O Holy Night", genre: "Christmas" },
+            { artist: "Josh Groban", title: "O Holy Night", genre: "Christmas" },
+            { artist: "Andrea Bocelli", title: "Silent Night", genre: "Christmas" },
+            { artist: "Carrie Underwood", title: "Mary, Did You Know?", genre: "Christmas" },
+            { artist: "Chris Tomlin", title: "Noel", genre: "Christmas" },
+            
+            // More Fun Upbeat
+            { artist: "Mariah Carey", title: "Oh Santa!", genre: "Christmas" },
+            { artist: "Kelly Clarkson", title: "Christmas Eve", genre: "Christmas" },
+            { artist: "The Pointer Sisters", title: "Santa Claus Is Coming to Town", genre: "Christmas" },
+            { artist: "Jessica Simpson", title: "Let It Snow", genre: "Christmas" },
+            { artist: "Britney Spears", title: "My Only Wish", genre: "Christmas" },
+            { artist: "NSYNC", title: "Merry Christmas, Happy Holidays", genre: "Christmas" },
+            { artist: "Christina Aguilera", title: "Christmas Time", genre: "Christmas" },
+            { artist: "Destiny's Child", title: "8 Days of Christmas", genre: "Christmas" },
+            
+            // International Flavors
+            { artist: "Andrea Bocelli", title: "Cantique de Noël", genre: "Christmas" },
+            { artist: "Josh Groban", title: "Ave Maria", genre: "Christmas" },
+            { artist: "Il Divo", title: "O Holy Night", genre: "Christmas" },
+            { artist: "Celtic Woman", title: "O Come All Ye Faithful", genre: "Christmas" },
+            
+            // Broadway/Show Tunes
+            { artist: "Idina Menzel", title: "A Hand for Mrs. Claus", genre: "Christmas" },
+            { artist: "Kristin Chenoweth", title: "Home on Christmas Day", genre: "Christmas" },
+            { artist: "Barbra Streisand", title: "Jingle Bells", genre: "Christmas" },
+            { artist: "Barbra Streisand", title: "The Christmas Song", genre: "Christmas" },
+            
+            // Novelty Songs
+            { artist: "Spike Jones", title: "All I Want for Christmas", genre: "Christmas" },
+            { artist: "Bob Rivers", title: "The Twelve Pains of Christmas", genre: "Christmas" },
+            { artist: "Adam Sandler", title: "The Chanukah Song", genre: "Christmas" },
+            { artist: "Dr. Demento", title: "Grandma Got Run Over by a Reindeer", genre: "Christmas" },
+            
+            // Additional Contemporary
+            { artist: "Sam Smith", title: "Have Yourself a Merry Little Christmas", genre: "Christmas" },
+            { artist: "Shawn Mendes", title: "The Christmas Song", genre: "Christmas" },
+            { artist: "Sabrina Carpenter", title: "White Christmas", genre: "Christmas" },
+            { artist: "Alessia Cara", title: "Make It to Christmas", genre: "Christmas" },
+            { artist: "Camila Cabello", title: "I'll Be Home for Christmas", genre: "Christmas" },
+            { artist: "Brett Eldredge", title: "The First Noel", genre: "Christmas" },
+            { artist: "Harry Connick Jr.", title: "When My Heart Finds Christmas", genre: "Christmas" },
+            { artist: "Harry Connick Jr.", title: "It Must've Been Ol' Santa Claus", genre: "Christmas" },
+            
+            // More Traditional Carols
+            { artist: "Mormon Tabernacle Choir", title: "Silent Night", genre: "Christmas" },
+            { artist: "Mormon Tabernacle Choir", title: "The First Noel", genre: "Christmas" },
+            { artist: "King's College Choir", title: "Once in Royal David's City", genre: "Christmas" },
+            { artist: "Vienna Boys Choir", title: "O Come All Ye Faithful", genre: "Christmas" }
+        ];
+        
+        // Shuffle playlist
+        this.playlist = this.playlist.sort(() => Math.random() - 0.5);
+    }
+    
     async render() {
+        const stationTitle = this.station === 'christmas' ? '🎄 Christmas Radio' : '🎵 Music Radio';
+        const stationSubtitle = this.station === 'christmas' ? 'Holiday classics & modern favorites • 30-second previews' : 'Discover new music • 30-second previews';
+        
         this.container.innerHTML = `
             <div class="music-radio">
                 <div class="radio-header">
-                    <h2>🎵 Music Radio</h2>
-                    <p class="radio-subtitle">Discover new music • 30-second previews</p>
+                    <h2>${stationTitle}</h2>
+                    <p class="radio-subtitle">${stationSubtitle}</p>
                 </div>
                 
                 <div class="radio-player">

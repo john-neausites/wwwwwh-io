@@ -48,7 +48,12 @@ class ContentManager {
         }
         // Music Radio
         if (contentId === 'audio-music-radio') {
-            this.loadMusicRadio();
+            this.loadMusicRadio('general');
+            return;
+        }
+        // Music Radio - Christmas Station
+        if (contentId === 'audio-music-radio-christmas') {
+            this.loadMusicRadio('christmas');
             return;
         }
         this.contentElement.classList.add('loading');
@@ -604,12 +609,12 @@ class ContentManager {
             return;
         }, this.options.loadingDelay);
     }
-    loadMusicRadio() {
-        console.log('Loading music radio...');
+    loadMusicRadio(station = 'general') {
+        console.log(`Loading music radio station: ${station}...`);
         
         // Track content load
         if (window.analytics) {
-            window.analytics.trackContentLoad('music_radio', 'audio-music-radio');
+            window.analytics.trackContentLoad('music_radio', `audio-music-radio-${station}`);
         }
         
         this.contentElement.classList.add('loading');
@@ -627,12 +632,12 @@ class ContentManager {
                 return;
             }
             
-            const radio = new window.MusicRadio(this.contentElement);
+            const radio = new window.MusicRadio(this.contentElement, station);
             window.musicRadio = radio; // Make globally available for inline handlers
             radio.render();
             
             this.contentElement.classList.remove('loading');
-            console.log('Music radio loaded successfully');
+            console.log(`Music radio loaded successfully: ${station}`);
         }, this.options.loadingDelay);
     }
     loadMoodPlaylistsOld() {

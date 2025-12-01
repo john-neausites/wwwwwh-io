@@ -359,6 +359,28 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('🔑 Shortcut: Type "jrv" to toggle navigation unlock');
     console.log('📊 Analytics functions: playbackJourney(speed), showJourney(), showSummary(), exportSession(), clearAnalytics()');
     
+    // Add click handler to logo and mobile header to go home and clear state
+    const logoLinks = document.querySelectorAll('.logo a, .mobile-header-content');
+    logoLinks.forEach(element => {
+        element.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Clear navigation state
+            sessionStorage.removeItem('lastSlug');
+            sessionStorage.removeItem('lastItemId');
+            // Go home
+            if (mainMenu) {
+                mainMenu.goHome();
+            }
+            // Load default content
+            if (contentManager) {
+                contentManager.contentElement.innerHTML = `
+                    <h1>wwwwwh.io</h1>
+                    <p>Data acquisition, storage, and retrieval.</p>
+                `;
+            }
+        });
+    });
+    
     // Restore last navigation state if exists
     const lastSlug = sessionStorage.getItem('lastSlug');
     const lastItemId = sessionStorage.getItem('lastItemId');

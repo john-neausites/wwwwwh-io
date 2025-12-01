@@ -1641,6 +1641,28 @@ class MusicRadio {
             document.getElementById('like-btn').classList.toggle('active', isLiked);
         }
     }
+    
+    destroy() {
+        // Stop playback and clean up audio resources
+        if (this.currentAudio) {
+            this.currentAudio.pause();
+            this.currentAudio.src = '';
+            this.currentAudio = null;
+        }
+        
+        // Clear progress interval
+        if (this.progressInterval) {
+            clearInterval(this.progressInterval);
+            this.progressInterval = null;
+        }
+        
+        // Reset state
+        this.isPlaying = false;
+        this.isLoading = false;
+        this.currentTrack = null;
+        
+        console.log('🛑 Music radio stopped');
+    }
 }
 
 // Make it globally available

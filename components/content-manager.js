@@ -17,6 +17,13 @@ class ContentManager {
             console.error('Content display element not found');
             return;
         }
+        
+        // Stop any currently playing radio when navigating away
+        // TODO: Future enhancement - add crossfade transition between stations
+        if (this.currentRadio) {
+            this.currentRadio.destroy();
+            this.currentRadio = null;
+        }
         if (contentId === 'photo-fineart') {
             this.loadNGAGallery();
             return;
@@ -664,6 +671,7 @@ class ContentManager {
             }
             
             const radio = new window.MusicRadio(this.contentElement, station);
+            this.currentRadio = radio; // Keep reference to stop on navigation
             window.musicRadio = radio; // Make globally available for inline handlers
             radio.render();
             

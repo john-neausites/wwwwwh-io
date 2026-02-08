@@ -1,7 +1,7 @@
 class TypographyShowcase {
     constructor() {
         this.container = null;
-        this.pangram = "Five boxing wizards jump quickly";
+        this.pangram = "Then, five boxing wizards jump quickly";
         this.fonts = [];
         this.loadedFonts = new Set();
         this.currentIndex = 0;
@@ -248,7 +248,7 @@ class TypographyShowcase {
         header.className = 'typography-header';
         header.innerHTML = `
             <h1>Typography Showcase</h1>
-            <p class="typography-subtitle">Then "${this.pangram}" in 1,000 fonts</p>
+            <p class="typography-subtitle">"${this.pangram}" in 100+ fonts</p>
             <div class="typography-stats">
                 <span class="stat">Total: <strong id="font-count">Loading...</strong></span>
                 <span class="stat">Loaded: <strong id="fonts-loaded">0</strong></span>

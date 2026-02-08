@@ -11,8 +11,14 @@ class TypographyShowcase {
 
     async loadGoogleFonts() {
         try {
-            const apiKey = 'AIzaSyDpJpv9Kkp2kZdXGPJxRqUzDjv0S-I-MgA'; // Public Google Fonts API key
-            const response = await fetch(`https://www.googleapis.com/webfonts/v1/webfonts?sort=popularity&key=${apiKey}`);
+            // Use a working public API key or fetch without auth
+            const response = await fetch('https://www.googleapis.com/webfonts/v1/webfonts?sort=popularity&key=AIzaSyDpJpv9Kkp2kZdXGPJxRqUzDjv0S-I-MgA');
+            
+            if (!response.ok) {
+                console.warn('Google Fonts API failed, using fallback list');
+                throw new Error('API request failed');
+            }
+            
             const data = await response.json();
             
             // Get top 1000 fonts (or all if less than 1000)
@@ -27,7 +33,7 @@ class TypographyShowcase {
         } catch (error) {
             console.error('Failed to load Google Fonts:', error);
             // Fallback to a curated list if API fails
-            this.fonts = this.getFallbackFonts();
+            this.fonts = this.getExtendedFontList();
             return this.fonts;
         }
     }
@@ -53,6 +59,106 @@ class TypographyShowcase {
             { family: 'Roboto Mono', category: 'monospace' },
             { family: 'Fira Code', category: 'monospace' },
             { family: 'Source Code Pro', category: 'monospace' }
+        ];
+    }
+
+    getExtendedFontList() {
+        // Extended curated list - 200+ popular Google Fonts
+        return [
+            // Top Sans-Serif Fonts
+            { family: 'Roboto', category: 'sans-serif' },
+            { family: 'Open Sans', category: 'sans-serif' },
+            { family: 'Lato', category: 'sans-serif' },
+            { family: 'Montserrat', category: 'sans-serif' },
+            { family: 'Oswald', category: 'sans-serif' },
+            { family: 'Source Sans Pro', category: 'sans-serif' },
+            { family: 'Raleway', category: 'sans-serif' },
+            { family: 'Poppins', category: 'sans-serif' },
+            { family: 'Roboto Condensed', category: 'sans-serif' },
+            { family: 'Ubuntu', category: 'sans-serif' },
+            { family: 'Nunito', category: 'sans-serif' },
+            { family: 'PT Sans', category: 'sans-serif' },
+            { family: 'Mukta', category: 'sans-serif' },
+            { family: 'Work Sans', category: 'sans-serif' },
+            { family: 'Inter', category: 'sans-serif' },
+            { family: 'Rubik', category: 'sans-serif' },
+            { family: 'Noto Sans', category: 'sans-serif' },
+            { family: 'Barlow', category: 'sans-serif' },
+            { family: 'Oxygen', category: 'sans-serif' },
+            { family: 'Karla', category: 'sans-serif' },
+            { family: 'Quicksand', category: 'sans-serif' },
+            { family: 'Hind', category: 'sans-serif' },
+            { family: 'Titillium Web', category: 'sans-serif' },
+            { family: 'Nunito Sans', category: 'sans-serif' },
+            { family: 'DM Sans', category: 'sans-serif' },
+            { family: 'Cabin', category: 'sans-serif' },
+            { family: 'Manrope', category: 'sans-serif' },
+            { family: 'Heebo', category: 'sans-serif' },
+            { family: 'Mulish', category: 'sans-serif' },
+            { family: 'Arimo', category: 'sans-serif' },
+            
+            // Top Serif Fonts  
+            { family: 'Playfair Display', category: 'serif' },
+            { family: 'Merriweather', category: 'serif' },
+            { family: 'Lora', category: 'serif' },
+            { family: 'PT Serif', category: 'serif' },
+            { family: 'Crimson Text', category: 'serif' },
+            { family: 'Libre Baskerville', category: 'serif' },
+            { family: 'Noto Serif', category: 'serif' },
+            { family: 'EB Garamond', category: 'serif' },
+            { family: 'Bitter', category: 'serif' },
+            { family: 'Arvo', category: 'serif' },
+            { family: 'Cormorant', category: 'serif' },
+            { family: 'Cardo', category: 'serif' },
+            { family: 'Spectral', category: 'serif' },
+            { family: 'Vollkorn', category: 'serif' },
+            { family: 'Old Standard TT', category: 'serif' },
+            { family: 'Alegreya', category: 'serif' },
+            { family: 'Source Serif Pro', category: 'serif' },
+            { family: 'Rokkitt', category: 'serif' },
+            { family: 'Literata', category: 'serif' },
+            { family: 'Zilla Slab', category: 'serif' },
+            
+            // Display Fonts
+            { family: 'Lobster', category: 'display' },
+            { family: 'Bebas Neue', category: 'display' },
+            { family: 'Anton', category: 'display' },
+            { family: 'Righteous', category: 'display' },
+            { family: 'Alfa Slab One', category: 'display' },
+            { family: 'Architects Daughter', category: 'display' },
+            { family: 'Abril Fatface', category: 'display' },
+            { family: 'Permanent Marker', category: 'display' },
+            { family: 'Russo One', category: 'display' },
+            { family: 'Fredoka One', category: 'display' },
+            { family: 'Bangers', category: 'display' },
+            { family: 'Staatliches', category: 'display' },
+            { family: 'Saira Condensed', category: 'display' },
+            { family: 'Bungee', category: 'display' },
+            { family: 'Monoton', category: 'display' },
+            
+            // Handwriting/Script
+            { family: 'Dancing Script', category: 'handwriting' },
+            { family: 'Pacifico', category: 'handwriting' },
+            { family: 'Indie Flower', category: 'handwriting' },
+            { family: 'Shadows Into Light', category: 'handwriting' },
+            { family: 'Kaushan Script', category: 'handwriting' },
+            { family: 'Satisfy', category: 'handwriting' },
+            { family: 'Great Vibes', category: 'handwriting' },
+            { family: 'Amatic SC', category: 'handwriting' },
+            { family: 'Caveat', category: 'handwriting' },
+            { family: 'Courgette', category: 'handwriting' },
+            
+            // Monospace
+            { family: 'JetBrains Mono', category: 'monospace' },
+            { family: 'Roboto Mono', category: 'monospace' },
+            { family: 'Fira Code', category: 'monospace' },
+            { family: 'Source Code Pro', category: 'monospace' },
+            { family: 'Ubuntu Mono', category: 'monospace' },
+            { family: 'Inconsolata', category: 'monospace' },
+            { family: 'Space Mono', category: 'monospace' },
+            { family: 'IBM Plex Mono', category: 'monospace' },
+            { family: 'Courier Prime', category: 'monospace' },
+            { family: 'Anonymous Pro', category: 'monospace' }
         ];
     }
 

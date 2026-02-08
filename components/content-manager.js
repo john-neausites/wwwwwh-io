@@ -40,6 +40,7 @@ class ContentManager {
         }
         if (contentId === 'photo-typography') {
             console.log('Loading typography showcase...');
+            console.log('TypographyShowcase class available:', typeof TypographyShowcase !== 'undefined');
             this.loadTypographyShowcase();
             return;
         }
@@ -303,6 +304,14 @@ class ContentManager {
     loadTypographyShowcase() {
         console.log('loadTypographyShowcase called');
         this.contentElement.classList.add('loading');
+        // Check if TypographyShowcase is available
+        if (typeof TypographyShowcase === 'undefined') {
+            console.error('TypographyShowcase class not found');
+            this.contentElement.innerHTML = '<div class="error">Typography Showcase not available</div>';
+            this.contentElement.classList.remove('loading');
+            return;
+        }
+        
         
         setTimeout(() => {
             console.log('Creating TypographyShowcase instance...');

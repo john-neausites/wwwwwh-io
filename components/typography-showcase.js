@@ -263,7 +263,9 @@ class TypographyShowcase {
         container.appendChild(header);
         container.appendChild(loading);
         
-        // Load fonts asynchronously
+        this.container = container;
+        
+        // Load fonts asynchronously AFTER returning the container
         this.loadGoogleFonts().then(() => {
             loading.remove();
             
@@ -295,7 +297,7 @@ class TypographyShowcase {
             }, 1000);
         });
         
-        this.container = container;
+        // Return container immediately (fonts will load async)
         return container;
     }
 

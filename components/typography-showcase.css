@@ -1,0 +1,165 @@
+/* Typography Showcase Styles */
+.typography-showcase {
+    padding: var(--space-lg, 24px);
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    max-width: 100%;
+    background-color: var(--color-white, #ffffff);
+}
+
+.typography-header {
+    margin-bottom: var(--space-xl, 32px);
+    border-bottom: 2px solid var(--color-black, #000000);
+    padding-bottom: var(--space-md, 16px);
+}
+
+.typography-header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: var(--space-sm, 8px);
+    color: var(--color-black, #000000);
+}
+
+.typography-subtitle {
+    font-size: 14px;
+    color: var(--color-medium-grey, #666666);
+    margin-bottom: var(--space-md, 16px);
+    font-weight: 400;
+}
+
+.typography-stats {
+    display: flex;
+    gap: var(--space-lg, 24px);
+    font-size: 12px;
+    color: var(--color-dark-grey, #333333);
+}
+
+.typography-stats .stat {
+    font-weight: 400;
+}
+
+.typography-stats strong {
+    font-weight: 700;
+    color: var(--color-black, #000000);
+}
+
+.typography-loading {
+    text-align: center;
+    padding: var(--space-xl, 32px);
+}
+
+.loading-spinner {
+    font-size: 14px;
+    color: var(--color-medium-grey, #666666);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+}
+
+.typography-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg, 24px);
+}
+
+.typography-item {
+    border: 1px solid var(--color-light-grey, #e0e0e0);
+    padding: var(--space-md, 16px);
+    background-color: var(--color-lightest-grey, #f5f5f5);
+    transition: all 0.2s ease;
+}
+
+.typography-item:hover {
+    border-color: var(--color-black, #000000);
+    background-color: var(--color-white, #ffffff);
+    transform: translateX(4px);
+}
+
+.font-label {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-dark-grey, #333333);
+    margin-bottom: var(--space-sm, 8px);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.font-category {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--color-medium-grey, #666666);
+    text-transform: lowercase;
+    background-color: var(--color-lighter-grey, #cccccc);
+    padding: 2px 6px;
+    border-radius: 2px;
+}
+
+.font-pangram {
+    font-size: 32px;
+    line-height: 1.4;
+    color: var(--color-black, #000000);
+    word-wrap: break-word;
+    min-height: 45px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .typography-showcase {
+        padding: var(--space-md, 16px);
+    }
+    
+    .typography-header h1 {
+        font-size: 20px;
+    }
+    
+    .font-pangram {
+        font-size: 24px;
+    }
+    
+    .typography-stats {
+        flex-direction: column;
+        gap: var(--space-xs, 4px);
+    }
+}
+
+@media (min-width: 769px) {
+    .typography-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 1200px) {
+    .typography-showcase {
+        padding: var(--space-xl, 32px);
+    }
+}
+
+/* Animation for items appearing */
+.typography-item {
+    opacity: 0;
+    animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stagger animation delay */
+.typography-item:nth-child(n) {
+    animation-delay: calc(0.02s * var(--item-index, 0));
+}

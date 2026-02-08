@@ -38,6 +38,11 @@ class ContentManager {
             this.loadColorPaletteBuilder();
             return;
         }
+        if (contentId === 'photo-typography') {
+            console.log('Loading typography showcase...');
+            this.loadTypographyShowcase();
+            return;
+        }
         // Music tournament for popular
         if (contentId === 'audio-music-lists-popular') {
             this.loadMusicTournament();
@@ -294,6 +299,36 @@ class ContentManager {
             }
         }, this.options.loadingDelay);
     }
+    
+    loadTypographyShowcase() {
+        console.log('loadTypographyShowcase called');
+        this.contentElement.classList.add('loading');
+        
+        setTimeout(() => {
+            console.log('Creating TypographyShowcase instance...');
+            // Create the showcase and render it
+            window.typographyShowcase = new TypographyShowcase();
+            
+            // Render returns a promise since it loads fonts async
+            const showcaseElement = window.typographyShowcase.render();
+            
+            console.log('Showcase rendered, inserting into DOM...');
+            // Insert into content area
+            this.contentElement.innerHTML = '';
+            this.contentElement.appendChild(showcaseElement);
+            this.contentElement.classList.remove('loading');
+            
+            console.log('Typography showcase loaded successfully');
+            
+            if (this.isMobile()) {
+                const contentArea = document.querySelector('.why-content');
+                if (contentArea) {
+                    contentArea.style.display = 'block';
+                }
+            }
+        }, this.options.loadingDelay);
+    }
+    
     loadMusicTournament() {
         console.log('Loading music tournament...');
         

@@ -239,7 +239,7 @@ class TypographyShowcase {
         }, options);
     }
 
-    async render() {
+    render() {
         const container = document.createElement('div');
         container.className = 'typography-showcase';
         
